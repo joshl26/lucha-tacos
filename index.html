@@ -27,7 +27,7 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <main class="">
+    <main class="w-full">
       <div class="container">
         <header class="d-flex justify-content-center py-3">
           <ul class="nav nav-pills">
@@ -48,6 +48,16 @@
           </ul>
         </header>
       </div>
+      <div class="main-video-container">
+        <video
+          class="main-video"
+          src="lucha_tacos.mp4"
+          autoplay
+          loop
+          playsinline
+          muted
+        ></video>
+      </div>
       <video
         class="main-video"
         src="lucha_tacos.mp4"
@@ -55,19 +65,28 @@
         loop
         playsinline
         muted
-        width="100%"
       ></video>
       <div class="hero-container">
         <h2 class="hero-text">Lucha</h2>
-        <img src="./mask-1.svg" class="" width="400px" />
+        <div class="">
+          <img src="./mask-1.svg" class="" style="width: 300px" width="w-100" />
+        </div>
         <h2 class="hero-text">Tacos</h2>
       </div>
-      <div class="container">
-        Lucha Tacos brings the bold and vibrant flavors of Mexico to your plate
-        with a twist of excitement. Our tacos are like masked wrestlers in the
-        ring - packed with powerful combinations of fresh ingredients and savory
-        seasonings that will have your taste buds cheering for more. Get ready
-        to experience a fiesta of flavors with every bite at Lucha Tacos!
+      <div class="container d-flex flex-sm-row flex-column h-auto">
+        <div class="w-100 p-2">
+          <p class="">
+            Lucha Tacos brings the bold and vibrant flavors of Mexico to your
+            plate with a twist of excitement. Our tacos are like masked
+            wrestlers in the ring - packed with powerful combinations of fresh
+            ingredients and savory seasonings that will have your taste buds
+            cheering for more. Get ready to experience a fiesta of flavors with
+            every bite at Lucha Tacos!
+          </p>
+        </div>
+        <div class="w-100 p-2">
+          <img src="taco-woman-eating-taco.jpg" class="w-100" />
+        </div>
       </div>
     </main>
     <!--[if lt IE 7]>
