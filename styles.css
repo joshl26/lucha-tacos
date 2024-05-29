@@ -36,3 +36,22 @@ main {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 6rem;
 }
+
+.hero-image-container {
+  min-height: 300px;
+  height: auto;
+  display: flex;
+}
+
+.hero-image {
+  width: auto;
+}
+
+.delivery-image {
+  height: 200px;
+  width: auto;
+}
+
+.footer-container {
+  height: 100px;
+}
