@@ -44,7 +44,7 @@
             </li>
             <li class="nav-item">
               <a href="#" class="nav-link active bg-success">
-                <i class="fa-solid fa-cart-shopping"></i> Cart (0)</a
+                <i class="fa-solid fa-cart-shopping fa-lg"></i> Cart (0)</a
               >
             </li>
             <li class="nav-item">
@@ -54,7 +54,7 @@
         </header>
         <!-- <h2 class="hero-text text-center py-5">Order Online</h2> -->
         <div
-          class="w-100"
+          class="w-100 flex-row d-flex"
           style="background-color: rgb(225, 225, 225); height: 70dvh"
         >
           <div class="flex-column overflow-y-scroll h-100" style="width: 30%">
@@ -67,7 +67,7 @@
               </h5>
             </div>
             <div class="flex-wrap d-flex gap-3 p-3 justify-content-around">
-              <div class="menu-category position-relative">
+              <button class="menu-category position-relative">
                 <img
                   class="position-relative"
                   src="../public/menu-tacos.jpg"
@@ -75,12 +75,12 @@
                   style="max-width: 150px; max-height: 150px"
                 />
                 <h5
-                  class="position-absolute p-1"
+                  class="position-absolute p-1 text-white"
                   style="top: 0; background-color: rgb(255, 0, 0)"
                 >
                   Tacos
                 </h5>
-              </div>
+              </button>
               <div
                 class="menu-category"
                 style="min-width: 150px; height: 150px; background-color: gray"
@@ -111,7 +111,60 @@
               ></div>
             </div>
           </div>
-          <div class="" style="width: 70%"></div>
+          <div class="d-flex flex-column gap-3 p-3 h-100" style="width: 70%">
+            <div class="flex-row rounded-4">
+              <div
+                class="rounded-top-4 h-auto text-black"
+                style="background-color: lightgray"
+              >
+                <div class="d-flex flex-row justify-content-between">
+                  <h5 class="p-1 m-0">CARNE ASADA QUESADILLAS</h5>
+                  <div class="d-flex flex-row">
+                    <p class="m-auto px-1">$15.99</p>
+                    <button style="background-color: transparent">
+                      <i
+                        style="font-size: 25px; color: rgb(255, 30, 30)"
+                        class="fa-sharp fa-solid fa-circle-xmark px-2"
+                      ></i>
+                    </button>
+                  </div>
+                </div>
+                <p class="p-1 m-0">
+                  A 1 inch tortilla filled with flank steak, Monterrey Jack
+                  cheese, garnished with sour cream, lettuce, ranchera sauce and
+                  side fries.
+                </p>
+              </div>
+              <div class="d-flex flex-row justify-content-between">
+                <div class="flex-column">
+                  <div class="d-flex flex-row text-black h-100">
+                    <div class="flex-column px-3 m-auto">
+                      <button>
+                        <i class="fa-sharp fa-solid fa-circle-minus fa-xl"></i>
+                      </button>
+                    </div>
+                    <div class="flex-column px-3 m-auto">1</div>
+                    <div class="flex-column px-3 m-auto">
+                      <button class="">
+                        <i class="fa-sharp fa-solid fa-circle-plus fa-xl"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex-column align-content-center">
+                  <button class="p-1">Add to Cart</button>
+                </div>
+              </div>
+            </div>
+            <div
+              class="flex-row rounded-4"
+              style="height: 100px; background-color: gray"
+            ></div>
+            <div
+              class="flex-row rounded-4"
+              style="height: 100px; background-color: gray"
+            ></div>
+          </div>
         </div>
       </div>
       <script src="../app.js"></script>
