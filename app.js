@@ -1,4 +1,5 @@
 const menuCategoriesDOM = document.querySelector(".menu-categories");
+const menuItemsDOM = document.querySelector(".menu-items");
 
 // cart
 let cart = [];
@@ -58,6 +59,87 @@ class UI {
     });
     menuCategoriesDOM.innerHTML = result;
   }
+  displayItems(menuItems) {
+    let result = "";
+    menuItems.tacos.forEach((item) => {
+      result += `
+        <div class="flex-row rounded-4 bg-white">
+        <div
+          class="rounded-top-4 h-auto text-black"
+          style="background-color: lightgray"
+        >
+          <div class="d-flex flex-row justify-content-between">
+            <h5 class="pt-3 px-3 m-0">${item.title}</h5>
+            <div class="d-flex flex-row">
+              <p class="m-auto px-2" style="font-size: 20px">$${item.price}</p>
+              <button
+                class="pt-1"
+                style="background-color: transparent; border: 0px"
+                data-id=${item.id}
+              >
+                <i
+                  style="
+                    font-size: 25px;
+                    color: rgb(255, 30, 30);
+                    border: 0px;
+                  "
+                  class="fa-sharp fa-solid fa-circle-xmark px-3"
+                ></i>
+              </button>
+            </div>
+          </div>
+          <p class="p-3 m-0">
+            ${item.description}
+          </p>
+        </div>
+        <div class="d-flex flex-row justify-content-between">
+          <div class="flex-column">
+            <div class="d-flex flex-row text-black h-100">
+              <div class="flex-column px-3 m-auto">
+                <button
+                  style="background-color: transparent; border: 0px"
+                >
+                  <i
+                    class="fa-sharp fa-solid fa-circle-minus fa-xl"
+                    style="font-size: 25px; color: rgb(255, 30, 30)"
+                  ></i>
+                </button>
+              </div>
+              <div
+                class="flex-column px-3 m-auto"
+                style="font-size: 20px"
+              >
+                1
+              </div>
+              <div class="flex-column px-3 m-auto">
+                <button
+                  style="background-color: transparent; border: 0px"
+                  class=""
+                >
+                  <i
+                    class="fa-sharp fa-solid fa-circle-plus fa-xl"
+                    style="font-size: 25px; color: rgb(255, 30, 30)"
+                  ></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="flex-column align-content-center">
+            <button
+              style="background-color: red; border: 0px"
+              class="p-1 rounded mx-3 my-2 px-5 text-white"
+              data-id=${item.id}
+            >
+              ADD TO CART
+            </button>
+          </div>
+        </div>
+      </div>
+
+        `;
+    });
+    menuItemsDOM.innerHTML = result;
+  }
 }
 
 // local storage
@@ -67,7 +149,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const ui = new UI();
   const menuItems = new Menu();
 
-  menuItems.getMenuItems();
+  menuItems.getMenuItems().then((menuItems) => {
+    ui.displayItems(menuItems);
+  });
   menuItems.getMenuCategories().then((menuCategories) => {
     ui.displayCategories(menuCategories);
   });

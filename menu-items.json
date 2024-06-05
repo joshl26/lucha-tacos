@@ -5,21 +5,21 @@
       "title": "Carne Asada Tacos",
       "description": "3 soft-shell 4 inch corn tortilla garnish with flank steak, white onion, cilantro in the french fries on the side.",
       "price": 18.99,
-      "image": "./public/menu-tacos.jpg"
+      "image": "/public/menu-tacos.jpg"
     },
     {
       "id": 2,
       "title": "Pollo Asado Tacos",
       "description": "3 soft shell 4 inch corn tortilla with grilled chicken, white onion, cilantro in the french fries on the side.",
       "price": 17.99,
-      "image": "./public/menu-tacos.jpg"
+      "image": "/public/menu-tacos.jpg"
     },
     {
       "id": 3,
       "title": "Chorizo Tacos",
       "description": "3 soft shell 4 inch corn tortilla filled with Mexican sausage, white onion, cilantro in the french fries on the side.",
       "price": 20.99,
-      "image": "./public/menu-tacos.jpg"
+      "image": "/public/menu-tacos.jpg"
     }
   ],
   "burritos": [
@@ -28,21 +28,21 @@
       "title": "Carne Asada Burritos",
       "description": "Flank steak, black beans, lettuce, jalapeno, ranchero sauce, sour cream, avocado mayonnaise & side fries.",
       "price": 17.99,
-      "image": "./public/menu-burritos.jpg"
+      "image": "/public/menu-burritos.jpg"
     },
     {
       "id": 5,
       "title": "Pollo Asado Burritos",
       "description": "Grilled chicken, black beans, lettuce, jalapeno, ranchero sauce, sour cream, avocado mayonnaise & side fries.",
       "price": 17.99,
-      "image": "./public/menu-burritos.jpg"
+      "image": "/public/menu-burritos.jpg"
     },
     {
       "id": 6,
       "title": "Chorizo Burritos",
       "description": "Mexican sausage, black beans, lettuce, jalapeno, ranchero sauce, sour cream, avocado mayonnaise & side fries.",
       "price": 20.99,
-      "image": "./public/menu-burritos.jpg"
+      "image": "/public/menu-burritos.jpg"
     }
   ],
   "quesadillas": [
@@ -51,7 +51,7 @@
       "title": "Carnitas Quesadilla",
       "description": "A 1 inch tortilla filled with pulled pork Monterrey Jack cheese, garnished with sour cream, lettuce, ranchera sauce and side fries.",
       "price": 19.99,
-      "image": "./public/menu-quesadillas.jpg"
+      "image": "/public/menu-quesadillas.jpg"
     }
   ]
 }
