@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Alef:wght@400;700&family=Carter+One&display=swap"
+      rel="stylesheet"
+    />
     <link
       rel="apple-touch-icon"
       sizes="180x180"
@@ -78,23 +84,56 @@
         muted
       ></video>
       <div class="hero-container">
-        <h2 class="hero-text">Lucha</h2>
-        <div class="">
-          <img alt="" src="./public/mask-1.svg" class="" style="width: 300px" />
+        <div
+          class="position-relative m-auto px-1 pt-4 pb-2 drop-shadow-md"
+          style="max-width: 350px"
+        >
+          <div
+            class="position-absolute top-0 w-100 h-100 z-0 rounded-4"
+            style="
+              background-color: rgba(255, 203, 203, 0.216);
+              background-image: url(/public/black-felt.png);
+            "
+          ></div>
+          <h2
+            class="position-relative hero-text carter-one-regular pb-2 drop-shadow-md"
+            style="color: red"
+          >
+            Lucha
+          </h2>
+          <img
+            alt=""
+            src="./public/mask-1.svg"
+            class="position-relative drop-shadow-md"
+            style="width: 300px"
+          />
+          <h2
+            class="position-relative hero-text carter-one-regular pt-3 drop-shadow-md"
+            style="color: red"
+          >
+            Tacos
+          </h2>
         </div>
-        <h2 class="hero-text">Tacos</h2>
       </div>
       <div class="d-flex flex-sm-row flex-column h-auto">
-        <div class="w-100 p-2">
-          <h4 class="">
-            Lucha Tacos brings the bold and vibrant flavors of Mexico to your
-            plate with a twist of excitement.
-          </h4>
-          <h4>
-            Our tacos are like masked wrestlers in the ring - packed with
-            powerful combinations of fresh ingredients and savory seasonings
-            that will have your taste buds cheering for more.
-          </h4>
+        <div class="w-100" style="padding: 6rem">
+          <h5 class="pb-3">
+            Lucha Tacos introduces the dynamic and lively flavors of Mexico to
+            your dining experience, infusing it with an extra element of
+            excitement.
+          </h5>
+          <h5 class="pb-3">
+            Our tacos embody the spirit of masked wrestlers in the ring -
+            brimming with robust combinations of freshly sourced ingredients and
+            rich, savory seasonings that are certain to leave your taste buds
+            clamoring for an encore.
+          </h5>
+          <h5>
+            Step right up and feast your eyes on our tantalizing tacos that are
+            akin to masked wrestlers in the ring, each one bursting with a
+            powerful medley of the freshest ingredients and the most
+            mouthwatering seasonings.
+          </h5>
         </div>
         <div class="w-100">
           <img
@@ -108,16 +147,21 @@
         <div class="w-100">
           <img alt="" src="/public/taco-platter.jpg" class="hero-image w-100" />
         </div>
-        <div class="w-100 p-2">
-          <h4 class="">
+        <div class="w-100 2" style="padding: 4rem">
+          <h5 class="pb-3">
             Lucha Tacos brings the bold and vibrant flavors of Mexico to your
             plate with a twist of excitement.
-          </h4>
-          <h4>
+          </h5>
+          <h5 class="pb-3">
             Our tacos are like masked wrestlers in the ring - packed with
             powerful combinations of fresh ingredients and savory seasonings
             that will have your taste buds cheering for more.
-          </h4>
+          </h5>
+          <h5>
+            Our menu is prepared with the same level of enthusiasm and
+            dedication as the luchadores from the bygone days when wrestling was
+            a grand spectacle of passion and skill.
+          </h5>
         </div>
         <div class="w-100">
           <img alt="" src="/public/bacon-dip.jpg" class="hero-image w-100" />
@@ -163,7 +207,7 @@
         </div>
       </div>
       <div class="d-flex flex-column h-auto container text-center">
-        <h2 class="py-4 w-100">Our Sweets Collection!</h2>
+        <h2 class="py-4 w-100">Our Food Selection!</h2>
         <hr
           class="w-25 m-auto mb-2"
           style="
@@ -231,7 +275,12 @@
           </h2>
         </div>
         <div class="w-25 d-flex flex-column m-auto py-sm-5">
-          <button class="p-2 mx-sm-3">PLACE YOUR ORDER HERE</button>
+          <a
+            href="/order/index.html"
+            class="p-2 mx-sm-3 text-center rounded text-white"
+            style="background-color: red; text-decoration: none"
+            >PLACE YOUR ORDER HERE</a
+          >
         </div>
       </div>
       <div
