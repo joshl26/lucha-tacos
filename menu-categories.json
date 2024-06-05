@@ -1,0 +1,19 @@
+{
+  "categories": [
+    {
+      "id": 1,
+      "title": "Tacos",
+      "image": "/public/menu-tacos.jpg"
+    },
+    {
+      "id": 2,
+      "title": "Burritos",
+      "image": "/public/menu-burritos.jpg"
+    },
+    {
+      "id": 3,
+      "title": "Quesadilla",
+      "image": "/public/menu-quesadillas.jpg"
+    }
+  ]
+}
