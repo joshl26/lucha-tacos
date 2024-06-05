@@ -98,6 +98,7 @@ class UI {
               <div class="flex-column px-3 m-auto">
                 <button
                   style="background-color: transparent; border: 0px"
+                  data-id=${item.id}
                 >
                   <i
                     class="fa-sharp fa-solid fa-circle-minus fa-xl"
@@ -109,12 +110,13 @@ class UI {
                 class="flex-column px-3 m-auto"
                 style="font-size: 20px"
               >
-                1
+                ${item.qty}
               </div>
               <div class="flex-column px-3 m-auto">
                 <button
                   style="background-color: transparent; border: 0px"
                   class=""
+                  data-id=${item.id}
                 >
                   <i
                     class="fa-sharp fa-solid fa-circle-plus fa-xl"
