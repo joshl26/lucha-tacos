@@ -143,7 +143,27 @@ class UI {
 }
 
 // local storage
-class Storage {}
+class Storage {
+  static saveCategories(categories) {
+    localStorage.setItem("categories", JSON.stringify(categories));
+  }
+  static saveItems(items) {
+    localStorage.setItem("items", JSON.stringify(items));
+    console.log(JSON.stringify(items));
+  }
+  static getCategory(id) {
+    let categories = JSON.parse(localStorage.getItem("categories"));
+    return categories.find((category) => (category.id = id));
+  }
+  static saveCart(cart) {
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }
+  static getCart() {
+    return localStorage.getItem("cart")
+      ? JSON.parse(localStorage.getItem("cart"))
+      : [];
+  }
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   const ui = new UI();
@@ -151,8 +171,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   menuItems.getMenuItems().then((menuItems) => {
     ui.displayItems(menuItems);
+    Storage.saveItems(menuItems);
   });
   menuItems.getMenuCategories().then((menuCategories) => {
     ui.displayCategories(menuCategories);
+    Storage.saveCategories(menuCategories);
   });
 });
