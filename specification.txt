@@ -1,0 +1,9 @@
+Q. 10 Distinct HTML tags used:
+A. head, body, main, header, footer, h1, h2, h3, h4 and p
+
+Q. 5 Distinct CSS Properties used:
+A. font-family, font-weight, font-style, margin, padding
+
+Q. A brief (one-sentence) description of how you chose to use JavaScript and Bootstrap.
+A. I chose to use Javascript to dynamically insert a list of menu items from a JSON file 
+and I used bootstrap for responsive styling.
