@@ -2,7 +2,6 @@ const menuCategoriesDOM = document.querySelector(".menu-categories");
 const menuItemsDOM = document.querySelector(".menu-items");
 
 // cart
-// TODO
 let cart = [];
 
 // buttons
