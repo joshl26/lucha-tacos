@@ -1,0 +1,151 @@
+---
+title: "Lucha Libre Restaurant - Development Roadmap"
+updated: "2025-10-14"
+status: "Phase 1 complete — move to Phase 2"
+---
+
+### Lucha Libre Restaurant - Development Roadmap
+
+#### Phase 1: Critical Fixes 🔧 (COMPLETE ✅)
+
+- Menu & Ordering System
+  - [x] Fix menu display system (items not showing)
+  - [x] Implement working category filtering
+  - [x] Debug JavaScript rendering logic
+  - [x] Test menu-items.json data loading
+  - [x] Verify menu-categories.json loads correctly
+
+- State Management
+  - [x] Remove all localStorage usage from app.js
+  - [x] Convert to in-memory state (variables/objects)
+  - [x] Test state persistence during session
+  - [x] Document new state management approach
+
+- Homepage Content
+  - [x] Remove repetitive paragraphs (reduce 3x repeated content to 1x)
+  - [x] Diversify wrestling/masked wrestler metaphors
+  - [x] Keep unique branding, reduce redundancy
+  - [x] Review overall messaging clarity
+
+- Accessibility & SEO
+  - [x] Add descriptive alt text to all images
+  - [x] Add alt text to food item images
+  - [x] Add alt text to logo and decorative elements
+  - [x] Verify semantic HTML structure
+  - [x] Check image file paths and formats
+
+---
+
+#### Phase 2: Functionality 🚀 (PRIORITY)
+
+- Cart System
+  - [ ] Implement working add-to-cart functionality
+  - [ ] Create cart display/modal
+  - [ ] Add quantity adjustment controls
+  - [ ] Implement remove from cart option
+  - [ ] Display running cart total
+  - [ ] Test cart persistence during session
+
+- Navigation & Links
+  - [ ] Fix navigation active states
+  - [ ] Clarify menu vs order navigation
+  - [ ] Update commented-out menu references
+  - [ ] Ensure all links are functional
+  - [ ] Test navigation on all pages
+
+- Interactive Elements
+  - [ ] Make "Leave Feedback" button open modal/form
+  - [ ] Create feedback form (even if not functional yet)
+  - [ ] Make delivery service images clickable
+  - [ ] Link delivery images to actual services (UberEats, DoorDash, etc.)
+  - [ ] Add hover states to interactive elements
+
+- Layout Issues
+  - [ ] Fix footer overlap on content pages
+  - [ ] Adjust spacing and padding consistency
+  - [ ] Verify responsive design on mobile
+  - [ ] Test on tablet/desktop viewports
+  - [ ] Fix hero text sizing on mobile
+
+---
+
+#### Phase 3: Enhancements ✨
+
+- Animations & Interactivity
+  - [ ] Add smooth page transitions
+  - [ ] Implement hover effects on menu items
+  - [ ] Add loading states for cart actions
+  - [ ] Create smooth category transitions
+  - [ ] Add button press feedback
+
+- Menu Filtering
+  - [ ] Add vegetarian filter option
+  - [ ] Add spicy level indicator
+  - [ ] Add dietary restriction filters
+  - [ ] Implement multiple filter combinations
+  - [ ] Show filter results count
+
+- Content Expansion
+  - [ ] Create actual privacy policy page
+  - [ ] Update "BlackRock Design Haus" link context
+  - [ ] Add more detailed item descriptions
+  - [ ] Include ingredient lists or allergen info
+  - [ ] Add staff recommendations
+
+- Mobile Optimization
+  - [ ] Create mobile navigation menu (hamburger)
+  - [ ] Optimize touch targets for mobile
+  - [ ] Ensure text readability on small screens
+  - [ ] Test performance on mobile devices
+  - [ ] Optimize image sizes for different devices
+
+- Social Proof & Trust
+  - [ ] Add placeholder/mock customer reviews
+  - [ ] Add star ratings display
+  - [ ] Include location/hours information
+  - [ ] Add phone number prominently
+  - [ ] Create "Why Choose Us" section
+
+---
+
+#### Phase 4: Polish & Launch 🎉
+
+- Testing
+  - [ ] Test all functionality end-to-end
+  - [ ] Cross-browser testing
+  - [ ] Performance optimization
+  - [ ] SEO audit and optimization
+  - [ ] Accessibility audit (WCAG compliance)
+
+- Deployment
+  - [ ] Prepare production build
+  - [ ] Set up hosting
+  - [ ] Configure deployment pipeline
+  - [ ] Test in production environment
+  - [ ] Monitor for errors
+
+- Post-Launch
+  - [ ] Gather user feedback
+  - [ ] Fix any bugs discovered
+  - [ ] Plan next iteration features
+  - [ ] Monitor analytics
+  - [ ] Plan seasonal updates
+
+---
+
+#### Notes & Considerations
+
+- Current Strengths:
+  - Unique lucha libre branding
+  - Quality food photography
+  - Autoplay video hero
+  - Bootstrap foundation
+  - Multi-location setup
+
+- Key Constraints:
+  - No localStorage available on some platforms — in-memory session state is required
+  - Menu/order flow is the primary revenue path — prioritize Phase 2 cart system and navigation
+  - Accessibility & SEO fixes are complete (Phase 1); keep accessibility practices for future changes
+
+#### Recommended next step
+- Prioritize Phase 2 — implement the cart modal/display and quantity controls so the existing add-to-cart behavior has a clear UX flow.
