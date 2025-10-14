@@ -1,0 +1,12 @@
+{
+  "name": "lucha-tacos",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:cart": "node tests/cart.test.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

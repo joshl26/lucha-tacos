@@ -1,7 +1,7 @@
 ---
 title: "Lucha Libre Restaurant - Development Roadmap"
 updated: "2025-10-14"
-status: "Phase 1 complete — move to Phase 2"
+status: "Phase 1 complete — Phase 2 in progress"
 ---
 
 ### Lucha Libre Restaurant - Development Roadmap
@@ -36,36 +36,36 @@ status: "Phase 1 complete — move to Phase 2"
 
 ---
 
-#### Phase 2: Functionality 🚀 (PRIORITY)
+#### Phase 2: Functionality 🚀 (PRIORITY — IN PROGRESS)
 
 - Cart System
-  - [ ] Implement working add-to-cart functionality
-  - [ ] Create cart display/modal
-  - [ ] Add quantity adjustment controls
-  - [ ] Implement remove from cart option
-  - [ ] Display running cart total
-  - [ ] Test cart persistence during session
+  - [x] Implement working add-to-cart functionality (cart.js + cart-ui.js)
+  - [x] Create cart display/modal (cart modal implemented in cart-ui.js)
+  - [x] Add quantity adjustment controls (plus/minus in menu + modal qty controls)
+  - [x] Implement remove from cart option (remove control in modal)
+  - [x] Display running cart total (subtotal shown in modal and badge updated)
+  - [~] Test cart persistence during session — In-memory session state works (cart persists while the page is open). Persistence across page reloads is NOT implemented (no localStorage/sessionStorage). — STATUS: needs decision (persist or session-only)
 
 - Navigation & Links
-  - [ ] Fix navigation active states
-  - [ ] Clarify menu vs order navigation
-  - [ ] Update commented-out menu references
-  - [ ] Ensure all links are functional
-  - [ ] Test navigation on all pages
+  - [~] Fix navigation active states — partial (CSS/JS active styling shown for first category; site-wide nav active state needs final polish)
+  - [ ] Clarify menu vs order navigation (separate pages) — TODO
+  - [ ] Update commented-out menu references — TODO
+  - [ ] Ensure all links are functional — TODO (recommend QA pass)
+  - [ ] Test navigation on all pages — TODO
 
 - Interactive Elements
-  - [ ] Make "Leave Feedback" button open modal/form
-  - [ ] Create feedback form (even if not functional yet)
-  - [ ] Make delivery service images clickable
-  - [ ] Link delivery images to actual services (UberEats, DoorDash, etc.)
-  - [ ] Add hover states to interactive elements
+  - [ ] Make "Leave Feedback" button open modal/form — TODO
+  - [ ] Create feedback form (even if not functional yet) — TODO
+  - [ ] Make delivery service images clickable — TODO
+  - [ ] Link delivery images to actual services (UberEats, DoorDash, etc.) — TODO
+  - [ ] Add hover states to interactive elements — TODO
 
 - Layout Issues
-  - [ ] Fix footer overlap on content pages
-  - [ ] Adjust spacing and padding consistency
-  - [ ] Verify responsive design on mobile
-  - [ ] Test on tablet/desktop viewports
-  - [ ] Fix hero text sizing on mobile
+  - [ ] Fix footer overlap on content pages — TODO
+  - [ ] Adjust spacing and padding consistency — TODO
+  - [ ] Verify responsive design on mobile — TODO
+  - [ ] Test on tablet/desktop viewports — TODO
+  - [ ] Fix hero text sizing on mobile — TODO
 
 ---
 
@@ -133,19 +133,47 @@ status: "Phase 1 complete — move to Phase 2"
 
 ---
 
-#### Notes & Considerations
+#### Notes & Considerations (current)
 
-- Current Strengths:
-  - Unique lucha libre branding
-  - Quality food photography
-  - Autoplay video hero
-  - Bootstrap foundation
-  - Multi-location setup
+- What was implemented in this sprint:
+  - Added a module-based cart implementation: `cart.js` (in-memory cart API).
+  - Built `cart-ui.js` to provide:
+    - Cart button + badge
+    - Accessible cart modal (dialog) with focus trap
+    - Item rendering in modal, qty controls, remove, clear, subtotal
+    - Auto-wiring of `.add-to-cart` buttons (reads data-id, data-name, data-price-cents, optional data-qty)
+  - Updated `app.js` to:
+    - Render menu categories and items
+    - Ensure `Add` buttons include data attributes: data-id, data-name, data-price-cents
+    - Update per-item qty controls and set data-qty before Add
+  - Minimal CSS added for modal/button (recommend merging into styles.css)
 
-- Key Constraints:
-  - No localStorage available on some platforms — in-memory session state is required
-  - Menu/order flow is the primary revenue path — prioritize Phase 2 cart system and navigation
-  - Accessibility & SEO fixes are complete (Phase 1); keep accessibility practices for future changes
+- Key constraint to decide:
+  - Persistence: current cart is in-memory and persists only for the current page lifetime. If you want cart to survive page reloads, add sessionStorage/localStorage restore/serialize in cart.js — I can do that if you want.
 
-#### Recommended next step
-- Prioritize Phase 2 — implement the cart modal/display and quantity controls so the existing add-to-cart behavior has a clear UX flow.
+- Quick risks / TODOs to address asap:
+  - Make sure cart-ui.js is included as a module on all pages using add-to-cart (index.html, order/index.html).
+  - QA cross-directory paths for JSON and script includes (menu JSON path logic is already in app.js but verify hosting structure).
+  - Finalize navigation active-state logic so users know when they’re on the menu vs order pages.
+
+---
+
+#### Recommended next steps (highest priority)
+
+1. Decide persistence behavior:
+   - Option A: keep in-memory only (no reload persistence) — faster, simpler.
+   - Option B: add sessionStorage persistence in cart.js (recommended for better UX).
+   Tell me which and I’ll implement immediately.
+
+2. Finish Navigation & QA:
+   - Fix nav active states site-wide and run link check across pages.
+
+3. UX polish for Phase 2:
+   - Replace alert() notifications with a non-blocking toast.
+   - Add hover/focus states and small animations for add-to-cart feedback.
+
+4. Run an end-to-end manual test checklist across desktop & mobile and capture issues to triage into Phase 2/3.
+
+---
+
+

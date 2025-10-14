@@ -1,22 +1,21 @@
+// app.js (updated for cart-ui integration)
+
 // DOM Elements
 const menuCategoriesDOM = document.querySelector(".menu-categories");
 const menuItemsDOM = document.querySelector(".menu-items");
 const cartCountDOM = document.querySelector(".cart-count");
 
-// In-memory state (no localStorage)
+// In-memory state for menu data only (no cart)
 let allMenuItems = {};
 let allCategories = [];
-let cart = [];
 let currentCategory = null;
 
 // Menu class - fetch data
 class Menu {
   async getMenuItems() {
-    // Determine correct path based on current location
     const currentPath = window.location.pathname;
     let jsonPath = "menu-items.json";
 
-    // If we're in a subdirectory (like /order/), go up one level
     if (currentPath.includes("/order/") || currentPath.includes("/pages/")) {
       jsonPath = "../menu-items.json";
     }
@@ -36,11 +35,9 @@ class Menu {
   }
 
   async getMenuCategories() {
-    // Determine correct path based on current location
     const currentPath = window.location.pathname;
     let jsonPath = "menu-categories.json";
 
-    // If we're in a subdirectory (like /order/), go up one level
     if (currentPath.includes("/order/") || currentPath.includes("/pages/")) {
       jsonPath = "../menu-categories.json";
     }
@@ -59,7 +56,6 @@ class Menu {
     }
   }
 
-  // Fallback data in case JSON files don't load
   getFallbackMenuItems() {
     return {
       tacos: [
@@ -165,6 +161,10 @@ class UI {
     let result = "";
 
     itemsToDisplay.forEach((item) => {
+      // compute price cents for data attribute
+      const priceCents =
+        item.priceCents ?? Math.round(Number(item.price || 0) * 100);
+
       result += `
         <div class="menu-item flex-row rounded-4 bg-white mb-3" data-id="${
           item.id
@@ -174,15 +174,15 @@ class UI {
             style="background-color: lightgray"
           >
             <div class="d-flex flex-row justify-content-between">
-              <h5 class="pt-3 px-3 m-0">${item.title}</h5>
+              <h5 class="pt-3 px-3 m-0">${escapeHtml(item.title)}</h5>
               <div class="d-flex flex-row">
-                <p class="m-auto px-2" style="font-size: 20px">$${item.price.toFixed(
-                  2
-                )}</p>
+                <p class="m-auto px-2" style="font-size: 20px">$${(
+                  priceCents / 100
+                ).toFixed(2)}</p>
               </div>
             </div>
             <p class="p-3 m-0">
-              ${item.description}
+              ${escapeHtml(item.description)}
             </p>
           </div>
           <div class="d-flex flex-row justify-content-between w-100 p-2">
@@ -228,6 +228,9 @@ class UI {
                 class="add-to-cart p-2 rounded mx-3 my-2 px-4 text-white"
                 style="background-color: red; border: 0px; cursor: pointer"
                 data-id="${item.id}"
+                data-name="${escapeHtml(item.title)}"
+                data-price-cents="${priceCents}"
+                type="button"
               >
                 ADD TO CART
               </button>
@@ -249,17 +252,14 @@ class UI {
     console.log("🔍 Filtering category:", categoryKey);
     console.log("📦 Available categories:", Object.keys(allMenuItems));
 
-    // Handle singular/plural variations
     let items = allMenuItems[categoryKey];
 
-    // Try singular version if plural doesn't exist
     if (!items && categoryKey.endsWith("s")) {
       const singular = categoryKey.slice(0, -1);
       items = allMenuItems[singular];
       console.log("🔄 Trying singular version:", singular);
     }
 
-    // Try plural version if singular doesn't exist
     if (!items && !categoryKey.endsWith("s")) {
       const plural = categoryKey + "s";
       items = allMenuItems[plural];
@@ -275,25 +275,30 @@ class UI {
   }
 
   attachItemEventListeners() {
-    // Add to cart buttons
+    // Add-to-cart buttons: set data-qty before letting cart-ui handle the actual add
     document.querySelectorAll(".add-to-cart").forEach((btn) => {
+      // avoid re-binding
+      if (btn.dataset.uiWired) return;
+      btn.dataset.uiWired = "1";
       btn.addEventListener("click", (e) => {
-        const itemId = parseInt(e.currentTarget.getAttribute("data-id"));
-        const qtyDisplay = e.currentTarget
-          .closest(".menu-item")
-          .querySelector(".qty-display");
-        const qty = parseInt(qtyDisplay.textContent);
-        this.addToCart(itemId, qty);
+        const menuItemEl = e.currentTarget.closest(".menu-item");
+        const qtyDisplay = menuItemEl.querySelector(".qty-display");
+        const qty = parseInt(qtyDisplay.textContent || "1", 10) || 1;
+        // set attribute so cart-ui reads it
+        e.currentTarget.dataset.qty = String(qty);
+        // Optionally show a quick visual confirmation here (we rely on cart-ui announce/modal)
       });
     });
 
     // Minus buttons
     document.querySelectorAll(".qty-minus").forEach((btn) => {
+      if (btn.dataset.wiredMinus) return;
+      btn.dataset.wiredMinus = "1";
       btn.addEventListener("click", (e) => {
         const qtyDisplay = e.currentTarget
           .closest(".menu-item")
           .querySelector(".qty-display");
-        let qty = parseInt(qtyDisplay.textContent);
+        let qty = parseInt(qtyDisplay.textContent || "1", 10);
         if (qty > 1) {
           qty--;
           qtyDisplay.textContent = qty;
@@ -303,64 +308,28 @@ class UI {
 
     // Plus buttons
     document.querySelectorAll(".qty-plus").forEach((btn) => {
+      if (btn.dataset.wiredPlus) return;
+      btn.dataset.wiredPlus = "1";
       btn.addEventListener("click", (e) => {
         const qtyDisplay = e.currentTarget
           .closest(".menu-item")
           .querySelector(".qty-display");
-        let qty = parseInt(qtyDisplay.textContent);
+        let qty = parseInt(qtyDisplay.textContent || "1", 10);
         qty++;
         qtyDisplay.textContent = qty;
       });
     });
   }
+}
 
-  addToCart(itemId, qty) {
-    // Find item in allMenuItems
-    let itemToAdd = null;
-
-    for (const category in allMenuItems) {
-      const found = allMenuItems[category].find((item) => item.id === itemId);
-      if (found) {
-        itemToAdd = { ...found, qty: qty };
-        break;
-      }
-    }
-
-    if (itemToAdd) {
-      // Check if item already in cart
-      const existingItem = cart.find((item) => item.id === itemId);
-
-      if (existingItem) {
-        existingItem.qty += qty;
-      } else {
-        cart.push(itemToAdd);
-      }
-
-      this.updateCartDisplay();
-
-      // Show success message
-      console.log("🛒 Added to cart:", itemToAdd.title, "qty:", qty);
-      this.showCartNotification(itemToAdd.title, qty);
-    } else {
-      console.error("❌ Item not found:", itemId);
-    }
-  }
-
-  showCartNotification(itemName, qty) {
-    // Simple alert for now - can be replaced with a nicer notification later
-    alert(`✅ Added ${itemName} (qty: ${qty}) to cart!`);
-  }
-
-  updateCartDisplay() {
-    const cartCount = cart.reduce((total, item) => total + item.qty, 0);
-    const cartLink = document.querySelector(".cart-count");
-
-    if (cartLink) {
-      cartLink.textContent = `Cart (${cartCount})`;
-    }
-
-    console.log("🛒 Cart updated. Total items:", cartCount);
-  }
+function escapeHtml(str) {
+  if (!str) return "";
+  return String(str)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
 // Initialize app

@@ -142,6 +142,45 @@ This project prioritizes accessibility and SEO with:
 
 ---
 
+## Cart API (developer notes)
+
+Files:
+
+- `cart.js` — ES module that exports:
+  - `createCart()` — factory function that returns an in-memory cart instance with methods:
+    - `addItem(item, qty = 1)`
+    - `updateQty(id, qty)`
+    - `removeItem(id)`
+    - `clearCart()`
+    - `getItems()`
+    - `getTotalQty()`
+    - `getSubtotalCents()`
+    - `getSubtotal()`
+    - `getSummary()`
+  - `cart` — default singleton instance (convenience)
+
+Data model:
+
+- Items store price as integer cents (`priceCents`) to avoid floating-point rounding issues.
+- Example item: `{ id: 't1', name: 'California Taco', priceCents: 500 }`
+
+Example usage (browser module):
+
+<script type="module">
+  import { cart } from './cart.js';
+
+  // add item
+  cart.addItem({ id: 't1', name: 'California Taco', priceCents: 500 }, 2);
+
+  // read totals
+  const summary = cart.getSummary();
+  console.log('Items in cart:', summary.items);
+  console.log('Total items:', summary.totalQty);
+  console.log('Subtotal ($):', summary.subtotal);
+</script>
+
+---
+
 ## Contributing
 
 Contributions are welcome! Please follow these steps:
