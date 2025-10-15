@@ -1,4 +1,4 @@
-// app.js (updated for cart-ui integration)
+// app.js (updated with nav active helper)
 
 // DOM Elements
 const menuCategoriesDOM = document.querySelector(".menu-categories");
@@ -161,7 +161,6 @@ class UI {
     let result = "";
 
     itemsToDisplay.forEach((item) => {
-      // compute price cents for data attribute
       const priceCents =
         item.priceCents ?? Math.round(Number(item.price || 0) * 100);
 
@@ -275,22 +274,17 @@ class UI {
   }
 
   attachItemEventListeners() {
-    // Add-to-cart buttons: set data-qty before letting cart-ui handle the actual add
     document.querySelectorAll(".add-to-cart").forEach((btn) => {
-      // avoid re-binding
       if (btn.dataset.uiWired) return;
       btn.dataset.uiWired = "1";
       btn.addEventListener("click", (e) => {
         const menuItemEl = e.currentTarget.closest(".menu-item");
         const qtyDisplay = menuItemEl.querySelector(".qty-display");
         const qty = parseInt(qtyDisplay.textContent || "1", 10) || 1;
-        // set attribute so cart-ui reads it
         e.currentTarget.dataset.qty = String(qty);
-        // Optionally show a quick visual confirmation here (we rely on cart-ui announce/modal)
       });
     });
 
-    // Minus buttons
     document.querySelectorAll(".qty-minus").forEach((btn) => {
       if (btn.dataset.wiredMinus) return;
       btn.dataset.wiredMinus = "1";
@@ -306,7 +300,6 @@ class UI {
       });
     });
 
-    // Plus buttons
     document.querySelectorAll(".qty-plus").forEach((btn) => {
       if (btn.dataset.wiredPlus) return;
       btn.dataset.wiredPlus = "1";
@@ -332,42 +325,55 @@ function escapeHtml(str) {
     .replaceAll("'", "&#039;");
 }
 
-// Initialize app
+function setActiveNavLink() {
+  try {
+    const navLinks = document.querySelectorAll("header a, nav a, .nav-link");
+    const path = window.location.pathname.replace(/\/$/, "");
+    navLinks.forEach((a) => {
+      const href = a.getAttribute("href") || "";
+      if (!href) return;
+      const url = new URL(href, window.location.origin);
+      if (url.pathname.replace(/\/$/, "") === path) {
+        a.classList.add("active");
+      } else {
+        a.classList.remove("active");
+      }
+    });
+  } catch (err) {
+    // ignore
+  }
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   console.log("🚀 Initializing Lucha Libre Menu App...");
 
   const ui = new UI();
   const menu = new Menu();
 
-  // Load menu items
-  console.log("📥 Loading menu items...");
   const menuItems = await menu.getMenuItems();
   allMenuItems = menuItems;
   console.log("📦 Menu items loaded:", Object.keys(menuItems));
 
-  // Load categories
-  console.log("📥 Loading categories...");
   const categories = await menu.getMenuCategories();
   allCategories = categories;
   console.log("📂 Categories loaded:", categories.length);
 
-  // Display categories
   if (menuCategoriesDOM) {
     ui.displayCategories(categories);
   }
 
-  // Display first category by default
   if (categories.length > 0 && menuItemsDOM) {
     const firstCategory = categories[0].title.toLowerCase();
     console.log("🎯 Displaying first category:", firstCategory);
     ui.filterItems(firstCategory);
 
-    // Set first category as active
     const firstCategoryBtn = document.querySelector(".menu-category");
     if (firstCategoryBtn) {
       firstCategoryBtn.style.opacity = "1";
     }
   }
+
+  setActiveNavLink();
 
   console.log("✅ App initialized successfully!");
 });

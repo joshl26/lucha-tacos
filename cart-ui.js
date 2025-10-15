@@ -1,11 +1,13 @@
 // cart-ui.js
-// ES module to wire cart UI to cart.js (single source of truth)
+// ES module to wire cart UI to cart.js (single source of truth, uses configurable storage in cart.js)
 
 import { cart } from "./cart.js";
 
 const CART_BUTTON_ID = "site-cart-button";
 const CART_MODAL_ID = "site-cart-modal";
+const CHECKOUT_MODAL_ID = "cart-checkout-modal";
 const CART_ANNOUNCER_ID = "cart-announcer";
+const TOAST_CONTAINER_ID = "cart-toast-container";
 
 function createCartButton() {
   if (document.getElementById(CART_BUTTON_ID)) return;
@@ -40,7 +42,34 @@ function createAnnouncer() {
   document.body.appendChild(div);
 }
 
-function buildModalHtml() {
+function ensureToastContainer() {
+  if (document.getElementById(TOAST_CONTAINER_ID)) return;
+  const c = document.createElement("div");
+  c.id = TOAST_CONTAINER_ID;
+  c.className = "cart-toast-container";
+  c.setAttribute("aria-live", "polite");
+  document.body.appendChild(c);
+}
+
+function showToast(message, opts = {}) {
+  ensureToastContainer();
+  const container = document.getElementById(TOAST_CONTAINER_ID);
+  const toast = document.createElement("div");
+  toast.className = "cart-toast";
+  toast.role = "status";
+  toast.textContent = message;
+  container.appendChild(toast);
+  const timeout = opts.timeout || 3000;
+  requestAnimationFrame(() => {
+    toast.classList.add("visible");
+  });
+  setTimeout(() => {
+    toast.classList.remove("visible");
+    setTimeout(() => container.removeChild(toast), 300);
+  }, timeout);
+}
+
+function buildCartModalHtml() {
   return `
   <div class="cart-modal-backdrop"></div>
   <div class="cart-modal" role="dialog" aria-modal="true" aria-labelledby="cart-title" tabindex="-1">
@@ -66,12 +95,12 @@ function buildModalHtml() {
   `;
 }
 
-function ensureModalExists() {
+function ensureCartModalExists() {
   if (document.getElementById(CART_MODAL_ID)) return;
   const wrapper = document.createElement("div");
   wrapper.id = CART_MODAL_ID;
   wrapper.className = "cart-modal-wrapper";
-  wrapper.innerHTML = buildModalHtml();
+  wrapper.innerHTML = buildCartModalHtml();
   document.body.appendChild(wrapper);
 
   wrapper
@@ -81,15 +110,16 @@ function ensureModalExists() {
     cart.clearCart();
     updateCartUI();
     announce("Cart cleared");
+    showToast("Cart cleared");
   });
   wrapper.querySelector(".cart-checkout").addEventListener("click", () => {
-    announce("Proceed to checkout — placeholder");
-    alert("Proceed to checkout — not implemented in this demo");
+    // Open checkout modal
+    openCheckoutModal();
   });
 }
 
 function openCartModal() {
-  ensureModalExists();
+  ensureCartModalExists();
   const wrapper = document.getElementById(CART_MODAL_ID);
   wrapper.classList.add("open");
   const dialog = wrapper.querySelector(".cart-modal");
@@ -109,6 +139,201 @@ function closeCartModal() {
   if (btn) btn.focus();
 }
 
+/* --- Checkout modal --- */
+
+function buildCheckoutModalHtml() {
+  return `
+  <div class="checkout-modal-backdrop"></div>
+  <div class="checkout-modal" role="dialog" aria-modal="true" aria-labelledby="checkout-title" tabindex="-1">
+    <div class="checkout-modal-header">
+      <h2 id="checkout-title">Checkout</h2>
+      <button class="checkout-modal-close" aria-label="Close checkout">&times;</button>
+    </div>
+    <div class="checkout-modal-body">
+      <section class="checkout-summary" aria-labelledby="checkout-summary-heading">
+        <h3 id="checkout-summary-heading">Order Summary</h3>
+        <div id="checkout-items" class="checkout-items"></div>
+        <div id="checkout-subtotal" class="checkout-subtotal" aria-live="polite"></div>
+      </section>
+
+      <section class="checkout-contact" aria-labelledby="checkout-contact-heading">
+        <h3 id="checkout-contact-heading">Contact & Delivery</h3>
+        <form id="checkout-form" novalidate>
+          <label>
+            Full name *
+            <input type="text" name="name" id="checkout-name" required autocomplete="name" />
+          </label>
+          <label>
+            Email (or) Phone *
+            <input type="text" name="contact" id="checkout-contact" required autocomplete="email tel" />
+          </label>
+          <label>
+            Delivery address (optional)
+            <textarea name="address" id="checkout-address" rows="3" ></textarea>
+          </label>
+          <div class="checkout-form-actions">
+            <button type="button" class="btn btn-secondary checkout-cancel">Cancel</button>
+            <button type="submit" class="btn btn-primary checkout-confirm">Confirm Order</button>
+          </div>
+        </form>
+      </section>
+    </div>
+  </div>
+  `;
+}
+
+function ensureCheckoutModalExists() {
+  if (document.getElementById(CHECKOUT_MODAL_ID)) return;
+  const wrapper = document.createElement("div");
+  wrapper.id = CHECKOUT_MODAL_ID;
+  wrapper.className = "checkout-modal-wrapper";
+  wrapper.innerHTML = buildCheckoutModalHtml();
+  document.body.appendChild(wrapper);
+
+  wrapper
+    .querySelector(".checkout-modal-close")
+    .addEventListener("click", closeCheckoutModal);
+  wrapper
+    .querySelector(".checkout-cancel")
+    .addEventListener("click", closeCheckoutModal);
+
+  const form = wrapper.querySelector("#checkout-form");
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    handleCheckoutSubmit(form);
+  });
+}
+
+function openCheckoutModal() {
+  // close cart modal first to keep single-modal UX
+  closeCartModal();
+
+  ensureCheckoutModalExists();
+  const wrapper = document.getElementById(CHECKOUT_MODAL_ID);
+  wrapper.classList.add("open");
+  const dialog = wrapper.querySelector(".checkout-modal");
+  dialog.focus();
+  trapFocus(dialog);
+  document.body.classList.add("checkout-open");
+  updateCheckoutSummary(); // render current cart summary into modal
+}
+
+function closeCheckoutModal() {
+  const wrapper = document.getElementById(CHECKOUT_MODAL_ID);
+  if (!wrapper) return;
+  wrapper.classList.remove("open");
+  document.body.classList.remove("checkout-open");
+  releaseFocusTrap();
+  const cartBtn = document.getElementById(CART_BUTTON_ID);
+  if (cartBtn) cartBtn.focus();
+}
+
+function updateCheckoutSummary() {
+  const itemsContainer = document.getElementById("checkout-items");
+  const subtotalEl = document.getElementById("checkout-subtotal");
+  if (!itemsContainer || !subtotalEl) return;
+  const s = cart.getSummary();
+  itemsContainer.innerHTML = "";
+  if (!s.items || s.items.length === 0) {
+    itemsContainer.innerHTML = `<p>Your cart is empty.</p>`;
+  } else {
+    for (const it of s.items) {
+      const row = document.createElement("div");
+      row.className = "checkout-item";
+      row.innerHTML = `
+        <div class="checkout-item-name">${escapeHtml(
+          it.name
+        )} <small class="muted">x${it.qty}</small></div>
+        <div class="checkout-item-price">$${formatPrice(
+          it.priceCents * it.qty
+        )}</div>
+      `;
+      itemsContainer.appendChild(row);
+    }
+  }
+  subtotalEl.innerHTML = `<strong>Subtotal:</strong> $${formatPrice(
+    s.subtotalCents
+  )}`;
+}
+
+/* Checkout form validation + submit handling */
+function handleCheckoutSubmit(formEl) {
+  const nameInput = formEl.querySelector("#checkout-name");
+  const contactInput = formEl.querySelector("#checkout-contact");
+  const addressInput = formEl.querySelector("#checkout-address");
+
+  const name = (nameInput.value || "").trim();
+  const contact = (contactInput.value || "").trim();
+  const address = (addressInput.value || "").trim();
+
+  let valid = true;
+  clearFieldErrors(formEl);
+
+  if (!name) {
+    showFieldError(nameInput, "Please enter your name");
+    valid = false;
+  }
+
+  if (!contact) {
+    showFieldError(contactInput, "Please enter an email or phone number");
+    valid = false;
+  } else {
+    // basic contact validation: email or phone-like
+    const emailLike = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact);
+    const phoneLike = /^[0-9 \-\+\(\)]{6,}$/.test(contact);
+    if (!emailLike && !phoneLike) {
+      showFieldError(contactInput, "Enter a valid email or phone number");
+      valid = false;
+    }
+  }
+
+  if (!valid) {
+    announce("Please correct the highlighted fields");
+    return;
+  }
+
+  // All good — emit event with cart summary and contact info
+  const summary = cart.getSummary();
+  const payload = {
+    summary,
+    customer: { name, contact, address },
+    timestamp: new Date().toISOString(),
+  };
+
+  // Emit event for host application to handle (server call, payments, etc.)
+  window.dispatchEvent(new CustomEvent("cart:checkout", { detail: payload }));
+
+  // Non-blocking placeholder UI
+  showToast("Order placed (placeholder) — check console for event payload");
+  announce("Order placed — thank you");
+
+  // Close the modal after a short delay
+  setTimeout(() => {
+    closeCheckoutModal();
+  }, 800);
+}
+
+function showFieldError(inputEl, message) {
+  if (!inputEl) return;
+  inputEl.classList.add("field-error");
+  let err = inputEl.parentNode.querySelector(".field-error-msg");
+  if (!err) {
+    err = document.createElement("div");
+    err.className = "field-error-msg";
+    inputEl.parentNode.appendChild(err);
+  }
+  err.textContent = message;
+}
+
+function clearFieldErrors(formEl) {
+  formEl
+    .querySelectorAll(".field-error")
+    .forEach((el) => el.classList.remove("field-error"));
+  formEl.querySelectorAll(".field-error-msg").forEach((el) => el.remove());
+}
+
+/* --- End checkout modal --- */
+
 function formatPrice(cents) {
   return (Number(cents) / 100).toFixed(2);
 }
@@ -118,10 +343,12 @@ function renderCartItems(container) {
   const items = summary.items;
   container.innerHTML = "";
   if (!items || items.length === 0) {
-    document.getElementById("cart-empty").hidden = false;
+    const emptyEl = document.getElementById("cart-empty");
+    if (emptyEl) emptyEl.hidden = false;
     return;
   }
-  document.getElementById("cart-empty").hidden = true;
+  const emptyEl = document.getElementById("cart-empty");
+  if (emptyEl) emptyEl.hidden = true;
 
   for (const it of items) {
     const row = document.createElement("div");
@@ -147,28 +374,39 @@ function renderCartItems(container) {
       </div>
       <div class="cart-item-price">$${formatPrice(it.priceCents)}</div>
     `;
-    row.querySelector(".qty-decrease").addEventListener("click", () => {
-      const newQty = Math.max(0, Number(it.qty) - 1);
+    const dec = row.querySelector(".qty-decrease");
+    const inc = row.querySelector(".qty-increase");
+    const input = row.querySelector(".qty-input");
+    const rem = row.querySelector(".remove-item");
+
+    dec.addEventListener("click", () => {
+      const current = Number(input.value || 0);
+      const newQty = Math.max(0, current - 1);
       cart.updateQty(it.id, newQty);
       updateCartUI();
       announce(`${it.name} quantity updated to ${newQty}`);
+      showToast(`${it.name} quantity: ${newQty}`);
     });
-    row.querySelector(".qty-increase").addEventListener("click", () => {
-      const newQty = Number(it.qty) + 1;
+    inc.addEventListener("click", () => {
+      const current = Number(input.value || 0);
+      const newQty = current + 1;
       cart.updateQty(it.id, newQty);
       updateCartUI();
       announce(`${it.name} quantity updated to ${newQty}`);
+      showToast(`${it.name} quantity: ${newQty}`);
     });
-    row.querySelector(".qty-input").addEventListener("change", (e) => {
+    input.addEventListener("change", (e) => {
       const v = Math.max(0, Number(e.target.value || 0));
       cart.updateQty(it.id, v);
       updateCartUI();
       announce(`${it.name} quantity updated to ${v}`);
+      showToast(`${it.name} quantity: ${v}`);
     });
-    row.querySelector(".remove-item").addEventListener("click", () => {
+    rem.addEventListener("click", () => {
       cart.removeItem(it.id);
       updateCartUI();
       announce(`${it.name} removed from cart`);
+      showToast(`${it.name} removed`);
     });
 
     container.appendChild(row);
@@ -202,9 +440,10 @@ function updateCartUI() {
   renderCartItems(itemsContainer);
   const subtotalEl = wrapper.querySelector("#cart-subtotal");
   const s = cart.getSummary();
-  subtotalEl.innerHTML = `<strong>Subtotal:</strong> $${formatPrice(
-    s.subtotalCents
-  )}`;
+  if (subtotalEl)
+    subtotalEl.innerHTML = `<strong>Subtotal:</strong> $${formatPrice(
+      s.subtotalCents
+    )}`;
 }
 
 function announce(text) {
@@ -240,7 +479,15 @@ function _onKeyDown(e) {
   if (!_trapActive || !_trapElement) return;
   if (e.key === "Escape") {
     e.preventDefault();
-    closeCartModal();
+    // If checkout is open, close it; else close cart
+    if (
+      document.getElementById(CHECKOUT_MODAL_ID) &&
+      document.getElementById(CHECKOUT_MODAL_ID).classList.contains("open")
+    ) {
+      closeCheckoutModal();
+    } else {
+      closeCartModal();
+    }
     return;
   }
   if (e.key === "Tab") {
@@ -301,6 +548,7 @@ function wireAddToCartButtons() {
       cart.addItem(item, qty);
       updateCartUI();
       announce(`${name} added to cart`);
+      showToast(`${name} added (x${qty})`);
       const cartBtn = document.getElementById(CART_BUTTON_ID);
       if (cartBtn) {
         cartBtn.classList.add("bump");
@@ -310,11 +558,31 @@ function wireAddToCartButtons() {
   });
 }
 
-/* Public init function */
+/* react to global cart changes (e.g. other scripts / other tabs) */
+window.addEventListener("cart:changed", (evt) => {
+  updateCartUI();
+});
+
+// storage events will fire across tabs when using localStorage
+window.addEventListener("storage", (e) => {
+  if (e.key === "lucha_cart_v1") {
+    updateCartUI();
+    // If checkout modal is open, refresh its summary
+    if (
+      document.getElementById(CHECKOUT_MODAL_ID) &&
+      document.getElementById(CHECKOUT_MODAL_ID).classList.contains("open")
+    ) {
+      updateCheckoutSummary();
+    }
+  }
+});
+
 export function initCartUI() {
   createCartButton();
   createAnnouncer();
-  ensureModalExists();
+  ensureCartModalExists();
+  ensureCheckoutModalExists(); // create checkout modal upfront
+  ensureToastContainer();
   updateCartUI();
   wireAddToCartButtons();
 
@@ -323,7 +591,6 @@ export function initCartUI() {
   });
   mo.observe(document.body, { childList: true, subtree: true });
 
-  // Listen for manual refresh events (optional)
   document.addEventListener("cart:refresh", () => updateCartUI());
 }
 

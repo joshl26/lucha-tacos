@@ -1,7 +1,7 @@
 ---
 title: "Lucha Libre Restaurant - Development Roadmap"
 updated: "2025-10-14"
-status: "Phase 1 complete — Phase 2 in progress"
+status: "Phase 2 in progress — persistence & UX implemented"
 ---
 
 ### Lucha Libre Restaurant - Development Roadmap
@@ -44,28 +44,34 @@ status: "Phase 1 complete — Phase 2 in progress"
   - [x] Add quantity adjustment controls (plus/minus in menu + modal qty controls)
   - [x] Implement remove from cart option (remove control in modal)
   - [x] Display running cart total (subtotal shown in modal and badge updated)
-  - [~] Test cart persistence during session — In-memory session state works (cart persists while the page is open). Persistence across page reloads is NOT implemented (no localStorage/sessionStorage). — STATUS: needs decision (persist or session-only)
+  - [x] Implement session persistence (Option B) — cart persists in-session via sessionStorage under key `lucha_cart_v1`
+  - [x] Emit cart change events — window dispatches `cart:changed` with cart summary
+  - [x] Replace blocking alerts with accessible, non-blocking toast notifications
+  - [x] Add accessible aria-live announcer and focus-trapped modal
+  - [~] Cross-tab sync: NOT enabled (sessionStorage is per-tab). Option to add localStorage toggle remains.
 
 - Navigation & Links
-  - [~] Fix navigation active states — partial (CSS/JS active styling shown for first category; site-wide nav active state needs final polish)
-  - [ ] Clarify menu vs order navigation (separate pages) — TODO
-  - [ ] Update commented-out menu references — TODO
-  - [ ] Ensure all links are functional — TODO (recommend QA pass)
-  - [ ] Test navigation on all pages — TODO
+  - [x] Add nav active-state helper (setActiveNavLink() in app.js)
+  - [~] Fix navigation active states — helper added; site-wide styling polish still recommended
+  - [ ] Clarify menu vs order navigation (separate pages)
+  - [ ] Update commented-out menu references
+  - [ ] Ensure all links are functional
+  - [ ] Test navigation on all pages
 
 - Interactive Elements
-  - [ ] Make "Leave Feedback" button open modal/form — TODO
-  - [ ] Create feedback form (even if not functional yet) — TODO
-  - [ ] Make delivery service images clickable — TODO
-  - [ ] Link delivery images to actual services (UberEats, DoorDash, etc.) — TODO
-  - [ ] Add hover states to interactive elements — TODO
+  - [x] Add hover/focus small polish for add-to-cart and cart actions (CSS)
+  - [ ] Make "Leave Feedback" button open modal/form
+  - [ ] Create feedback form (even if not functional yet)
+  - [ ] Make delivery service images clickable
+  - [ ] Link delivery images to actual services (UberEats, DoorDash, etc.)
+  - [ ] Add more polished hover states and transitions
 
 - Layout Issues
-  - [ ] Fix footer overlap on content pages — TODO
-  - [ ] Adjust spacing and padding consistency — TODO
-  - [ ] Verify responsive design on mobile — TODO
-  - [ ] Test on tablet/desktop viewports — TODO
-  - [ ] Fix hero text sizing on mobile — TODO
+  - [ ] Fix footer overlap on content pages
+  - [ ] Adjust spacing and padding consistency
+  - [ ] Verify responsive design on mobile
+  - [ ] Test on tablet/desktop viewports
+  - [ ] Fix hero text sizing on mobile
 
 ---
 
@@ -135,45 +141,52 @@ status: "Phase 1 complete — Phase 2 in progress"
 
 #### Notes & Considerations (current)
 
-- What was implemented in this sprint:
-  - Added a module-based cart implementation: `cart.js` (in-memory cart API).
-  - Built `cart-ui.js` to provide:
-    - Cart button + badge
-    - Accessible cart modal (dialog) with focus trap
-    - Item rendering in modal, qty controls, remove, clear, subtotal
-    - Auto-wiring of `.add-to-cart` buttons (reads data-id, data-name, data-price-cents, optional data-qty)
-  - Updated `app.js` to:
-    - Render menu categories and items
-    - Ensure `Add` buttons include data attributes: data-id, data-name, data-price-cents
-    - Update per-item qty controls and set data-qty before Add
-  - Minimal CSS added for modal/button (recommend merging into styles.css)
+- Files changed / implemented in this sprint:
+  - cart.js — replaced with sessionStorage-persisted cart (exports singleton `cart`) and public createCart() factory.
+  - cart-ui.js — replaced with toast-based, accessible modal UI listening to `cart:changed`.
+  - app.js — updated with nav active-state helper and wiring so Add buttons include data attributes required by cart-ui.
+  - styles.css — appended toast and small UX/collision fixes (bump animation, focus outlines).
+- Key technical details:
+  - Persistence: sessionStorage used (per-tab). Cart summary is saved under key `lucha_cart_v1`.
+  - Eventing: `window` emits a `cart:changed` CustomEvent with the cart summary in detail so other modules can react.
+  - Accessibility: aria-live announcer, focus trap in modal, aria-labels on controls.
+  - Price handling: prices stored and handled as integer cents in cart.js to avoid floating-point issues.
 
-- Key constraint to decide:
-  - Persistence: current cart is in-memory and persists only for the current page lifetime. If you want cart to survive page reloads, add sessionStorage/localStorage restore/serialize in cart.js — I can do that if you want.
+- Decisions made (so you don't need to re-approve):
+  - Option B chosen: sessionStorage persistence (per-tab). This improves UX on reload within same tab and avoids cross-tab sync complexity.
+  - Non-blocking toast implemented to replace alert() placeholders.
 
 - Quick risks / TODOs to address asap:
-  - Make sure cart-ui.js is included as a module on all pages using add-to-cart (index.html, order/index.html).
-  - QA cross-directory paths for JSON and script includes (menu JSON path logic is already in app.js but verify hosting structure).
-  - Finalize navigation active-state logic so users know when they’re on the menu vs order pages.
+  - Ensure cart-ui.js and cart.js are loaded as ES modules on all pages that have Add buttons (index.html, order/index.html). Relative pathing matters — verify script tags.
+  - QA link paths (menu JSON fetch paths are relative; confirm hosting structure).
+  - Cross-tab behavior expected: carts do not sync between tabs when using sessionStorage. If cross-tab sync is required, switch to localStorage with optional conflict handling.
 
 ---
 
 #### Recommended next steps (highest priority)
 
-1. Decide persistence behavior:
-   - Option A: keep in-memory only (no reload persistence) — faster, simpler.
-   - Option B: add sessionStorage persistence in cart.js (recommended for better UX).
-   Tell me which and I’ll implement immediately.
+1. Cross-tab persistence decision:
+   - Option A: Keep sessionStorage (current) — per-tab persistence, simpler.
+   - Option B: Enable localStorage toggle (recommended if users may open multiple tabs and expect shared cart). I can implement a toggle constant in cart.js that defaults to sessionStorage but can be set to localStorage.
 
-2. Finish Navigation & QA:
-   - Fix nav active states site-wide and run link check across pages.
+2. Script injection & patch:
+   - I can produce a single .diff patch that replaces files (cart.js, cart-ui.js, app.js, styles.css) and updates index.html / order/index.html to include correct `<script type="module">` tags with correct relative paths. This is the fastest way to apply changes.
 
-3. UX polish for Phase 2:
-   - Replace alert() notifications with a non-blocking toast.
-   - Add hover/focus states and small animations for add-to-cart feedback.
+3. QA pass:
+   - Run the verification checklist across desktop and mobile:
+     - Add items → toast appears, badge updates
+     - Open cart modal → items, qty controls, remove, clear, subtotal work
+     - Refresh page → cart persists (sessionStorage)
+     - Cross-tab behavior → expected no sync
+     - Accessibility checks with a screen reader: aria-live announcements & keyboard focus trap
+   - Report any layout overlaps (footer, hero text) to triage into Phase 2 layout fixes.
 
-4. Run an end-to-end manual test checklist across desktop & mobile and capture issues to triage into Phase 2/3.
+4. Polish UX:
+   - Replace remaining alert() placeholders with accessible modals or toasts (checkout flow scaffold).
+   - Add feedback form modal and wire delivery partner links.
 
 ---
+
+
 
 
