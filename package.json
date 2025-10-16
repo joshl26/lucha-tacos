@@ -8,7 +8,7 @@
     "test:watch": "jest --watchAll"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "devDependencies": {
     "@babel/core": "^7.28.4",
