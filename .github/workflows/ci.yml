@@ -49,8 +49,6 @@ jobs:
           files: ./coverage/lcov.info
           flags: unit
           fail_ci_if_error: true
-          token: ${{ secrets.CODECOV_TOKEN }} # optional for public repos
-
 
   # Optional: E2E tests (Cypress or Playwright)
   # e2e:
