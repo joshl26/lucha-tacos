@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1760630568891" clover="3.2.0">
-  <project timestamp="1760630568891" name="All files">
+<coverage generated="1760631670040" clover="3.2.0">
+  <project timestamp="1760631670040" name="All files">
     <metrics statements="122" coveredstatements="103" conditionals="89" coveredconditionals="62" methods="24" coveredmethods="20" elements="235" coveredelements="185" complexity="0" loc="122" ncloc="122" packages="1" files="1" classes="1"/>
     <file name="cart.js" path="E:\GIT Working Folders\lucha-tacos\cart.js">
       <metrics statements="122" coveredstatements="103" conditionals="89" coveredconditionals="62" methods="24" coveredmethods="20"/>
