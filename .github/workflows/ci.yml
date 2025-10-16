@@ -14,6 +14,8 @@ jobs:
     strategy:
       matrix:
         node-version: [20.x]
+    env:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -32,23 +34,38 @@ jobs:
         env:
           CI: true
 
-      #   - name: Enforce coverage threshold (80% lines)
-      #     run: |
-      #       node -e "
-      #       const fs = require('fs');
-      #       const data = JSON.parse(fs.readFileSync('coverage/coverage-summary.json','utf8'));
-      #       const pct = data.total.lines.pct;
-      #       console.log('Total lines coverage:', pct + '%');
-      #       if (pct < 80) { console.error('❌ Coverage below threshold: ' + pct + '%'); process.exit(1); }
-      #       console.log('✅ Coverage threshold met');
-      #       "
+      - name: Show coverage summary (for logs)
+        run: |
+          echo "=== coverage/coverage-summary.json ==="
+          if [ -f coverage/coverage-summary.json ]; then
+            cat coverage/coverage-summary.json
+          else
+            echo "No coverage summary found"
+          fi
 
-      - name: Upload coverage to Codecov
+      - name: Upload coverage to Codecov (tokened)
+        if: env.CODECOV_TOKEN != ''
         uses: codecov/codecov-action@v4
         with:
           files: ./coverage/lcov.info
           flags: unit
           fail_ci_if_error: true
+          token: ${{ env.CODECOV_TOKEN }}
+
+      - name: Upload coverage to Codecov (tokenless via GitHub App)
+        if: env.CODECOV_TOKEN == ''
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage/lcov.info
+          flags: unit
+          fail_ci_if_error: false
+
+      - name: Upload coverage artifact (fallback)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage
 
   # Optional: E2E tests (Cypress or Playwright)
   # e2e:
