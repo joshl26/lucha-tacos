@@ -4,6 +4,10 @@ Welcome to the **Lucha Libre Restaurant** website project! This is a vibrant, lu
 
 ---
 
+![CI](https://github.com/joshl26/lucha-tacos/actions/workflows/ci.yml/badge.svg)
+
+---
+
 ## Table of Contents
 
 - [Project Overview](#project-overview)

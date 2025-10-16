@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "test": "jest --runInBand",
-    "test:watch": "jest --watchAll"
+    "test:watch": "jest --watchAll",
+    "test:ci": "jest --runInBand",
+    "coverage": "jest --coverage"
   },
   "engines": {
     "node": ">=20"

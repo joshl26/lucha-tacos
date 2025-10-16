@@ -36,6 +36,12 @@ jobs:
         if: success() && steps['Run unit tests'] # no explicit artifact without coverage script
         run: echo "Add coverage upload step here if you use coverage tooling (e.g. codecov)."
 
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }} # optional for public repos if using token
+
+
   # Optional: Cypress E2E (requires a server step to run your app on CI)
   # e2e:
   #   name: E2E (Cypress)
