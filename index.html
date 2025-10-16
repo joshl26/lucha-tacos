@@ -53,7 +53,7 @@
       content="Lucha Tacos brings the bold and vibrant flavors of Mexico to your plate with a twist of excitement. Tacos, burritos, and quesadillas crafted with passion and fresh ingredients."
     />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
     <main class="w-full">
@@ -63,18 +63,21 @@
             <ul class="nav nav-pills">
               <li class="nav-item">
                 <a
-                  href="#"
-                  class="nav-link active bg-success"
+                  href="/index.html"
+                  class="nav-link"
+                  data-page="home"
                   aria-current="page"
                 >
                   Home
                 </a>
               </li>
               <li class="nav-item">
-                <a href="/order/index.html" class="nav-link text-white">Menu</a>
+                <a href="/order/index.html" class="nav-link" data-page="order"
+                  >Order Menu</a
+                >
               </li>
               <li class="nav-item">
-                <a href="/about/index.html" class="nav-link text-white"
+                <a href="/about/index.html" class="nav-link" data-page="about"
                   >About</a
                 >
               </li>
@@ -86,7 +89,7 @@
       <!-- Hero Video Section -->
       <video
         class="main-video"
-        src="./public/lucha_tacos.mp4"
+        src="/public/lucha_tacos.mp4"
         autoplay
         loop
         playsinline
@@ -116,7 +119,7 @@
           </h1>
           <img
             alt="Lucha Tacos logo featuring a traditional red and gold Mexican wrestling mask"
-            src="./public/mask-1.svg"
+            src="/public/mask-1.svg"
             class="position-relative drop-shadow-md"
             style="width: 300px"
           />
@@ -389,7 +392,8 @@
           </address>
           <div class="flex-row text-center">
             <button
-              class="my-4 p-2 text-center"
+              class="my-4 p-2 text-center feedback-button"
+              data-location="vancouver"
               aria-label="Leave feedback for Vancouver location"
             >
               LEAVE FEEDBACK
@@ -431,7 +435,8 @@
           </address>
           <div class="flex-row text-center">
             <button
-              class="my-4 p-2"
+              class="my-4 p-2 feedback-button"
+              data-location="toronto"
               aria-label="Leave feedback for Toronto location"
             >
               LEAVE FEEDBACK
@@ -453,14 +458,22 @@
             <p>
               © 2024 Lucha Tacos Canada | by
               <a href="https://joshlehman.ca">BlackRock Design Haus</a> |
-              <a href="/privacy">Privacy Policy</a>
+              <a href="/privacy/index.html">Privacy Policy</a>
             </p>
           </div>
         </footer>
       </div>
     </main>
-    <script type="module" src="./cart.js"></script>
-    <script type="module" src="./cart-ui.js"></script>
-    <script type="module" src="./app.js"></script>
+
+    <!-- Load cart and UI modules -->
+    <script type="module" src="/cart.js"></script>
+    <script type="module" src="/cart-ui.js"></script>
+    <script type="module" src="/app.js"></script>
+
+    <!-- Initialize navigation active state -->
+    <script type="module">
+      import { setActiveNavLink } from "/app.js";
+      setActiveNavLink("home");
+    </script>
   </body>
 </html>

@@ -534,17 +534,16 @@ function wireAddToCartButtons() {
     if (btn.dataset.cartWired) return;
     btn.dataset.cartWired = "1";
     btn.addEventListener("click", (e) => {
-      const id = btn.dataset.id || btn.getAttribute("data-id");
-      const name = btn.dataset.name || btn.getAttribute("data-name") || id;
-      const qty = btn.dataset.qty ? Number(btn.dataset.qty) : 1;
+      const id = btn.dataset.itemId || btn.getAttribute("data-item-id");
+      const name =
+        btn.dataset.itemName || btn.getAttribute("data-item-name") || id;
+      const qty = btn.dataset.itemQuantity
+        ? Number(btn.dataset.itemQuantity)
+        : 1;
       const priceCents =
-        btn.dataset.priceCents || btn.getAttribute("data-price-cents") || null;
-      const price = priceCents
-        ? Number(priceCents)
-        : btn.dataset.price || btn.getAttribute("data-price") || null;
+        btn.dataset.itemPrice || btn.getAttribute("data-item-price") || null;
       const item = { id, name };
-      if (priceCents) item.priceCents = Number(priceCents);
-      else if (price != null) item.price = Number(price);
+      if (priceCents != null) item.priceCents = Number(priceCents);
       cart.addItem(item, qty);
       updateCartUI();
       announce(`${name} added to cart`);
@@ -557,7 +556,6 @@ function wireAddToCartButtons() {
     });
   });
 }
-
 /* react to global cart changes (e.g. other scripts / other tabs) */
 window.addEventListener("cart:changed", (evt) => {
   updateCartUI();

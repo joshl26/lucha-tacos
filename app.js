@@ -1,379 +1,436 @@
-// app.js (updated with nav active helper)
+// app.js - Main application logic
 
-// DOM Elements
-const menuCategoriesDOM = document.querySelector(".menu-categories");
-const menuItemsDOM = document.querySelector(".menu-items");
-const cartCountDOM = document.querySelector(".cart-count");
+/**
+ * Sets the active navigation link based on current page
+ * @param {string} page - The page identifier ('home', 'order', 'about')
+ */
+export function setActiveNavLink(page) {
+  const navLinks = document.querySelectorAll(".nav-link");
 
-// In-memory state for menu data only (no cart)
-let allMenuItems = {};
-let allCategories = [];
-let currentCategory = null;
+  navLinks.forEach((link) => {
+    const linkPage = link.getAttribute("data-page");
 
-// Menu class - fetch data
-class Menu {
-  async getMenuItems() {
-    const currentPath = window.location.pathname;
-    let jsonPath = "menu-items.json";
-
-    if (currentPath.includes("/order/") || currentPath.includes("/pages/")) {
-      jsonPath = "../menu-items.json";
+    if (linkPage === page) {
+      link.classList.add("active", "bg-success");
+      link.classList.remove("text-white");
+      link.setAttribute("aria-current", "page");
+    } else {
+      link.classList.remove("active", "bg-success");
+      link.classList.add("text-white");
+      link.removeAttribute("aria-current");
     }
-
-    try {
-      let result = await fetch(jsonPath);
-      if (result.ok) {
-        let menuItems = await result.json();
-        console.log("✅ Menu items loaded successfully");
-        return menuItems;
-      }
-      throw new Error("Failed to load menu items");
-    } catch (error) {
-      console.error("❌ Error fetching menu items:", error);
-      return this.getFallbackMenuItems();
-    }
-  }
-
-  async getMenuCategories() {
-    const currentPath = window.location.pathname;
-    let jsonPath = "menu-categories.json";
-
-    if (currentPath.includes("/order/") || currentPath.includes("/pages/")) {
-      jsonPath = "../menu-categories.json";
-    }
-
-    try {
-      let result = await fetch(jsonPath);
-      if (result.ok) {
-        let data = await result.json();
-        console.log("✅ Categories loaded successfully");
-        return data.categories || [];
-      }
-      throw new Error("Failed to load categories");
-    } catch (error) {
-      console.error("❌ Error fetching categories:", error);
-      return this.getFallbackCategories();
-    }
-  }
-
-  getFallbackMenuItems() {
-    return {
-      tacos: [
-        {
-          id: 1,
-          title: "Carne Asada Tacos",
-          description:
-            "3 soft-shell 4 inch corn tortilla garnish with flank steak, white onion, cilantro in the french fries on the side.",
-          price: 18.99,
-          qty: 1,
-        },
-        {
-          id: 2,
-          title: "Pollo Asado Tacos",
-          description:
-            "3 soft shell 4 inch corn tortilla with grilled chicken, white onion, cilantro in the french fries on the side.",
-          price: 17.99,
-          qty: 1,
-        },
-      ],
-      burritos: [
-        {
-          id: 4,
-          title: "Carne Asada Burritos",
-          description:
-            "Flank steak, black beans, lettuce, jalapeno, ranchero sauce, sour cream, avocado mayonnaise & side fries.",
-          price: 17.99,
-          qty: 1,
-        },
-      ],
-    };
-  }
-
-  getFallbackCategories() {
-    return [
-      { id: 1, title: "Tacos", image: "/public/menu-tacos.jpg" },
-      { id: 2, title: "Burritos", image: "/public/menu-burritos.jpg" },
-    ];
-  }
+  });
 }
 
-// UI class - render elements
-class UI {
-  displayCategories(menuCategories) {
-    if (!menuCategoriesDOM) {
-      console.warn("⚠️ Menu categories container not found");
-      return;
+// Menu data storage
+let menuCategories = [];
+let menuItems = [];
+let currentFilter = "all";
+
+/**
+ * Load menu categories from JSON
+ */
+async function loadCategories() {
+  console.log("=== loadCategories START ===");
+  try {
+    const response = await fetch("/menu-categories.json");
+    console.log("Categories response:", response.ok);
+    if (!response.ok) throw new Error("Failed to load categories");
+    const data = await response.json();
+    console.log("Categories data:", data);
+
+    // Handle both array and object with categories property
+    menuCategories = Array.isArray(data) ? data : data.categories || [];
+
+    console.log("Loaded categories array:", menuCategories);
+    displayCategories();
+  } catch (error) {
+    console.error("Error loading categories:", error);
+  }
+  console.log("=== loadCategories END ===");
+}
+
+/**
+ * Load menu items from JSON
+ */
+async function loadMenuItems() {
+  console.log("=== loadMenuItems START ===");
+  try {
+    const response = await fetch("/menu-items.json");
+    console.log("Menu items response:", response.ok);
+    if (!response.ok) throw new Error("Failed to load menu items");
+    const data = await response.json();
+    console.log("Menu items data:", data);
+
+    // Handle object with category keys (tacos, burritos, quesadillas)
+    if (data && typeof data === "object" && !Array.isArray(data)) {
+      menuItems = [];
+      // Flatten all category arrays into single array
+      Object.keys(data).forEach((categoryKey) => {
+        if (Array.isArray(data[categoryKey])) {
+          data[categoryKey].forEach((item) => {
+            // Add categoryKey to each item for filtering (keep original case from JSON key)
+            menuItems.push({
+              ...item,
+              categoryKey: categoryKey, // This will be "tacos", "burritos", "quesadillas" from JSON keys
+              // Convert price from dollars to cents for consistency
+              price: Math.round((item.price || 0) * 100),
+            });
+          });
+        }
+      });
+    } else {
+      // Handle array format
+      menuItems = Array.isArray(data) ? data : data.items || [];
     }
 
-    let result = "";
-    menuCategories.forEach((category) => {
-      result += `
-        <button class="menu-category position-relative" data-category="${category.title.toLowerCase()}">
-          <img
-            class="position-relative"
-            src="${category.image}"
-            alt="${category.title} category menu items"
-            style="max-width: 150px; max-height: 150px"
-          />
-          <h5
-            class="position-absolute p-1 text-white"
-            style="top: 0; background-color: rgb(255, 0, 0)"
-          >
-            ${category.title}
-          </h5>
-        </button>
-      `;
-    });
-    menuCategoriesDOM.innerHTML = result;
+    console.log("Loaded menu items:", menuItems);
+    if (menuItems.length > 0) {
+      console.log("Sample item:", menuItems[0]);
+      console.log("Sample item categoryKey:", menuItems[0].categoryKey);
+    }
+    displayMenuItems();
+  } catch (error) {
+    console.error("Error loading menu items:", error);
+  }
+  console.log("=== loadMenuItems END ===");
+}
 
-    // Add click handlers to category buttons
-    document.querySelectorAll(".menu-category").forEach((btn) => {
-      btn.addEventListener("click", (e) => {
-        const category = e.currentTarget.getAttribute("data-category");
-        this.filterItems(category);
-
-        // Update active state
-        document.querySelectorAll(".menu-category").forEach((b) => {
-          b.style.opacity = "0.5";
-        });
-        e.currentTarget.style.opacity = "1";
-      });
-    });
-
-    console.log("✅ Categories displayed:", menuCategories.length);
+/**
+ * Display category buttons - handle both 'name' and 'title' properties
+ */
+function displayCategories() {
+  console.log("=== displayCategories START ===");
+  const container = document.querySelector(".menu-categories");
+  console.log("Categories container found:", container);
+  if (!container) {
+    console.error("No .menu-categories container found!");
+    return;
   }
 
-  displayItems(itemsToDisplay) {
-    if (!menuItemsDOM) {
-      console.warn("⚠️ Menu items container not found");
-      return;
-    }
+  // Ensure menuCategories is an array
+  if (!Array.isArray(menuCategories)) {
+    console.error("menuCategories is not an array:", menuCategories);
+    return;
+  }
 
-    if (!itemsToDisplay || itemsToDisplay.length === 0) {
-      menuItemsDOM.innerHTML = `
-        <div class="text-center p-5">
-          <h4>No items available in this category</h4>
-        </div>
-      `;
-      return;
-    }
+  console.log("Creating buttons for categories:", menuCategories);
 
-    let result = "";
+  // Create "All" button
+  let html = `
+    <button 
+      class="category-btn btn ${
+        currentFilter === "all" ? "btn-light active" : "btn-outline-light"
+      }"
+      data-category="all"
+      aria-label="Show all menu items"
+    >
+      All Items
+    </button>
+  `;
 
-    itemsToDisplay.forEach((item) => {
-      const priceCents =
-        item.priceCents ?? Math.round(Number(item.price || 0) * 100);
+  // Create category buttons
+  html += menuCategories
+    .map((category) => {
+      const categoryName = category.name || category.title;
+      // Use title.toLowerCase() as the filter key (matches JSON keys: tacos, burritos, quesadillas)
+      const categoryKey = (category.title || category.name || "").toLowerCase();
+      console.log("Creating button:", categoryName, "key:", categoryKey);
+      return `
+    <button 
+      class="category-btn btn ${
+        currentFilter === categoryKey ? "btn-light active" : "btn-outline-light"
+      }"
+      data-category="${categoryKey}"
+      aria-label="Filter menu by ${categoryName}"
+    >
+      ${categoryName}
+    </button>
+  `;
+    })
+    .join("");
 
-      result += `
-        <div class="menu-item flex-row rounded-4 bg-white mb-3" data-id="${
-          item.id
-        }">
-          <div
-            class="rounded-top-4 h-auto text-black"
-            style="background-color: lightgray"
-          >
-            <div class="d-flex flex-row justify-content-between">
-              <h5 class="pt-3 px-3 m-0">${escapeHtml(item.title)}</h5>
-              <div class="d-flex flex-row">
-                <p class="m-auto px-2" style="font-size: 20px">$${(
-                  priceCents / 100
-                ).toFixed(2)}</p>
+  container.innerHTML = html;
+  console.log("Buttons HTML inserted into container");
+
+  // Add event listeners to category buttons
+  const buttons = container.querySelectorAll(".category-btn");
+  console.log("Found category buttons:", buttons.length);
+  buttons.forEach((btn, index) => {
+    const category = btn.getAttribute("data-category");
+    console.log(`Attaching handler #${index}:`, category);
+    btn.addEventListener("click", handleCategoryClick);
+  });
+  console.log("=== displayCategories END ===");
+}
+
+/**
+ * Handle category button clicks
+ */
+function handleCategoryClick(e) {
+  console.log("=== CATEGORY CLICKED ===");
+  const category = e.target.getAttribute("data-category");
+  console.log("Category clicked:", category);
+  currentFilter = category;
+
+  // Update active button state
+  document.querySelectorAll(".category-btn").forEach((btn) => {
+    btn.classList.remove("active", "btn-light");
+    btn.classList.add("btn-outline-light");
+  });
+  e.target.classList.add("active", "btn-light");
+  e.target.classList.remove("btn-outline-light");
+
+  // Display filtered items
+  displayMenuItems();
+}
+
+/**
+ * Display menu items (filtered or all)
+ */
+function displayMenuItems() {
+  console.log("=== displayMenuItems START ===");
+  const container = document.querySelector(".menu-items");
+  console.log("Menu items container found:", container);
+  if (!container) {
+    console.error("No .menu-items container found!");
+    return;
+  }
+
+  // Ensure menuItems is an array
+  if (!Array.isArray(menuItems)) {
+    console.error("menuItems is not an array:", menuItems);
+    container.innerHTML = `
+      <div class="text-center text-white py-5">
+        <p>Error loading menu items. Please refresh the page.</p>
+      </div>
+    `;
+    return;
+  }
+
+  // Filter items based on current category
+  const filteredItems =
+    currentFilter === "all"
+      ? menuItems
+      : menuItems.filter((item) => item.categoryKey === currentFilter);
+
+  console.log("Current filter:", currentFilter);
+  console.log("Total items:", menuItems.length);
+  console.log("Filtered items:", filteredItems.length);
+  console.log("Filtered items array:", filteredItems);
+
+  if (filteredItems.length === 0) {
+    container.innerHTML = `
+      <div class="text-center text-white py-5">
+        <p>No items found in this category.</p>
+      </div>
+    `;
+    return;
+  }
+
+  // Render menu items
+  container.innerHTML = filteredItems
+    .map((item) => {
+      const priceFormatted = `$${(item.price / 100).toFixed(2)}`;
+      const itemName = item.name || item.title;
+      return `
+        <div class="menu-item card bg-dark text-white">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <div class="flex-grow-1">
+                <h5 class="card-title mb-1">${itemName}</h5>
+                ${
+                  item.description
+                    ? `<p class="card-text text-muted small mb-2">${item.description}</p>`
+                    : ""
+                }
+                <p class="card-text fw-bold text-success">${priceFormatted}</p>
               </div>
             </div>
-            <p class="p-3 m-0">
-              ${escapeHtml(item.description)}
-            </p>
-          </div>
-          <div class="d-flex flex-row justify-content-between w-100 p-2">
-            <div class="flex-column">
-              <div class="d-flex flex-row text-black h-100">
-                <div class="flex-column px-3 m-auto">
-                  <button
-                    class="qty-minus"
-                    style="background-color: transparent; border: 0px; cursor: pointer"
-                    data-id="${item.id}"
-                    aria-label="Decrease quantity"
-                  >
-                    <i
-                      class="fa-sharp fa-solid fa-circle-minus fa-xl"
-                      style="font-size: 25px; color: rgb(255, 30, 30)"
-                    ></i>
-                  </button>
-                </div>
-                <div
-                  class="qty-display flex-column px-3 m-auto"
-                  style="font-size: 20px"
-                  aria-label="Quantity"
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="d-flex gap-2 align-items-center">
+                <button
+                  class="btn btn-sm btn-outline-light qty-minus"
+                  data-item-id="${item.id}"
+                  aria-label="Decrease quantity"
                 >
-                  1
-                </div>
-                <div class="flex-column px-3 m-auto">
-                  <button
-                    class="qty-plus"
-                    style="background-color: transparent; border: 0px; cursor: pointer"
-                    data-id="${item.id}"
-                    aria-label="Increase quantity"
-                  >
-                    <i
-                      class="fa-sharp fa-solid fa-circle-plus fa-xl"
-                      style="font-size: 25px; color: rgb(255, 30, 30)"
-                    ></i>
-                  </button>
-                </div>
+                  <i class="fas fa-minus"></i>
+                </button>
+                <span class="qty-display px-2" data-item-id="${
+                  item.id
+                }">1</span>
+                <button
+                  class="btn btn-sm btn-outline-light qty-plus"
+                  data-item-id="${item.id}"
+                  aria-label="Increase quantity"
+                >
+                  <i class="fas fa-plus"></i>
+                </button>
               </div>
-            </div>
-            <div class="flex-column align-content-center">
               <button
-                class="add-to-cart p-2 rounded mx-3 my-2 px-4 text-white"
-                style="background-color: red; border: 0px; cursor: pointer"
-                data-id="${item.id}"
-                data-name="${escapeHtml(item.title)}"
-                data-price-cents="${priceCents}"
-                type="button"
+                class="btn btn-danger add-to-cart"
+                data-item-id="${item.id}"
+                data-item-name="${itemName}"
+                data-item-price="${item.price}"
+                aria-label="Add ${itemName} to cart"
               >
-                ADD TO CART
+                <i class="fas fa-cart-plus me-1"></i> Add to Cart
               </button>
             </div>
           </div>
         </div>
       `;
-    });
+    })
+    .join("");
 
-    menuItemsDOM.innerHTML = result;
-    this.attachItemEventListeners();
-    console.log("✅ Items displayed:", itemsToDisplay.length);
-  }
-
-  filterItems(category) {
-    currentCategory = category;
-    const categoryKey = category.toLowerCase();
-
-    console.log("🔍 Filtering category:", categoryKey);
-    console.log("📦 Available categories:", Object.keys(allMenuItems));
-
-    let items = allMenuItems[categoryKey];
-
-    if (!items && categoryKey.endsWith("s")) {
-      const singular = categoryKey.slice(0, -1);
-      items = allMenuItems[singular];
-      console.log("🔄 Trying singular version:", singular);
-    }
-
-    if (!items && !categoryKey.endsWith("s")) {
-      const plural = categoryKey + "s";
-      items = allMenuItems[plural];
-      console.log("🔄 Trying plural version:", plural);
-    }
-
-    if (items && items.length > 0) {
-      this.displayItems(items);
-    } else {
-      console.warn("⚠️ No items found for category:", categoryKey);
-      this.displayItems([]);
-    }
-  }
-
-  attachItemEventListeners() {
-    document.querySelectorAll(".add-to-cart").forEach((btn) => {
-      if (btn.dataset.uiWired) return;
-      btn.dataset.uiWired = "1";
-      btn.addEventListener("click", (e) => {
-        const menuItemEl = e.currentTarget.closest(".menu-item");
-        const qtyDisplay = menuItemEl.querySelector(".qty-display");
-        const qty = parseInt(qtyDisplay.textContent || "1", 10) || 1;
-        e.currentTarget.dataset.qty = String(qty);
-      });
-    });
-
-    document.querySelectorAll(".qty-minus").forEach((btn) => {
-      if (btn.dataset.wiredMinus) return;
-      btn.dataset.wiredMinus = "1";
-      btn.addEventListener("click", (e) => {
-        const qtyDisplay = e.currentTarget
-          .closest(".menu-item")
-          .querySelector(".qty-display");
-        let qty = parseInt(qtyDisplay.textContent || "1", 10);
-        if (qty > 1) {
-          qty--;
-          qtyDisplay.textContent = qty;
-        }
-      });
-    });
-
-    document.querySelectorAll(".qty-plus").forEach((btn) => {
-      if (btn.dataset.wiredPlus) return;
-      btn.dataset.wiredPlus = "1";
-      btn.addEventListener("click", (e) => {
-        const qtyDisplay = e.currentTarget
-          .closest(".menu-item")
-          .querySelector(".qty-display");
-        let qty = parseInt(qtyDisplay.textContent || "1", 10);
-        qty++;
-        qtyDisplay.textContent = qty;
-      });
-    });
-  }
+  console.log("Menu items HTML inserted");
+  // Add event listeners for quantity controls
+  attachQuantityControls();
+  console.log("=== displayMenuItems END ===");
 }
 
-function escapeHtml(str) {
-  if (!str) return "";
-  return String(str)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
-
-function setActiveNavLink() {
-  try {
-    const navLinks = document.querySelectorAll("header a, nav a, .nav-link");
-    const path = window.location.pathname.replace(/\/$/, "");
-    navLinks.forEach((a) => {
-      const href = a.getAttribute("href") || "";
-      if (!href) return;
-      const url = new URL(href, window.location.origin);
-      if (url.pathname.replace(/\/$/, "") === path) {
-        a.classList.add("active");
-      } else {
-        a.classList.remove("active");
+/**
+ * Attach event listeners to quantity controls
+ */
+function attachQuantityControls() {
+  // Plus buttons
+  document.querySelectorAll(".qty-plus").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const itemId = e.currentTarget.getAttribute("data-item-id");
+      const display = document.querySelector(
+        `.qty-display[data-item-id="${itemId}"]`
+      );
+      if (display) {
+        let currentQty = parseInt(display.textContent) || 1;
+        currentQty = Math.min(currentQty + 1, 99); // Max 99
+        display.textContent = currentQty;
       }
     });
-  } catch (err) {
-    // ignore
-  }
+  });
+
+  // Minus buttons
+  document.querySelectorAll(".qty-minus").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const itemId = e.currentTarget.getAttribute("data-item-id");
+      const display = document.querySelector(
+        `.qty-display[data-item-id="${itemId}"]`
+      );
+      if (display) {
+        let currentQty = parseInt(display.textContent) || 1;
+        currentQty = Math.max(currentQty - 1, 1); // Min 1
+        display.textContent = currentQty;
+      }
+    });
+  });
+
+  // Add to cart buttons - ensure proper data attributes for cart-ui.js
+  document.querySelectorAll(".add-to-cart").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const button = e.currentTarget;
+      const itemId = button.getAttribute("data-item-id");
+      const qtyDisplay = document.querySelector(
+        `.qty-display[data-item-id="${itemId}"]`
+      );
+      const qty = qtyDisplay ? parseInt(qtyDisplay.textContent) : 1;
+
+      // Set quantity as data attribute for cart-ui.js to read
+      button.setAttribute("data-item-quantity", qty);
+
+      // Manually trigger cart addition if cart-ui.js listener didn't fire
+      // This ensures compatibility
+      if (window.cart) {
+        const itemName = button.getAttribute("data-item-name");
+        const itemPrice = parseInt(button.getAttribute("data-item-price"));
+
+        try {
+          window.cart.addItem(
+            {
+              id: itemId,
+              name: itemName,
+              priceCents: itemPrice,
+            },
+            qty
+          );
+        } catch (error) {
+          console.error("Error adding to cart:", error);
+        }
+      }
+
+      // Reset quantity display after adding
+      if (qtyDisplay) {
+        setTimeout(() => {
+          qtyDisplay.textContent = "1";
+        }, 300);
+      }
+    });
+  });
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
-  console.log("🚀 Initializing Lucha Libre Menu App...");
+/**
+ * Setup feedback button handlers
+ */
+function setupFeedbackButtons() {
+  const feedbackButtons = document.querySelectorAll(".feedback-button");
 
-  const ui = new UI();
-  const menu = new Menu();
+  feedbackButtons.forEach((button) => {
+    button.addEventListener("click", (e) => {
+      const location = e.target.getAttribute("data-location");
+      showFeedbackModal(location);
+    });
+  });
+}
 
-  const menuItems = await menu.getMenuItems();
-  allMenuItems = menuItems;
-  console.log("📦 Menu items loaded:", Object.keys(menuItems));
+/**
+ * Show feedback modal (placeholder for future implementation)
+ */
+function showFeedbackModal(location) {
+  // TODO: Implement feedback modal in Phase 3
+  const locationName = location.charAt(0).toUpperCase() + location.slice(1);
+  alert(
+    `Feedback form for ${locationName} location will be available soon!\n\nThank you for your interest in providing feedback.`
+  );
+}
 
-  const categories = await menu.getMenuCategories();
-  allCategories = categories;
-  console.log("📂 Categories loaded:", categories.length);
+/**
+ * Initialize the application
+ */
+function init() {
+  console.log("=== INIT START ===");
+  console.log("Document ready state:", document.readyState);
+  console.log(
+    "Looking for .menu-categories:",
+    document.querySelector(".menu-categories")
+  );
+  console.log(
+    "Looking for .menu-items:",
+    document.querySelector(".menu-items")
+  );
 
-  if (menuCategoriesDOM) {
-    ui.displayCategories(categories);
+  // Load menu data if we're on the order page
+  if (document.querySelector(".menu-categories")) {
+    console.log("Found menu elements - loading menu data");
+    loadCategories();
+    loadMenuItems();
+  } else {
+    console.log("No menu elements found - skipping menu load");
   }
 
-  if (categories.length > 0 && menuItemsDOM) {
-    const firstCategory = categories[0].title.toLowerCase();
-    console.log("🎯 Displaying first category:", firstCategory);
-    ui.filterItems(firstCategory);
-
-    const firstCategoryBtn = document.querySelector(".menu-category");
-    if (firstCategoryBtn) {
-      firstCategoryBtn.style.opacity = "1";
-    }
+  // Setup feedback buttons if they exist
+  if (document.querySelector(".feedback-button")) {
+    console.log("Found feedback buttons - setting up handlers");
+    setupFeedbackButtons();
   }
+  console.log("=== INIT END ===");
+}
 
-  setActiveNavLink();
-
-  console.log("✅ App initialized successfully!");
-});
+// Initialize on DOM ready
+if (document.readyState === "loading") {
+  console.log("Document still loading, waiting for DOMContentLoaded");
+  document.addEventListener("DOMContentLoaded", init);
+} else {
+  console.log("Document already loaded, running init immediately");
+  init();
+}
