@@ -1,5 +1,5 @@
-// cart-ui.js
-// ES module to wire cart UI to cart.js (single source of truth, uses configurable storage in cart.js)
+// cart-ui.js with loading states
+// ES module to wire cart UI to cart.js
 
 import { cart } from "./cart.js";
 
@@ -69,6 +69,24 @@ function showToast(message, opts = {}) {
   }, timeout);
 }
 
+/**
+ * Show loading state on button
+ */
+function showButtonLoading(btn) {
+  if (!btn) return;
+  btn.classList.add("btn-loading");
+  btn.disabled = true;
+}
+
+/**
+ * Hide loading state on button
+ */
+function hideButtonLoading(btn) {
+  if (!btn) return;
+  btn.classList.remove("btn-loading");
+  btn.disabled = false;
+}
+
 function buildCartModalHtml() {
   return `
   <div class="cart-modal-backdrop"></div>
@@ -106,16 +124,27 @@ function ensureCartModalExists() {
   wrapper
     .querySelector(".cart-modal-close")
     .addEventListener("click", closeCartModal);
-  wrapper.querySelector(".cart-clear").addEventListener("click", () => {
-    cart.clearCart();
-    updateCartUI();
-    announce("Cart cleared");
-    showToast("Cart cleared");
+
+  wrapper.querySelector(".cart-clear").addEventListener("click", function () {
+    showButtonLoading(this);
+    setTimeout(() => {
+      cart.clearCart();
+      updateCartUI();
+      announce("Cart cleared");
+      showToast("Cart cleared");
+      hideButtonLoading(this);
+    }, 300);
   });
-  wrapper.querySelector(".cart-checkout").addEventListener("click", () => {
-    // Open checkout modal
-    openCheckoutModal();
-  });
+
+  wrapper
+    .querySelector(".cart-checkout")
+    .addEventListener("click", function () {
+      showButtonLoading(this);
+      setTimeout(() => {
+        hideButtonLoading(this);
+        openCheckoutModal();
+      }, 300);
+    });
 }
 
 function openCartModal() {
@@ -138,8 +167,6 @@ function closeCartModal() {
   const btn = document.getElementById(CART_BUTTON_ID);
   if (btn) btn.focus();
 }
-
-/* --- Checkout modal --- */
 
 function buildCheckoutModalHtml() {
   return `
@@ -205,9 +232,7 @@ function ensureCheckoutModalExists() {
 }
 
 function openCheckoutModal() {
-  // close cart modal first to keep single-modal UX
   closeCartModal();
-
   ensureCheckoutModalExists();
   const wrapper = document.getElementById(CHECKOUT_MODAL_ID);
   wrapper.classList.add("open");
@@ -215,7 +240,7 @@ function openCheckoutModal() {
   dialog.focus();
   trapFocus(dialog);
   document.body.classList.add("checkout-open");
-  updateCheckoutSummary(); // render current cart summary into modal
+  updateCheckoutSummary();
 }
 
 function closeCheckoutModal() {
@@ -256,11 +281,11 @@ function updateCheckoutSummary() {
   )}`;
 }
 
-/* Checkout form validation + submit handling */
 function handleCheckoutSubmit(formEl) {
   const nameInput = formEl.querySelector("#checkout-name");
   const contactInput = formEl.querySelector("#checkout-contact");
   const addressInput = formEl.querySelector("#checkout-address");
+  const submitBtn = formEl.querySelector(".checkout-confirm");
 
   const name = (nameInput.value || "").trim();
   const contact = (contactInput.value || "").trim();
@@ -278,7 +303,6 @@ function handleCheckoutSubmit(formEl) {
     showFieldError(contactInput, "Please enter an email or phone number");
     valid = false;
   } else {
-    // basic contact validation: email or phone-like
     const emailLike = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact);
     const phoneLike = /^[0-9 \-\+\(\)]{6,}$/.test(contact);
     if (!emailLike && !phoneLike) {
@@ -292,25 +316,24 @@ function handleCheckoutSubmit(formEl) {
     return;
   }
 
-  // All good — emit event with cart summary and contact info
-  const summary = cart.getSummary();
-  const payload = {
-    summary,
-    customer: { name, contact, address },
-    timestamp: new Date().toISOString(),
-  };
-
-  // Emit event for host application to handle (server call, payments, etc.)
-  window.dispatchEvent(new CustomEvent("cart:checkout", { detail: payload }));
-
-  // Non-blocking placeholder UI
-  showToast("Order placed (placeholder) — check console for event payload");
-  announce("Order placed — thank you");
-
-  // Close the modal after a short delay
+  showButtonLoading(submitBtn);
   setTimeout(() => {
-    closeCheckoutModal();
-  }, 800);
+    const summary = cart.getSummary();
+    const payload = {
+      summary,
+      customer: { name, contact, address },
+      timestamp: new Date().toISOString(),
+    };
+
+    window.dispatchEvent(new CustomEvent("cart:checkout", { detail: payload }));
+    showToast("Order placed (placeholder) — check console for event payload");
+    announce("Order placed — thank you");
+
+    hideButtonLoading(submitBtn);
+    setTimeout(() => {
+      closeCheckoutModal();
+    }, 800);
+  }, 600);
 }
 
 function showFieldError(inputEl, message) {
@@ -331,8 +354,6 @@ function clearFieldErrors(formEl) {
     .forEach((el) => el.classList.remove("field-error"));
   formEl.querySelectorAll(".field-error-msg").forEach((el) => el.remove());
 }
-
-/* --- End checkout modal --- */
 
 function formatPrice(cents) {
   return (Number(cents) / 100).toFixed(2);
@@ -379,22 +400,30 @@ function renderCartItems(container) {
     const input = row.querySelector(".qty-input");
     const rem = row.querySelector(".remove-item");
 
-    dec.addEventListener("click", () => {
-      const current = Number(input.value || 0);
-      const newQty = Math.max(0, current - 1);
-      cart.updateQty(it.id, newQty);
-      updateCartUI();
-      announce(`${it.name} quantity updated to ${newQty}`);
-      showToast(`${it.name} quantity: ${newQty}`);
+    dec.addEventListener("click", function () {
+      showButtonLoading(this);
+      setTimeout(() => {
+        const current = Number(input.value || 0);
+        const newQty = Math.max(0, current - 1);
+        cart.updateQty(it.id, newQty);
+        updateCartUI();
+        announce(`${it.name} quantity updated to ${newQty}`);
+        showToast(`${it.name} quantity: ${newQty}`);
+      }, 200);
     });
-    inc.addEventListener("click", () => {
-      const current = Number(input.value || 0);
-      const newQty = current + 1;
-      cart.updateQty(it.id, newQty);
-      updateCartUI();
-      announce(`${it.name} quantity updated to ${newQty}`);
-      showToast(`${it.name} quantity: ${newQty}`);
+
+    inc.addEventListener("click", function () {
+      showButtonLoading(this);
+      setTimeout(() => {
+        const current = Number(input.value || 0);
+        const newQty = current + 1;
+        cart.updateQty(it.id, newQty);
+        updateCartUI();
+        announce(`${it.name} quantity updated to ${newQty}`);
+        showToast(`${it.name} quantity: ${newQty}`);
+      }, 200);
     });
+
     input.addEventListener("change", (e) => {
       const v = Math.max(0, Number(e.target.value || 0));
       cart.updateQty(it.id, v);
@@ -402,11 +431,15 @@ function renderCartItems(container) {
       announce(`${it.name} quantity updated to ${v}`);
       showToast(`${it.name} quantity: ${v}`);
     });
-    rem.addEventListener("click", () => {
-      cart.removeItem(it.id);
-      updateCartUI();
-      announce(`${it.name} removed from cart`);
-      showToast(`${it.name} removed`);
+
+    rem.addEventListener("click", function () {
+      showButtonLoading(this);
+      setTimeout(() => {
+        cart.removeItem(it.id);
+        updateCartUI();
+        announce(`${it.name} removed from cart`);
+        showToast(`${it.name} removed`);
+      }, 200);
     });
 
     container.appendChild(row);
@@ -414,13 +447,7 @@ function renderCartItems(container) {
 }
 
 function updateCartBadge() {
-  const existingCountEl = document.querySelector(".cart-count");
   const qty = cart.getTotalQty();
-
-  if (existingCountEl) {
-    existingCountEl.textContent = `Cart (${qty})`;
-  }
-
   const btn = document.getElementById(CART_BUTTON_ID);
   if (btn) {
     const badge = btn.querySelector(".cart-badge");
@@ -455,10 +482,10 @@ function announce(text) {
   }, 2000);
 }
 
-/* Focus trap */
 let _previouslyFocused = null;
 let _trapActive = false;
 let _trapElement = null;
+
 function trapFocus(el) {
   if (_trapActive) return;
   _trapActive = true;
@@ -466,6 +493,7 @@ function trapFocus(el) {
   _previouslyFocused = document.activeElement;
   document.addEventListener("keydown", _onKeyDown, true);
 }
+
 function releaseFocusTrap() {
   if (!_trapActive) return;
   _trapActive = false;
@@ -475,11 +503,11 @@ function releaseFocusTrap() {
     _previouslyFocused.focus();
   }
 }
+
 function _onKeyDown(e) {
   if (!_trapActive || !_trapElement) return;
   if (e.key === "Escape") {
     e.preventDefault();
-    // If checkout is open, close it; else close cart
     if (
       document.getElementById(CHECKOUT_MODAL_ID) &&
       document.getElementById(CHECKOUT_MODAL_ID).classList.contains("open")
@@ -524,16 +552,13 @@ function escapeHtml(str) {
     .replaceAll("'", "&#039;");
 }
 
-/* Auto-wire add-to-cart buttons:
-   - Buttons should have class `.add-to-cart`
-   - Use data attributes: data-id, data-name, data-price-cents (or data-price)
-   - Optional: data-qty (or cart-ui will default to 1)
-*/
 function wireAddToCartButtons() {
   document.querySelectorAll(".add-to-cart").forEach((btn) => {
     if (btn.dataset.cartWired) return;
     btn.dataset.cartWired = "1";
     btn.addEventListener("click", (e) => {
+      showButtonLoading(btn);
+
       const id = btn.dataset.itemId || btn.getAttribute("data-item-id");
       const name =
         btn.dataset.itemName || btn.getAttribute("data-item-name") || id;
@@ -544,28 +569,30 @@ function wireAddToCartButtons() {
         btn.dataset.itemPrice || btn.getAttribute("data-item-price") || null;
       const item = { id, name };
       if (priceCents != null) item.priceCents = Number(priceCents);
-      cart.addItem(item, qty);
-      updateCartUI();
-      announce(`${name} added to cart`);
-      showToast(`${name} added (x${qty})`);
-      const cartBtn = document.getElementById(CART_BUTTON_ID);
-      if (cartBtn) {
-        cartBtn.classList.add("bump");
-        setTimeout(() => cartBtn.classList.remove("bump"), 300);
-      }
+
+      setTimeout(() => {
+        cart.addItem(item, qty);
+        updateCartUI();
+        announce(`${name} added to cart`);
+        showToast(`${name} added (x${qty})`);
+        const cartBtn = document.getElementById(CART_BUTTON_ID);
+        if (cartBtn) {
+          cartBtn.classList.add("bump");
+          setTimeout(() => cartBtn.classList.remove("bump"), 300);
+        }
+        hideButtonLoading(btn);
+      }, 300);
     });
   });
 }
-/* react to global cart changes (e.g. other scripts / other tabs) */
+
 window.addEventListener("cart:changed", (evt) => {
   updateCartUI();
 });
 
-// storage events will fire across tabs when using localStorage
 window.addEventListener("storage", (e) => {
   if (e.key === "lucha_cart_v1") {
     updateCartUI();
-    // If checkout modal is open, refresh its summary
     if (
       document.getElementById(CHECKOUT_MODAL_ID) &&
       document.getElementById(CHECKOUT_MODAL_ID).classList.contains("open")
@@ -579,7 +606,7 @@ export function initCartUI() {
   createCartButton();
   createAnnouncer();
   ensureCartModalExists();
-  ensureCheckoutModalExists(); // create checkout modal upfront
+  ensureCheckoutModalExists();
   ensureToastContainer();
   updateCartUI();
   wireAddToCartButtons();

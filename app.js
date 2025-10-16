@@ -1,4 +1,4 @@
-// app.js - Main application logic
+// app.js - Main application logic (with feedback modal)
 
 /**
  * Sets the active navigation link based on current page
@@ -31,92 +31,57 @@ let currentFilter = "all";
  * Load menu categories from JSON
  */
 async function loadCategories() {
-  console.log("=== loadCategories START ===");
   try {
     const response = await fetch("/menu-categories.json");
-    console.log("Categories response:", response.ok);
     if (!response.ok) throw new Error("Failed to load categories");
     const data = await response.json();
-    console.log("Categories data:", data);
 
-    // Handle both array and object with categories property
     menuCategories = Array.isArray(data) ? data : data.categories || [];
-
-    console.log("Loaded categories array:", menuCategories);
     displayCategories();
   } catch (error) {
     console.error("Error loading categories:", error);
   }
-  console.log("=== loadCategories END ===");
 }
 
 /**
  * Load menu items from JSON
  */
 async function loadMenuItems() {
-  console.log("=== loadMenuItems START ===");
   try {
     const response = await fetch("/menu-items.json");
-    console.log("Menu items response:", response.ok);
     if (!response.ok) throw new Error("Failed to load menu items");
     const data = await response.json();
-    console.log("Menu items data:", data);
 
-    // Handle object with category keys (tacos, burritos, quesadillas)
     if (data && typeof data === "object" && !Array.isArray(data)) {
       menuItems = [];
-      // Flatten all category arrays into single array
       Object.keys(data).forEach((categoryKey) => {
         if (Array.isArray(data[categoryKey])) {
           data[categoryKey].forEach((item) => {
-            // Add categoryKey to each item for filtering (keep original case from JSON key)
             menuItems.push({
               ...item,
-              categoryKey: categoryKey, // This will be "tacos", "burritos", "quesadillas" from JSON keys
-              // Convert price from dollars to cents for consistency
+              categoryKey: categoryKey.toLowerCase().trim(),
               price: Math.round((item.price || 0) * 100),
             });
           });
         }
       });
     } else {
-      // Handle array format
       menuItems = Array.isArray(data) ? data : data.items || [];
     }
 
-    console.log("Loaded menu items:", menuItems);
-    if (menuItems.length > 0) {
-      console.log("Sample item:", menuItems[0]);
-      console.log("Sample item categoryKey:", menuItems[0].categoryKey);
-    }
     displayMenuItems();
   } catch (error) {
     console.error("Error loading menu items:", error);
   }
-  console.log("=== loadMenuItems END ===");
 }
 
 /**
- * Display category buttons - handle both 'name' and 'title' properties
+ * Display category buttons
  */
 function displayCategories() {
-  console.log("=== displayCategories START ===");
   const container = document.querySelector(".menu-categories");
-  console.log("Categories container found:", container);
-  if (!container) {
-    console.error("No .menu-categories container found!");
-    return;
-  }
+  if (!container || !Array.isArray(menuCategories)) return;
 
-  // Ensure menuCategories is an array
-  if (!Array.isArray(menuCategories)) {
-    console.error("menuCategories is not an array:", menuCategories);
-    return;
-  }
-
-  console.log("Creating buttons for categories:", menuCategories);
-
-  // Create "All" button
   let html = `
     <button 
       class="category-btn btn ${
@@ -129,13 +94,10 @@ function displayCategories() {
     </button>
   `;
 
-  // Create category buttons
   html += menuCategories
     .map((category) => {
       const categoryName = category.name || category.title;
-      // Use title.toLowerCase() as the filter key (matches JSON keys: tacos, burritos, quesadillas)
       const categoryKey = (category.title || category.name || "").toLowerCase();
-      console.log("Creating button:", categoryName, "key:", categoryKey);
       return `
     <button 
       class="category-btn btn ${
@@ -151,29 +113,20 @@ function displayCategories() {
     .join("");
 
   container.innerHTML = html;
-  console.log("Buttons HTML inserted into container");
 
-  // Add event listeners to category buttons
   const buttons = container.querySelectorAll(".category-btn");
-  console.log("Found category buttons:", buttons.length);
-  buttons.forEach((btn, index) => {
-    const category = btn.getAttribute("data-category");
-    console.log(`Attaching handler #${index}:`, category);
+  buttons.forEach((btn) => {
     btn.addEventListener("click", handleCategoryClick);
   });
-  console.log("=== displayCategories END ===");
 }
 
 /**
  * Handle category button clicks
  */
 function handleCategoryClick(e) {
-  console.log("=== CATEGORY CLICKED ===");
   const category = e.target.getAttribute("data-category");
-  console.log("Category clicked:", category);
   currentFilter = category;
 
-  // Update active button state
   document.querySelectorAll(".category-btn").forEach((btn) => {
     btn.classList.remove("active", "btn-light");
     btn.classList.add("btn-outline-light");
@@ -181,7 +134,6 @@ function handleCategoryClick(e) {
   e.target.classList.add("active", "btn-light");
   e.target.classList.remove("btn-outline-light");
 
-  // Display filtered items
   displayMenuItems();
 }
 
@@ -189,35 +141,22 @@ function handleCategoryClick(e) {
  * Display menu items (filtered or all)
  */
 function displayMenuItems() {
-  console.log("=== displayMenuItems START ===");
   const container = document.querySelector(".menu-items");
-  console.log("Menu items container found:", container);
-  if (!container) {
-    console.error("No .menu-items container found!");
+  if (!container || !Array.isArray(menuItems)) {
+    if (container) {
+      container.innerHTML = `
+        <div class="text-center text-white py-5">
+          <p>Error loading menu items. Please refresh the page.</p>
+        </div>
+      `;
+    }
     return;
   }
 
-  // Ensure menuItems is an array
-  if (!Array.isArray(menuItems)) {
-    console.error("menuItems is not an array:", menuItems);
-    container.innerHTML = `
-      <div class="text-center text-white py-5">
-        <p>Error loading menu items. Please refresh the page.</p>
-      </div>
-    `;
-    return;
-  }
-
-  // Filter items based on current category
   const filteredItems =
     currentFilter === "all"
       ? menuItems
       : menuItems.filter((item) => item.categoryKey === currentFilter);
-
-  console.log("Current filter:", currentFilter);
-  console.log("Total items:", menuItems.length);
-  console.log("Filtered items:", filteredItems.length);
-  console.log("Filtered items array:", filteredItems);
 
   if (filteredItems.length === 0) {
     container.innerHTML = `
@@ -228,7 +167,6 @@ function displayMenuItems() {
     return;
   }
 
-  // Render menu items
   container.innerHTML = filteredItems
     .map((item) => {
       const priceFormatted = `$${(item.price / 100).toFixed(2)}`;
@@ -283,17 +221,13 @@ function displayMenuItems() {
     })
     .join("");
 
-  console.log("Menu items HTML inserted");
-  // Add event listeners for quantity controls
   attachQuantityControls();
-  console.log("=== displayMenuItems END ===");
 }
 
 /**
  * Attach event listeners to quantity controls
  */
 function attachQuantityControls() {
-  // Plus buttons
   document.querySelectorAll(".qty-plus").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       const itemId = e.currentTarget.getAttribute("data-item-id");
@@ -302,13 +236,12 @@ function attachQuantityControls() {
       );
       if (display) {
         let currentQty = parseInt(display.textContent) || 1;
-        currentQty = Math.min(currentQty + 1, 99); // Max 99
+        currentQty = Math.min(currentQty + 1, 99);
         display.textContent = currentQty;
       }
     });
   });
 
-  // Minus buttons
   document.querySelectorAll(".qty-minus").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       const itemId = e.currentTarget.getAttribute("data-item-id");
@@ -317,13 +250,12 @@ function attachQuantityControls() {
       );
       if (display) {
         let currentQty = parseInt(display.textContent) || 1;
-        currentQty = Math.max(currentQty - 1, 1); // Min 1
+        currentQty = Math.max(currentQty - 1, 1);
         display.textContent = currentQty;
       }
     });
   });
 
-  // Add to cart buttons - ensure proper data attributes for cart-ui.js
   document.querySelectorAll(".add-to-cart").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       e.preventDefault();
@@ -336,11 +268,8 @@ function attachQuantityControls() {
       );
       const qty = qtyDisplay ? parseInt(qtyDisplay.textContent) : 1;
 
-      // Set quantity as data attribute for cart-ui.js to read
       button.setAttribute("data-item-quantity", qty);
 
-      // Manually trigger cart addition if cart-ui.js listener didn't fire
-      // This ensures compatibility
       if (window.cart) {
         const itemName = button.getAttribute("data-item-name");
         const itemPrice = parseInt(button.getAttribute("data-item-price"));
@@ -359,7 +288,6 @@ function attachQuantityControls() {
         }
       }
 
-      // Reset quantity display after adding
       if (qtyDisplay) {
         setTimeout(() => {
           qtyDisplay.textContent = "1";
@@ -367,6 +295,241 @@ function attachQuantityControls() {
       }
     });
   });
+}
+
+/**
+ * Create and inject feedback modal HTML
+ */
+function ensureFeedbackModalExists() {
+  if (document.getElementById("feedback-modal-wrapper")) return;
+
+  const wrapper = document.createElement("div");
+  wrapper.id = "feedback-modal-wrapper";
+  wrapper.className = "feedback-modal-wrapper";
+  wrapper.innerHTML = `
+    <div class="feedback-modal-backdrop"></div>
+    <div class="feedback-modal" role="dialog" aria-modal="true" aria-labelledby="feedback-title" tabindex="-1">
+      <div class="feedback-modal-header">
+        <h2 id="feedback-title">Leave Feedback</h2>
+        <button class="feedback-modal-close" aria-label="Close feedback form">&times;</button>
+      </div>
+      <div class="feedback-modal-body">
+        <div class="feedback-location" id="feedback-location-display"></div>
+        <form id="feedback-form" novalidate>
+          <label>
+            Your Name *
+            <input type="text" name="name" id="feedback-name" required autocomplete="name" />
+          </label>
+          <label>
+            Email *
+            <input type="email" name="email" id="feedback-email" required autocomplete="email" />
+          </label>
+          <label>
+            Phone (optional)
+            <input type="tel" name="phone" id="feedback-phone" autocomplete="tel" />
+          </label>
+          <label>
+            Rating *
+            <select name="rating" id="feedback-rating" required>
+              <option value="">-- Select a rating --</option>
+              <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
+              <option value="4">⭐⭐⭐⭐ Good</option>
+              <option value="3">⭐⭐⭐ Average</option>
+              <option value="2">⭐⭐ Poor</option>
+              <option value="1">⭐ Very Poor</option>
+            </select>
+          </label>
+          <label>
+            Your Feedback *
+            <textarea name="message" id="feedback-message" required placeholder="Tell us what you think..."></textarea>
+          </label>
+          <div class="feedback-form-actions">
+            <button type="button" class="feedback-cancel">Cancel</button>
+            <button type="submit" class="feedback-submit">Submit Feedback</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(wrapper);
+
+  // Wire up close button
+  wrapper
+    .querySelector(".feedback-modal-close")
+    .addEventListener("click", closeFeedbackModal);
+
+  // Wire up cancel button
+  wrapper
+    .querySelector(".feedback-cancel")
+    .addEventListener("click", closeFeedbackModal);
+
+  // Wire up form submission
+  wrapper.querySelector("#feedback-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    handleFeedbackSubmit();
+  });
+
+  // Wire up backdrop click to close
+  wrapper
+    .querySelector(".feedback-modal-backdrop")
+    .addEventListener("click", closeFeedbackModal);
+}
+
+/**
+ * Open feedback modal
+ */
+function openFeedbackModal(location) {
+  ensureFeedbackModalExists();
+  const wrapper = document.getElementById("feedback-modal-wrapper");
+  wrapper.classList.add("open");
+
+  // Set location display
+  const locationDisplay = document.getElementById("feedback-location-display");
+  const locationName =
+    location.charAt(0).toUpperCase() + location.slice(1) + " Location";
+  locationDisplay.textContent = `Feedback for: ${locationName}`;
+
+  // Store location in form for submission
+  document.getElementById("feedback-form").dataset.location = location;
+
+  const modal = wrapper.querySelector(".feedback-modal");
+  modal.focus();
+  trapFeedbackFocus(modal);
+  document.body.classList.add("feedback-open");
+}
+
+/**
+ * Close feedback modal
+ */
+function closeFeedbackModal() {
+  const wrapper = document.getElementById("feedback-modal-wrapper");
+  if (!wrapper) return;
+
+  wrapper.classList.remove("open");
+  document.body.classList.remove("feedback-open");
+  releaseFeedbackFocusTrap();
+
+  // Reset form
+  const form = wrapper.querySelector("#feedback-form");
+  form.reset();
+  clearFeedbackFieldErrors();
+}
+
+/**
+ * Validate and submit feedback
+ */
+function handleFeedbackSubmit() {
+  const form = document.getElementById("feedback-form");
+  const nameInput = form.querySelector("#feedback-name");
+  const emailInput = form.querySelector("#feedback-email");
+  const phoneInput = form.querySelector("#feedback-phone");
+  const ratingInput = form.querySelector("#feedback-rating");
+  const messageInput = form.querySelector("#feedback-message");
+
+  const name = (nameInput.value || "").trim();
+  const email = (emailInput.value || "").trim();
+  const phone = (phoneInput.value || "").trim();
+  const rating = (ratingInput.value || "").trim();
+  const message = (messageInput.value || "").trim();
+  const location = form.dataset.location || "unknown";
+
+  let valid = true;
+  clearFeedbackFieldErrors();
+
+  // Validate name
+  if (!name) {
+    showFeedbackFieldError(nameInput, "Please enter your name");
+    valid = false;
+  }
+
+  // Validate email
+  if (!email) {
+    showFeedbackFieldError(emailInput, "Please enter your email");
+    valid = false;
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showFeedbackFieldError(emailInput, "Please enter a valid email");
+    valid = false;
+  }
+
+  // Validate rating
+  if (!rating) {
+    showFeedbackFieldError(ratingInput, "Please select a rating");
+    valid = false;
+  }
+
+  // Validate message
+  if (!message) {
+    showFeedbackFieldError(messageInput, "Please enter your feedback");
+    valid = false;
+  } else if (message.length < 10) {
+    showFeedbackFieldError(
+      messageInput,
+      "Feedback should be at least 10 characters"
+    );
+    valid = false;
+  }
+
+  if (!valid) return;
+
+  // Prepare payload
+  const payload = {
+    name,
+    email,
+    phone: phone || null,
+    rating: parseInt(rating),
+    message,
+    location,
+    timestamp: new Date().toISOString(),
+  };
+
+  // Emit event for host application to handle (send to server, etc.)
+  window.dispatchEvent(
+    new CustomEvent("feedback:submitted", { detail: payload })
+  );
+
+  // Show success message
+  const form_elem = document.getElementById("feedback-form");
+  const originalHTML = form_elem.innerHTML;
+  form_elem.innerHTML = `
+    <div style="text-align: center; padding: 2rem; color: #198754;">
+      <p style="font-size: 1.2rem; font-weight: 600; margin-bottom: 0.5rem;">Thank you!</p>
+      <p>Your feedback has been submitted. We appreciate your input!</p>
+    </div>
+  `;
+
+  // Close modal after delay
+  setTimeout(() => {
+    closeFeedbackModal();
+    form_elem.innerHTML = originalHTML;
+  }, 2500);
+}
+
+/**
+ * Show field error message
+ */
+function showFeedbackFieldError(inputEl, message) {
+  if (!inputEl) return;
+  inputEl.classList.add("field-error");
+  let err = inputEl.parentNode.querySelector(".field-error-msg");
+  if (!err) {
+    err = document.createElement("div");
+    err.className = "field-error-msg";
+    inputEl.parentNode.appendChild(err);
+  }
+  err.textContent = message;
+}
+
+/**
+ * Clear all field errors
+ */
+function clearFeedbackFieldErrors() {
+  const form = document.getElementById("feedback-form");
+  if (!form) return;
+  form
+    .querySelectorAll(".field-error")
+    .forEach((el) => el.classList.remove("field-error"));
+  form.querySelectorAll(".field-error-msg").forEach((el) => el.remove());
 }
 
 /**
@@ -378,59 +541,91 @@ function setupFeedbackButtons() {
   feedbackButtons.forEach((button) => {
     button.addEventListener("click", (e) => {
       const location = e.target.getAttribute("data-location");
-      showFeedbackModal(location);
+      openFeedbackModal(location);
     });
   });
 }
 
 /**
- * Show feedback modal (placeholder for future implementation)
+ * Focus trap for feedback modal
  */
-function showFeedbackModal(location) {
-  // TODO: Implement feedback modal in Phase 3
-  const locationName = location.charAt(0).toUpperCase() + location.slice(1);
-  alert(
-    `Feedback form for ${locationName} location will be available soon!\n\nThank you for your interest in providing feedback.`
-  );
+let _feedbackPreviousFocused = null;
+let _feedbackTrapActive = false;
+let _feedbackTrapElement = null;
+
+function trapFeedbackFocus(el) {
+  if (_feedbackTrapActive) return;
+  _feedbackTrapActive = true;
+  _feedbackTrapElement = el;
+  _feedbackPreviousFocused = document.activeElement;
+  document.addEventListener("keydown", _feedbackOnKeyDown, true);
+}
+
+function releaseFeedbackFocusTrap() {
+  if (!_feedbackTrapActive) return;
+  _feedbackTrapActive = false;
+  _feedbackTrapElement = null;
+  document.removeEventListener("keydown", _feedbackOnKeyDown, true);
+  if (
+    _feedbackPreviousFocused &&
+    typeof _feedbackPreviousFocused.focus === "function"
+  ) {
+    _feedbackPreviousFocused.focus();
+  }
+}
+
+function _feedbackOnKeyDown(e) {
+  if (!_feedbackTrapActive || !_feedbackTrapElement) return;
+
+  if (e.key === "Escape") {
+    e.preventDefault();
+    closeFeedbackModal();
+    return;
+  }
+
+  if (e.key === "Tab") {
+    const focusable = _feedbackTrapElement.querySelectorAll(
+      'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'
+    );
+    if (!focusable.length) {
+      e.preventDefault();
+      return;
+    }
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey) {
+      if (document.activeElement === first) {
+        last.focus();
+        e.preventDefault();
+      }
+    } else {
+      if (document.activeElement === last) {
+        first.focus();
+        e.preventDefault();
+      }
+    }
+  }
 }
 
 /**
  * Initialize the application
  */
 function init() {
-  console.log("=== INIT START ===");
-  console.log("Document ready state:", document.readyState);
-  console.log(
-    "Looking for .menu-categories:",
-    document.querySelector(".menu-categories")
-  );
-  console.log(
-    "Looking for .menu-items:",
-    document.querySelector(".menu-items")
-  );
-
   // Load menu data if we're on the order page
   if (document.querySelector(".menu-categories")) {
-    console.log("Found menu elements - loading menu data");
     loadCategories();
     loadMenuItems();
-  } else {
-    console.log("No menu elements found - skipping menu load");
   }
 
   // Setup feedback buttons if they exist
   if (document.querySelector(".feedback-button")) {
-    console.log("Found feedback buttons - setting up handlers");
     setupFeedbackButtons();
   }
-  console.log("=== INIT END ===");
 }
 
 // Initialize on DOM ready
 if (document.readyState === "loading") {
-  console.log("Document still loading, waiting for DOMContentLoaded");
   document.addEventListener("DOMContentLoaded", init);
 } else {
-  console.log("Document already loaded, running init immediately");
   init();
 }

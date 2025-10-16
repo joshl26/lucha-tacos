@@ -84,34 +84,53 @@ main {
   box-shadow: 0 8px 16px rgba(255, 255, 255, 0.1);
 }
 
-/* Content sections spacing */
+/* Content sections spacing - IMPROVED */
 section {
   padding: 2rem 0;
+  flex-shrink: 0;
 }
 
 .content-section {
   padding: 3rem 1rem;
+  flex-shrink: 0;
 }
 
 .content-text {
   padding: 2rem;
+  flex-shrink: 0;
 }
 
 .location-section {
   padding: 3rem 0;
   margin-top: 3rem;
+  flex-shrink: 0;
 }
 
 .image-gallery {
   padding: 1rem 0;
   margin: 2rem 0;
+  flex-shrink: 0;
 }
 
+/* Article/about page content */
+article {
+  padding: 2rem;
+  flex-shrink: 0;
+  min-height: auto;
+}
+
+/* Footer always at bottom */
 .footer-container {
   margin-top: auto;
-  min-height: 100px;
+  min-height: 120px;
   padding-top: 3rem;
   padding-bottom: 2rem;
+  flex-shrink: 0;
+  width: 100%;
+}
+
+.footer {
+  width: 100%;
 }
 
 .alef-regular {
@@ -555,27 +574,38 @@ section {
   box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.18);
 }
 
-/* Menu item hover effects */
+/* Menu item hover effects - enhanced */
 .menu-item {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 2px solid transparent;
 }
 
 .menu-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(255, 255, 255, 0.1);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(255, 255, 255, 0.15);
+  border-color: #dc3545;
 }
 
-/* Category button hover effects */
+.menu-item:active {
+  transform: translateY(-2px);
+}
+
+/* Category button hover effects - enhanced */
 .category-btn {
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
 }
 
 .category-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(255, 255, 255, 0.25);
 }
 
-/* Feedback button hover effects */
+.category-btn:active {
+  transform: translateY(-1px);
+}
+
+/* Feedback button hover effects - enhanced */
 .feedback-button {
   background: #dc3545;
   color: white;
@@ -584,27 +614,68 @@ section {
   border-radius: 6px;
   cursor: pointer;
   font-weight: 600;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.feedback-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  transition: left 0.3s ease;
+  z-index: -1;
 }
 
 .feedback-button:hover {
   background: #c82333;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 16px rgba(220, 53, 69, 0.4);
 }
 
-/* Delivery image hover effects */
+.feedback-button:hover::before {
+  left: 0;
+}
+
+.feedback-button:active {
+  transform: translateY(-1px);
+}
+
+/* Delivery image hover effects - enhanced */
 .delivery-image {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   cursor: pointer;
+  border-radius: 4px;
 }
 
 .delivery-image:hover {
-  transform: scale(1.05);
-  box-shadow: 0 8px 16px rgba(255, 255, 255, 0.1);
+  transform: scale(1.08);
+  box-shadow: 0 12px 28px rgba(255, 255, 255, 0.2);
+}
+
+.delivery-image:active {
+  transform: scale(1.04);
 }
 
 /* Responsive adjustments */
+@media (max-width: 1024px) {
+  section {
+    padding: 1.75rem 0;
+  }
+
+  .content-section {
+    padding: 2.5rem 1rem;
+  }
+
+  article {
+    padding: 1.75rem;
+  }
+}
+
 @media (max-width: 768px) {
   #cart-button-container {
     margin-left: 0.5rem;
@@ -633,6 +704,15 @@ section {
 
   .content-section {
     padding: 2rem 0.5rem;
+  }
+
+  article {
+    padding: 1.5rem;
+  }
+
+  .location-section {
+    padding: 2rem 0;
+    margin-top: 2rem;
   }
 }
 
@@ -677,18 +757,33 @@ section {
   .image-gallery {
     margin: 1rem 0;
   }
+
+  article {
+    padding: 1rem;
+  }
 }
 
-@media (max-width: 400px) {
-  .hero-text {
-    font-size: 2rem;
+/* Loading spinner animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
+}
 
-  .hero-container {
-    top: 12%;
-  }
+.btn-loading {
+  opacity: 0.6;
+  pointer-events: none;
+  position: relative;
+}
 
-  .content-text {
-    padding: 0.75rem;
-  }
+.btn-loading::after {
+  content: "";
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-left: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
 }
