@@ -1,0 +1,441 @@
+### Lucha Libre — Phase 4 Detailed Test Case Sheet (MDX)
+
+#### Description
+This MDX test-case sheet contains detailed, actionable test cases for frontend, cart logic, navigation, accessibility, performance, cross-browser, security, and smoke checks. Each test case includes ID, Title, Preconditions, Steps, Expected Result, Priority, Estimated Time, Automation candidate, and Test Data.
+
+---
+
+#### Notes about some uploaded files
+The following files are important for automated tests and code review: app.js, hamburger-menu.js, cart.js, cart-ui.js, cart.test.js — these documents can only be used in code execution.  
+Potential reasons text extraction failed earlier:
+- File uploaded with non-text MIME type or treated as binary.  
+- Encoding mismatch (not UTF-8) or hidden BOM.  
+- Minified/packed or transpiled artifact that extraction tools skip.  
+- Uploaded inside an archive container or with corrupted metadata.  
+
+If you want me to run tests or read these files directly, re-upload as plain UTF-8 .js files OR allow me to run the test suite in the project workspace. Example commands to run tests locally / in CI (useful when these documents are available for execution):
+
+```bash
+# install
+npm ci
+
+# run unit tests (Jest example)
+npx jest tests/cart.test.js --runInBand
+
+# run all tests
+npm test
+
+# run Cypress E2E (if configured)
+npx cypress run
+
+# run Playwright
+npx playwright test
+```
+
+Example unit-test snippet referencing cart logic (cart.test.js -> cart.js):
+
+```javascript
+// tests/cart.test.js
+const Cart = require('../cart.js');
+
+test('adds item and updates total', () => {
+  const cart = new Cart();
+  cart.add({ id: 1, price: 9.99 }, 2);
+  expect(cart.total()).toBeCloseTo(19.98);
+});
+```
+
+Example Cypress E2E snippet (automation candidate):
+
+```javascript
+// cypress/e2e/add_to_cart.cy.js
+describe('Add to cart flow', () => {
+  it('adds an item and persists after reload', () => {
+    cy.visit('/menu.html');
+    cy.get('[data-test="menu-item-1"] button.add-to-cart').click();
+    cy.get('#mini-cart .count').should('contain', '1');
+    cy.reload();
+    cy.get('#mini-cart .count').should('contain', '1');
+  });
+});
+```
+
+---
+
+### Test Case Index
+- UI-001 — Menu Page Load & Content
+- UI-002 — Category Navigation
+- NAV-001 — Hamburger Menu (mobile)
+- CART-001 — Add Item to Cart (single)
+- CART-002 — Add Multiple Items & Totals
+- CART-003 — Update Quantity
+- CART-004 — Remove Item
+- CART-005 — Cart Persistence (localStorage/sessionStorage)
+- CART-006 — Price Math & Rounding (tax, subtotal, discounts)
+- INTEGR-001 — Add-to-Cart Button Wiring (integration)
+- INTEGR-002 — Mini-cart UI Sync with cart.js/cart-ui.js
+- E2E-001 — Full Checkout Flow (mocked payment)
+- A11Y-001 — Keyboard Navigation (menu & cart)
+- A11Y-002 — Contrast & Alt Text
+- PERF-001 — Menu Page LCP/FCP baseline
+- CROSS-001 — Cross-browser smoke (Chrome, Firefox, Safari, Edge)
+- SEC-001 — XSS / Input sanitization
+- SMOKE-001 — Staging Smoke (deploy verification)
+- TESTDATA-001 — Large cart stress test
+- CI-001 — CI pipeline tests & flaky detection
+
+---
+
+### Detailed Test Cases
+
+#### UI-001 — Menu Page Load & Content
+- ID: UI-001  
+- Title: Menu page loads and displays categories & items  
+- Preconditions: staging or local server running; menu JSON available.  
+- Steps:
+  1. Navigate to /menu or homepage where menu is shown.
+  2. Observe that category tiles render (Tacos, Burritos, Quesadillas).
+  3. Scroll through list and open at least one item detail/expand.  
+- Expected Result: All categories appear with images and titles; clicking an item opens details; no console errors.  
+- Priority: High  
+- Estimated Time: 5 min  
+- Automation: Yes (Playwright/Cypress)  
+- Test Data: menu-categories.json, menu-items.json
+
+#### UI-002 — Category Navigation
+- ID: UI-002  
+- Title: Category filters and links navigate correctly  
+- Preconditions: Menu page loaded.  
+- Steps:
+  1. Click "Tacos" category.
+  2. Verify only tacos items are visible.
+  3. Click "Burritos" and verify items switch.  
+- Expected Result: Category selection filters items; URL state updates (if SPA) or anchors behave.  
+- Priority: Medium  
+- Estimated Time: 5 min  
+- Automation: Yes
+
+#### NAV-001 — Hamburger Menu (mobile)
+- ID: NAV-001  
+- Title: Mobile hamburger opens/closes and keyboard accessible  
+- Preconditions: Viewport set to mobile (e.g., 375x812).  
+- Steps:
+  1. Tap hamburger icon.
+  2. Verify menu slides out and focus shifts into menu.
+  3. Use keyboard Tab to navigate; press Esc to close; click outside to close.  
+- Expected Result: Hamburger toggles, focus managed, aria-expanded toggles, no focus trap leak.  
+- Priority: High  
+- Estimated Time: 10 min  
+- Automation: Partial (visual + aria checks scriptable)  
+- Relevant files: hamburger-menu.js — these documents can only be used in code execution
+
+Provide JS event-delegation example for hamburger toggle:
+
+```javascript
+// hamburger-menu.js (example)
+const btn = document.querySelector('.hamburger');
+const nav = document.querySelector('.nav');
+btn.addEventListener('click', () => {
+  const open = btn.getAttribute('aria-expanded') === 'true';
+  btn.setAttribute('aria-expanded', String(!open));
+  nav.classList.toggle('open', !open);
+});
+```
+
+#### CART-001 — Add Item to Cart (single)
+- ID: CART-001  
+- Title: Add single item to cart and verify counts & subtotal  
+- Preconditions: Menu item visible, cart empty.  
+- Steps:
+  1. Click "Add to cart" for item id=1.
+  2. Open mini-cart.
+  3. Observe item listed with qty 1 and correct price.  
+- Expected Result: Mini-cart count increments to 1; subtotal equals item price; localStorage updated (if used).  
+- Priority: Critical  
+- Estimated Time: 5 min  
+- Automation: Yes (Jest + DOM / Cypress)  
+- Relevant files: cart.js, cart-ui.js — these documents can only be used in code execution
+
+Example unit test for add operation:
+
+```javascript
+// tests/cart.test.js
+const Cart = require('../cart.js');
+
+test('add single item updates count and total', () => {
+  const cart = new Cart();
+  cart.add({ id: 1, price: 12.50 }, 1);
+  expect(cart.count()).toBe(1);
+  expect(cart.total()).toBeCloseTo(12.50);
+});
+```
+
+#### CART-002 — Add Multiple Items & Totals
+- ID: CART-002  
+- Title: Add different items and compute totals correctly  
+- Preconditions: Items available with known prices.  
+- Steps:
+  1. Add item A (price 9.99), qty 1.
+  2. Add item B (price 15.00), qty 2.
+  3. Open cart and check totals, tax, and grand total (if applicable).  
+- Expected Result: Subtotal = 9.99 + (15.00*2) = 39.99; tax and rounding follow expected rules; UI displays matching amounts.  
+- Priority: Critical  
+- Estimated Time: 8 min  
+- Automation: Yes
+
+#### CART-003 — Update Quantity
+- ID: CART-003  
+- Title: Change item quantity from cart UI and verify recalculation  
+- Preconditions: Cart has at least one item.  
+- Steps:
+  1. In mini-cart, update qty for item A from 1 → 3.
+  2. Observe subtotal and line total update.
+  3. Reload page and confirm persisted value (if persisted).  
+- Expected Result: Line total = item price * 3; subtotal updated; persisted state reflects change.  
+- Priority: High  
+- Estimated Time: 6 min  
+- Automation: Yes
+
+#### CART-004 — Remove Item
+- ID: CART-004  
+- Title: Remove item from cart and verify UI & storage  
+- Preconditions: Cart contains multiple items.  
+- Steps:
+  1. Click remove on item B.
+  2. Confirm removal if modal exists.
+  3. Validate item not present and totals recalc.  
+- Expected Result: Item removed, count decremented, totals correct, localStorage updated.  
+- Priority: High  
+- Estimated Time: 5 min  
+- Automation: Yes
+
+#### CART-005 — Cart Persistence (localStorage/sessionStorage)
+- ID: CART-005  
+- Title: Ensure cart persists across navigation and reloads  
+- Preconditions: Cart contains items; persistence expected.  
+- Steps:
+  1. Add several items to cart.
+  2. Refresh page.
+  3. Navigate to another category and back.  
+- Expected Result: Cart contents persist; no duplicate entries; timestamps (if any) are sane.  
+- Priority: Critical  
+- Estimated Time: 10 min  
+- Automation: Yes (E2E)
+
+#### CART-006 — Price Math & Rounding (tax, subtotal, discounts)
+- ID: CART-006  
+- Title: Verify price calculations, tax rounding, and promo application  
+- Preconditions: Tax rate/promo configured in app or test ENV.  
+- Steps:
+  1. Add items whose combined price causes rounding differences (e.g., 0.01 cent effects).
+  2. Apply promo code (if exists).
+  3. Compare displayed totals with calculated.  
+- Expected Result: Calculations follow spec; rounding to 2 decimals; promotions subtract correctly.  
+- Priority: Critical  
+- Estimated Time: 15 min  
+- Automation: Yes (unit tests for rounding logic in cart.js)
+
+Example rounding unit test:
+
+```javascript
+test('tax and rounding are consistent', () => {
+  const cart = new Cart({ taxRate: 0.0875 }); // example 8.75%
+  cart.add({ id: 1, price: 0.10 }, 1);
+  // expected tax = 0.00875 -> rounds to 0.01
+  expect(cart.tax()).toBeCloseTo(0.01);
+  expect(cart.total()).toBeCloseTo(0.11);
+});
+```
+
+#### INTEGR-001 — Add-to-Cart Button Wiring
+- ID: INTEGR-001  
+- Title: Ensure Add-to-cart buttons call cart API and UI updates  
+- Preconditions: DOM contains .add-to-cart buttons with data-id.  
+- Steps:
+  1. Click Add on several items.
+  2. Inspect network/console for errors.
+  3. Validate cart data model updated.  
+- Expected Result: No JS exceptions, UI and model in sync.  
+- Priority: High  
+- Estimated Time: 10 min  
+- Automation: Yes (integration tests with jsdom or headless browser)
+
+#### INTEGR-002 — Mini-cart UI Sync with cart.js/cart-ui.js
+- ID: INTEGR-002  
+- Title: Mini-cart reflect state changes in cart.js immediately  
+- Preconditions: Cart UI bound to cart model.  
+- Steps:
+  1. Programmatically call cart.add/remove and confirm UI changes.
+  2. Perform both UI-triggered and code-triggered updates.  
+- Expected Result: UI always matches model; no stale state.  
+- Priority: High  
+- Estimated Time: 10 min  
+- Automation: Yes
+
+Relevant files: cart-ui.js, cart.js — these documents can only be used in code execution
+
+#### E2E-001 — Full Checkout Flow (mocked payment)
+- ID: E2E-001  
+- Title: End-to-end: browse, add, checkout, order confirmation (payment mocked)  
+- Preconditions: Staging with mocked payment endpoint or sandbox credentials.  
+- Steps:
+  1. Add items and proceed to checkout.
+  2. Fill required fields (name, address, email).
+  3. Use sandbox card or mock payment flow.
+  4. Submit and confirm order success screen and email trigger (if applicable).  
+- Expected Result: Order completes, confirmation displayed, cart cleared after order.  
+- Priority: Critical  
+- Estimated Time: 20–40 min  
+- Automation: Yes (Cypress/Playwright recommended)  
+- Test Data: sandbox credentials or mocked endpoint.
+
+Example Playwright checkout snippet:
+
+```javascript
+// playwright/tests/checkout.spec.js
+await page.goto('/menu');
+await page.click('[data-test="menu-item-1"] button.add-to-cart');
+await page.click('#checkout-btn');
+await page.fill('#name', 'Test User');
+await page.fill('#email', 'test@example.com');
+// mock payment or use test card
+await page.click('#submit-order');
+await expect(page).toHaveURL('/order-confirmation');
+```
+
+#### A11Y-001 — Keyboard Navigation (menu & cart)
+- ID: A11Y-001  
+- Title: Keyboard-only access to menu, add-to-cart, and cart modal  
+- Preconditions: Page loaded.  
+- Steps:
+  1. Tab through page to menu items, "Add to cart", open cart, and close.  
+  2. Verify focus states and visible focus ring.  
+- Expected Result: All interactive elements reachable by keyboard; skip links work; no trapped focus.  
+- Priority: High  
+- Estimated Time: 15 min  
+- Automation: Partial (axe-core) + manual verification  
+- Tools: [axe-core](https://github.com/dequelabs/axe-core), [Lighthouse](https://developers.google.com/web/tools/lighthouse)
+
+#### A11Y-002 — Contrast & Alt Text
+- ID: A11Y-002  
+- Title: Images have alt text; contrast ratios meet WCAG AA  
+- Preconditions: UI with images and text.  
+- Steps:
+  1. Run axe / lighthouse audits.
+  2. Manual verify alt attributes for all product images.  
+- Expected Result: No critical a11y violations; alt text meaningful; contrast >= 4.5:1 for body text.  
+- Priority: High  
+- Estimated Time: 10 min  
+- Automation: Yes (axe/lighthouse)
+
+#### PERF-001 — Menu Page LCP/FCP baseline
+- ID: PERF-001  
+- Title: Run Lighthouse and record FCP, LCP, CLS, TBT  
+- Preconditions: Staging environment reachable.  
+- Steps:
+  1. Run Lighthouse for the menu page (desktop & mobile).
+  2. Capture metrics and compare to thresholds (e.g., LCP < 2.5s).  
+- Expected Result: Metrics within acceptable ranges or actionable items listed.  
+- Priority: Medium  
+- Estimated Time: 15 min  
+- Automation: Yes (lighthouse CI)
+
+Command example:
+
+```bash
+npx lighthouse https://staging.example.com/menu --only-categories=performance --chrome-flags="--headless"
+```
+
+#### CROSS-001 — Cross-browser smoke
+- ID: CROSS-001  
+- Title: Smoke test on Chrome, Firefox, Safari, Edge (desktop + iOS)  
+- Preconditions: BrowserStack or equivalent available, or local installs.  
+- Steps:
+  1. Run the critical smoke flow (add → cart → checkout) on each browser.
+  2. Validate UI and console for errors.  
+- Expected Result: Core flows work on major browsers; no browser-specific regressions.  
+- Priority: High  
+- Estimated Time: 30–60 min  
+- Automation: Yes (Playwright supports browser matrix)
+
+#### SEC-001 — XSS / Input sanitization
+- ID: SEC-001  
+- Title: Check that item descriptions and user inputs are sanitized and not injectable  
+- Preconditions: Test page with item detail or checkout notes.  
+- Steps:
+  1. Input a script tag into notes or a profile field.
+  2. Submit and observe rendered UI and network.  
+- Expected Result: Input is sanitized/escaped; script not executed.  
+- Priority: High  
+- Estimated Time: 15 min  
+- Automation: Partial (security scanner) + manual  
+- Tools: OWASP ZAP, manual tests
+
+#### SMOKE-001 — Staging Smoke (deploy verification)
+- ID: SMOKE-001  
+- Title: Smoke suite after each staging deploy (short & fast)  
+- Preconditions: New staging deploy.  
+- Steps:
+  1. Run scripted smoke: home load, menu load, add item, open cart, checkout mock.  
+  2. Check logs and error dashboards.  
+- Expected Result: All steps succeed; no regressions; critical errors flagged.  
+- Priority: Critical  
+- Estimated Time: 5–10 min  
+- Automation: Yes (Cypress/Playwright CI job)
+
+#### TESTDATA-001 — Large cart stress test
+- ID: TESTDATA-001  
+- Title: Add 50+ items and validate UI, storage limits, and performance  
+- Preconditions: Many distinct items available (or loop same item).  
+- Steps:
+  1. Programmatically add 50 items with varying qty.
+  2. Observe UI performance and memory; export/checkout simulation.  
+- Expected Result: UI remains responsive; totals accurate; localStorage not corrupted.  
+- Priority: Medium  
+- Estimated Time: 15 min  
+- Automation: Yes (scripted)
+
+#### CI-001 — CI pipeline tests & flaky detection
+- ID: CI-001  
+- Title: Ensure unit + integration + smoke run in CI, detect flakiness  
+- Preconditions: CI configured (GitHub Actions/GitLab).  
+- Steps:
+  1. Add tests to CI workflow (npm test, cypress run, lighthouse-ci).
+  2. Use artifacts for failures and rerun flakey tests policy.  
+- Expected Result: Green builds for PRs; failing tests fail pipeline; flaky tests annotated.  
+- Priority: High  
+- Estimated Time: Setup 1–2 hours; run 10–30 min per build  
+- Automation: Yes
+
+---
+
+### Test Data Samples
+- menu-items.json (canonical sample)  
+- promo codes: TEST10 (10% off), FREEDEL (free delivery)  
+- Payment sandbox: use gateway test card numbers (do not use real cards)  
+- User fixtures: testuser1@example.com / 123 Main St
+
+---
+
+### Automation Recommendations & Mapping
+- Unit tests (Jest) for cart.js, cart.test.js — automate fully.  
+- Integration tests (jsdom / Jest DOM) for cart-ui.js wiring.  
+- E2E (Cypress or Playwright) for full user flows and smoke. Use Playwright for cross-browser matrix.  
+- Accessibility: integrate axe-core with Cypress or use lighthouse-ci for scheduled runs.  
+- Performance: run Lighthouse CI on PRs for main pages.
+
+Helpful docs:
+- Jest: [Jest](https://jestjs.io/)  
+- Cypress: [Cypress](https://www.cypress.io/)  
+- Playwright: [Playwright](https://playwright.dev/)  
+- Axe-core: [axe-core](https://github.com/dequelabs/axe-core)  
+- Lighthouse: [Lighthouse](https://developers.google.com/web/tools/lighthouse)
+
+---
+
+### Deliverables I can produce next (pick one)
+- Full CSV/MDX test cases converted to a spreadsheet-ready CSV.  
+- Automated test skeletons: Jest test file for cart + Cypress smoke tests (I will output code examples you can paste).  
+- Run unit tests now and share results (requires code execution access).  
+
+Which would you like next? If you want the MDX file saved as an actual file, tell me “Create MDX file” and I’ll produce the file content or create it in the workspace.

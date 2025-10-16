@@ -1,0 +1,73 @@
+# .github/workflows/ci.yml
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  unit-tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests
+        run: npm test -- --runInBand
+        env:
+          CI: true
+
+      - name: Upload coverage (if you generate coverage)
+        if: success() && steps['Run unit tests'] # no explicit artifact without coverage script
+        run: echo "Add coverage upload step here if you use coverage tooling (e.g. codecov)."
+
+  # Optional: Cypress E2E (requires a server step to run your app on CI)
+  # e2e:
+  #   name: E2E (Cypress)
+  #   runs-on: ubuntu-latest
+  #   needs: unit-tests
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 18.x
+  #     - name: Install deps
+  #       run: npm ci
+  #     - name: Start app (adapt command to your project)
+  #       run: npm run start & npx wait-on http://localhost:3000
+  #     - name: Run Cypress tests
+  #       run: npx cypress run
+  #       env:
+  #         CI: true
+
+  # Optional: Lighthouse CI (needs a running site and LHCI token for uploading)
+  # lighthouse:
+  #   name: Lighthouse CI
+  #   runs-on: ubuntu-latest
+  #   needs: unit-tests
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 18.x
+  #     - run: npm ci
+  #     - name: Start app
+  #       run: npm run start & npx wait-on http://localhost:3000
+  #     - name: Run LHCI autorun
+  #       run: npx @lhci/cli autorun --upload.target=temporary-public-storage
+  #       # For persistent LHCI upload, configure LHCI_TOKEN as secret and set upload.target=lhci

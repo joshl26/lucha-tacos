@@ -1,11 +1,12 @@
 // cart.js
 // ES module — in-memory cart with configurable storage persistence and change events.
-// Default storage is localStorage (cross-tab sync). Prices are handled as integer cents.
+// Default storage is localStorage (cross-tab sync). Prices are handled as dollars by default.
 
 const STORAGE_KEY = "lucha_cart_v1";
 
 // Storage mode: 'local' (localStorage, cross-tab) or 'session' (sessionStorage, per-tab).
 let _storageMode = "local"; // default per decision 1 (cross-tab persistence enabled)
+let _customStorage = null; // For testability/injection
 
 /**
  * Set storage mode at runtime.
@@ -40,7 +41,15 @@ export function setStorageMode(mode) {
   }
 }
 
+// For testability
+export function __setStorageProvider(provider) {
+  _customStorage = provider;
+}
+
 function _getStorage(forceMode) {
+  // Use custom provider if set (for testing)
+  if (_customStorage) return _customStorage;
+
   const mode = forceMode || _storageMode;
   try {
     if (
@@ -73,29 +82,56 @@ function _getStorage(forceMode) {
   };
 }
 
-export function createCart(initialState = {}) {
-  const items = new Map(); // key: id -> { id, name, priceCents, qty, meta }
+// Improved price conversion - always treat numbers as dollars unless priceCents provided
+const toCents = (price) => {
+  if (price == null) return 0;
+  if (typeof price === "number") return Math.round(price * 100);
+  const s = String(price).trim();
+  // remove currency symbols
+  const parsed = Number(s.replace(/[^0-9.-]+/g, ""));
+  return Number.isFinite(parsed) ? Math.round(parsed * 100) : 0;
+};
 
-  const toCents = (price) => {
-    if (price == null) return 0;
-    if (Number.isInteger(price)) return price; // already cents
-    return Math.round(Number(price) * 100);
-  };
+export function createCart(initialState = {}, options = {}) {
+  const items = new Map(); // key: id -> { id, name, priceCents, qty, meta }
+  const storageProvider = options.storageProvider || _getStorage;
+  const persistDebounceMs = options.persistDebounceMs || 0;
+
+  let persistTimeout = null;
 
   function persist() {
-    try {
-      const summary = getSummary();
-      const raw = JSON.stringify(summary);
-      const storage = _getStorage();
-      storage.setItem(STORAGE_KEY, raw);
-    } catch (err) {
-      console.warn("cart: unable to persist to storage", err);
+    // Clear existing timeout if debouncing
+    if (persistDebounceMs > 0 && persistTimeout) {
+      clearTimeout(persistTimeout);
+    }
+
+    const doPersist = () => {
+      try {
+        const summary = getSummary();
+        const raw = JSON.stringify(summary);
+        const storage =
+          typeof storageProvider === "function"
+            ? storageProvider()
+            : storageProvider;
+        storage.setItem(STORAGE_KEY, raw);
+      } catch (err) {
+        console.warn("cart: unable to persist to storage", err);
+      }
+    };
+
+    if (persistDebounceMs > 0) {
+      persistTimeout = setTimeout(doPersist, persistDebounceMs);
+    } else {
+      doPersist();
     }
   }
 
   function restore() {
     try {
-      const storage = _getStorage();
+      const storage =
+        typeof storageProvider === "function"
+          ? storageProvider()
+          : storageProvider;
       const raw = storage.getItem(STORAGE_KEY);
       if (!raw) return;
       const summary = JSON.parse(raw);
@@ -130,6 +166,7 @@ export function createCart(initialState = {}) {
   function addItem(item, qty = 1) {
     if (!item || !item.id) throw new Error("addItem: item must have an id");
     const id = String(item.id);
+    // Use priceCents if provided, otherwise convert price to cents
     const priceCents =
       item.priceCents != null ? Number(item.priceCents) : toCents(item.price);
     const name = item.name || item.title || id;
@@ -247,6 +284,7 @@ export function createCart(initialState = {}) {
     dispatchChange();
   }
 
+  // Public API
   return {
     addItem,
     updateQty,
