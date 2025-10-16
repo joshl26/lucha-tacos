@@ -3,62 +3,264 @@
     {
       "id": 1,
       "title": "Carne Asada Tacos",
-      "description": "3 soft-shell 4 inch corn tortilla garnish with flank steak, white onion, cilantro in the french fries on the side.",
+      "description": "3 soft-shell 4 inch corn tortilla garnished with flank steak, white onion, cilantro and french fries on the side.",
+      "detailedDescription": "Perfectly grilled flank steak marinated in our secret blend of spices, served on authentic corn tortillas with fresh white onions and cilantro. Chef's favorite!",
       "price": 18.99,
       "qty": 1,
-      "image": "/public/menu-tacos.jpg"
+      "image": "/public/menu-tacos.jpg",
+      "spicyLevel": 1,
+      "isVegetarian": false,
+      "isGlutenFree": true,
+      "ingredients": [
+        "flank steak",
+        "corn tortilla",
+        "white onion",
+        "cilantro",
+        "lime",
+        "spices"
+      ],
+      "allergens": ["gluten (fries)"],
+      "calories": 580,
+      "staffPick": true
     },
     {
       "id": 2,
       "title": "Pollo Asado Tacos",
-      "description": "3 soft shell 4 inch corn tortilla with grilled chicken, white onion, cilantro in the french fries on the side.",
+      "description": "3 soft shell 4 inch corn tortilla with grilled chicken, white onion, cilantro and french fries on the side.",
+      "detailedDescription": "Tender grilled chicken breast marinated in citrus and herbs, topped with fresh onions and cilantro. A crowd favorite!",
       "price": 17.99,
       "qty": 1,
-      "image": "/public/menu-tacos.jpg"
+      "image": "/public/menu-tacos.jpg",
+      "spicyLevel": 1,
+      "isVegetarian": false,
+      "isGlutenFree": true,
+      "ingredients": [
+        "chicken breast",
+        "corn tortilla",
+        "white onion",
+        "cilantro",
+        "lime",
+        "citrus marinade"
+      ],
+      "allergens": ["gluten (fries)"],
+      "calories": 520
     },
     {
       "id": 3,
       "title": "Chorizo Tacos",
-      "description": "3 soft shell 4 inch corn tortilla filled with Mexican sausage, white onion, cilantro in the french fries on the side.",
+      "description": "3 soft shell 4 inch corn tortilla filled with Mexican sausage, white onion, cilantro and french fries on the side.",
+      "detailedDescription": "Authentic Mexican chorizo with a bold, smoky flavor that packs a punch. Not for the faint of heart!",
       "price": 20.99,
       "qty": 1,
-      "image": "/public/menu-tacos.jpg"
+      "image": "/public/menu-tacos.jpg",
+      "spicyLevel": 3,
+      "isVegetarian": false,
+      "isGlutenFree": true,
+      "ingredients": [
+        "Mexican chorizo",
+        "corn tortilla",
+        "white onion",
+        "cilantro",
+        "spices"
+      ],
+      "allergens": ["gluten (fries)", "pork"],
+      "calories": 680
+    },
+    {
+      "id": 8,
+      "title": "Veggie Supreme Tacos",
+      "description": "3 soft shell corn tortillas filled with grilled vegetables, black beans, and fresh guacamole.",
+      "detailedDescription": "A delicious plant-based option featuring seasonal grilled vegetables, creamy black beans, and house-made guacamole.",
+      "price": 15.99,
+      "qty": 1,
+      "image": "/public/menu-tacos.jpg",
+      "spicyLevel": 1,
+      "isVegetarian": true,
+      "isVegan": true,
+      "isGlutenFree": true,
+      "ingredients": [
+        "bell peppers",
+        "zucchini",
+        "black beans",
+        "corn tortilla",
+        "guacamole",
+        "cilantro"
+      ],
+      "allergens": [],
+      "calories": 420,
+      "staffPick": true
     }
   ],
   "burritos": [
     {
       "id": 4,
-      "title": "Carne Asada Burritos",
+      "title": "Carne Asada Burrito",
       "description": "Flank steak, black beans, lettuce, jalapeno, ranchero sauce, sour cream, avocado mayonnaise & side fries.",
+      "detailedDescription": "A massive burrito stuffed with tender carne asada, seasoned black beans, and all the fixings. Comes with crispy fries.",
       "price": 17.99,
       "qty": 1,
-      "image": "/public/menu-burritos.jpg"
+      "image": "/public/menu-burritos.jpg",
+      "spicyLevel": 2,
+      "isVegetarian": false,
+      "isGlutenFree": false,
+      "ingredients": [
+        "flank steak",
+        "flour tortilla",
+        "black beans",
+        "lettuce",
+        "jalapeno",
+        "ranchero sauce",
+        "sour cream",
+        "avocado mayo",
+        "rice"
+      ],
+      "allergens": ["gluten", "dairy"],
+      "calories": 920
     },
     {
       "id": 5,
-      "title": "Pollo Asado Burritos",
+      "title": "Pollo Asado Burrito",
       "description": "Grilled chicken, black beans, lettuce, jalapeno, ranchero sauce, sour cream, avocado mayonnaise & side fries.",
+      "detailedDescription": "Grilled chicken breast wrapped with beans, rice, and fresh toppings in a warm flour tortilla. Satisfying and delicious!",
       "price": 17.99,
       "qty": 1,
-      "image": "/public/menu-burritos.jpg"
+      "image": "/public/menu-burritos.jpg",
+      "spicyLevel": 2,
+      "isVegetarian": false,
+      "isGlutenFree": false,
+      "ingredients": [
+        "chicken breast",
+        "flour tortilla",
+        "black beans",
+        "lettuce",
+        "jalapeno",
+        "ranchero sauce",
+        "sour cream",
+        "avocado mayo",
+        "rice"
+      ],
+      "allergens": ["gluten", "dairy"],
+      "calories": 850,
+      "staffPick": true
     },
     {
       "id": 6,
-      "title": "Chorizo Burritos",
+      "title": "Chorizo Burrito",
       "description": "Mexican sausage, black beans, lettuce, jalapeno, ranchero sauce, sour cream, avocado mayonnaise & side fries.",
+      "detailedDescription": "Bold and spicy chorizo burrito loaded with beans, rice, and zesty toppings. For those who love heat!",
       "price": 20.99,
       "qty": 1,
-      "image": "/public/menu-burritos.jpg"
+      "image": "/public/menu-burritos.jpg",
+      "spicyLevel": 3,
+      "isVegetarian": false,
+      "isGlutenFree": false,
+      "ingredients": [
+        "Mexican chorizo",
+        "flour tortilla",
+        "black beans",
+        "lettuce",
+        "jalapeno",
+        "ranchero sauce",
+        "sour cream",
+        "avocado mayo",
+        "rice"
+      ],
+      "allergens": ["gluten", "dairy", "pork"],
+      "calories": 1020
+    },
+    {
+      "id": 9,
+      "title": "Bean & Cheese Burrito",
+      "description": "Refried beans, Mexican rice, melted cheese, lettuce, and salsa wrapped in a warm flour tortilla.",
+      "detailedDescription": "A vegetarian classic! Creamy refried beans and melted cheese with rice and fresh veggies. Simple and satisfying.",
+      "price": 13.99,
+      "qty": 1,
+      "image": "/public/menu-burritos.jpg",
+      "spicyLevel": 1,
+      "isVegetarian": true,
+      "isGlutenFree": false,
+      "ingredients": [
+        "refried beans",
+        "flour tortilla",
+        "Mexican rice",
+        "cheddar cheese",
+        "lettuce",
+        "tomato",
+        "salsa"
+      ],
+      "allergens": ["gluten", "dairy"],
+      "calories": 720
     }
   ],
   "quesadillas": [
     {
       "id": 7,
       "title": "Carnitas Quesadilla",
-      "description": "A 1 inch tortilla filled with pulled pork Monterrey Jack cheese, garnished with sour cream, lettuce, ranchera sauce and side fries.",
+      "description": "A 10 inch tortilla filled with pulled pork, Monterrey Jack cheese, garnished with sour cream, lettuce, ranchera sauce and side fries.",
+      "detailedDescription": "Slow-cooked pulled pork with melted Monterrey Jack cheese in a crispy tortilla. Rich, savory, and incredibly satisfying!",
       "price": 19.99,
       "qty": 1,
-      "image": "/public/menu-quesadillas.jpg"
+      "image": "/public/menu-quesadillas.jpg",
+      "spicyLevel": 2,
+      "isVegetarian": false,
+      "isGlutenFree": false,
+      "ingredients": [
+        "pulled pork",
+        "flour tortilla",
+        "Monterrey Jack cheese",
+        "sour cream",
+        "lettuce",
+        "ranchera sauce"
+      ],
+      "allergens": ["gluten", "dairy", "pork"],
+      "calories": 890,
+      "staffPick": true
+    },
+    {
+      "id": 10,
+      "title": "Chicken Quesadilla",
+      "description": "Grilled chicken and melted cheese in a crispy flour tortilla, served with sour cream and salsa.",
+      "detailedDescription": "Classic chicken quesadilla with perfectly melted cheese. A fan favorite that never disappoints!",
+      "price": 16.99,
+      "qty": 1,
+      "image": "/public/menu-quesadillas.jpg",
+      "spicyLevel": 1,
+      "isVegetarian": false,
+      "isGlutenFree": false,
+      "ingredients": [
+        "chicken breast",
+        "flour tortilla",
+        "Monterrey Jack cheese",
+        "cheddar cheese",
+        "sour cream",
+        "salsa"
+      ],
+      "allergens": ["gluten", "dairy"],
+      "calories": 780
+    },
+    {
+      "id": 11,
+      "title": "Veggie Quesadilla",
+      "description": "Grilled peppers, onions, mushrooms, and melted cheese in a crispy tortilla with guacamole and sour cream.",
+      "detailedDescription": "Loaded with fresh grilled vegetables and gooey melted cheese. A delicious vegetarian option!",
+      "price": 14.99,
+      "qty": 1,
+      "image": "/public/menu-quesadillas.jpg",
+      "spicyLevel": 1,
+      "isVegetarian": true,
+      "isGlutenFree": false,
+      "ingredients": [
+        "bell peppers",
+        "onions",
+        "mushrooms",
+        "flour tortilla",
+        "Monterrey Jack cheese",
+        "cheddar cheese",
+        "guacamole",
+        "sour cream"
+      ],
+      "allergens": ["gluten", "dairy"],
+      "calories": 650
     }
   ]
 }
