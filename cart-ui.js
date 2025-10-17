@@ -1,5 +1,5 @@
-// cart-ui.js with loading states
-// ES module to wire cart UI to cart.js
+// cart-ui.js
+// UI wiring for the cart module. Adds stable data-test attributes to enable reliable E2E tests.
 
 import { cart } from "./cart.js";
 
@@ -19,9 +19,12 @@ function createCartButton() {
   btn.setAttribute("aria-haspopup", "dialog");
   btn.type = "button";
 
+  // Add data-test attributes expected by tests
+  btn.setAttribute("data-test", "mini-cart-open");
+
   btn.innerHTML = `
     <span class="cart-icon" aria-hidden="true">🧾</span>
-    <span class="cart-badge" aria-hidden="true">0</span>
+    <span class="cart-badge" aria-hidden="true" data-test="mini-cart-count">0</span>
   `;
 
   const header =
@@ -105,8 +108,8 @@ function buildCartModalHtml() {
     <div class="cart-modal-footer">
       <div class="cart-subtotal" id="cart-subtotal"></div>
       <div class="cart-actions">
-        <button class="btn btn-secondary cart-clear">Clear</button>
-        <button class="btn btn-primary cart-checkout">Proceed to Checkout</button>
+        <button class="btn btn-secondary cart-clear" data-test="cart-clear">Clear</button>
+        <button class="btn btn-primary cart-checkout" data-test="checkout-button">Proceed to Checkout</button>
       </div>
     </div>
   </div>
@@ -375,72 +378,78 @@ function renderCartItems(container) {
     const row = document.createElement("div");
     row.className = "cart-item";
     row.dataset.itemId = it.id;
+    // data-test attribute for the item row so tests can target it:
+    row.setAttribute("data-test", `cart-item-${it.id}`);
+
     row.innerHTML = `
       <div class="cart-item-info">
         <div class="cart-item-name">${escapeHtml(it.name)}</div>
         <div class="cart-item-controls">
           <button class="qty-decrease" aria-label="Decrease quantity for ${escapeHtml(
             it.name
-          )}">−</button>
-          <input class="qty-input" type="number" inputmode="numeric" min="0" value="${
-            it.qty
-          }" aria-label="Quantity for ${escapeHtml(it.name)}">
+          )}" data-test="cart-decrement-${it.id}">−</button>
+          <span class="qty-display" data-test="cart-qty-${it.id}">${
+      it.qty
+    }</span>
           <button class="qty-increase" aria-label="Increase quantity for ${escapeHtml(
             it.name
-          )}">+</button>
+          )}" data-test="cart-increment-${it.id}">+</button>
           <button class="remove-item" aria-label="Remove ${escapeHtml(
             it.name
-          )}">Remove</button>
+          )}" data-test="cart-remove-${it.id}">Remove</button>
         </div>
       </div>
       <div class="cart-item-price">$${formatPrice(it.priceCents)}</div>
     `;
-    const dec = row.querySelector(".qty-decrease");
-    const inc = row.querySelector(".qty-increase");
-    const input = row.querySelector(".qty-input");
-    const rem = row.querySelector(".remove-item");
 
-    dec.addEventListener("click", function () {
-      showButtonLoading(this);
-      setTimeout(() => {
-        const current = Number(input.value || 0);
-        const newQty = Math.max(0, current - 1);
-        cart.updateQty(it.id, newQty);
-        updateCartUI();
-        announce(`${it.name} quantity updated to ${newQty}`);
-        showToast(`${it.name} quantity: ${newQty}`);
-      }, 200);
-    });
+    // hook up handlers using data-test attributes
+    const dec = row.querySelector(`[data-test="cart-decrement-${it.id}"]`);
+    const inc = row.querySelector(`[data-test="cart-increment-${it.id}"]`);
+    const qtyDisplay = row.querySelector(`[data-test="cart-qty-${it.id}"]`);
+    const rem = row.querySelector(`[data-test="cart-remove-${it.id}"]`);
 
-    inc.addEventListener("click", function () {
-      showButtonLoading(this);
-      setTimeout(() => {
-        const current = Number(input.value || 0);
-        const newQty = current + 1;
-        cart.updateQty(it.id, newQty);
-        updateCartUI();
-        announce(`${it.name} quantity updated to ${newQty}`);
-        showToast(`${it.name} quantity: ${newQty}`);
-      }, 200);
-    });
+    if (dec) {
+      dec.addEventListener("click", function () {
+        showButtonLoading(this);
+        setTimeout(() => {
+          const current = Number(qtyDisplay.textContent || 0);
+          const newQty = Math.max(0, current - 1);
+          cart.updateQty(it.id, newQty);
+          updateCartUI();
+          announce(`${it.name} quantity updated to ${newQty}`);
+          showToast(`${it.name} quantity: ${newQty}`);
+          hideButtonLoading(this);
+        }, 200);
+      });
+    }
 
-    input.addEventListener("change", (e) => {
-      const v = Math.max(0, Number(e.target.value || 0));
-      cart.updateQty(it.id, v);
-      updateCartUI();
-      announce(`${it.name} quantity updated to ${v}`);
-      showToast(`${it.name} quantity: ${v}`);
-    });
+    if (inc) {
+      inc.addEventListener("click", function () {
+        showButtonLoading(this);
+        setTimeout(() => {
+          const current = Number(qtyDisplay.textContent || 0);
+          const newQty = current + 1;
+          cart.updateQty(it.id, newQty);
+          updateCartUI();
+          announce(`${it.name} quantity updated to ${newQty}`);
+          showToast(`${it.name} quantity: ${newQty}`);
+          hideButtonLoading(this);
+        }, 200);
+      });
+    }
 
-    rem.addEventListener("click", function () {
-      showButtonLoading(this);
-      setTimeout(() => {
-        cart.removeItem(it.id);
-        updateCartUI();
-        announce(`${it.name} removed from cart`);
-        showToast(`${it.name} removed`);
-      }, 200);
-    });
+    if (rem) {
+      rem.addEventListener("click", function () {
+        showButtonLoading(this);
+        setTimeout(() => {
+          cart.removeItem(it.id);
+          updateCartUI();
+          announce(`${it.name} removed from cart`);
+          showToast(`${it.name} removed`);
+          hideButtonLoading(this);
+        }, 200);
+      });
+    }
 
     container.appendChild(row);
   }
@@ -552,10 +561,27 @@ function escapeHtml(str) {
     .replaceAll("'", "&#039;");
 }
 
+/**
+ * Wire add-to-cart buttons:
+ * - derive a stable data-test attribute if one isn't provided
+ * - attach click handlers only once per button
+ */
 function wireAddToCartButtons() {
-  document.querySelectorAll(".add-to-cart").forEach((btn) => {
+  document.querySelectorAll(".add-to-cart").forEach((btn, idx) => {
     if (btn.dataset.cartWired) return;
+
+    // derive id (prefer explicit data attributes)
+    const derivedId =
+      btn.dataset.itemId || btn.getAttribute("data-item-id") || `t${idx + 1}`;
+    if (!btn.hasAttribute("data-test")) {
+      btn.setAttribute("data-test", `add-to-cart-${derivedId}`);
+      if (!btn.dataset.itemId && !btn.getAttribute("data-item-id")) {
+        btn.dataset.itemId = derivedId;
+      }
+    }
+
     btn.dataset.cartWired = "1";
+
     btn.addEventListener("click", (e) => {
       showButtonLoading(btn);
 

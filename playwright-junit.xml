@@ -1,0 +1,20 @@
+<testsuites id="" name="" tests="6" failures="0" skipped="0" errors="0" time="14.230962">
+<testsuite name="cart.spec.ts" timestamp="2025-10-17T14:20:00.093Z" hostname="chromium" tests="2" failures="0" skipped="0" time="12.458" errors="0">
+<testcase name="Cart flow › Add item to cart and update quantity" classname="cart.spec.ts" time="5.377">
+</testcase>
+<testcase name="Cart flow › Checkout flow (mock payment)" classname="cart.spec.ts" time="7.081">
+</testcase>
+</testsuite>
+<testsuite name="cart.spec.ts" timestamp="2025-10-17T14:20:00.093Z" hostname="firefox" tests="2" failures="0" skipped="0" time="9.779" errors="0">
+<testcase name="Cart flow › Add item to cart and update quantity" classname="cart.spec.ts" time="4.997">
+</testcase>
+<testcase name="Cart flow › Checkout flow (mock payment)" classname="cart.spec.ts" time="4.782">
+</testcase>
+</testsuite>
+<testsuite name="cart.spec.ts" timestamp="2025-10-17T14:20:00.093Z" hostname="webkit" tests="2" failures="0" skipped="0" time="6.401" errors="0">
+<testcase name="Cart flow › Add item to cart and update quantity" classname="cart.spec.ts" time="2.326">
+</testcase>
+<testcase name="Cart flow › Checkout flow (mock payment)" classname="cart.spec.ts" time="4.075">
+</testcase>
+</testsuite>
+</testsuites>

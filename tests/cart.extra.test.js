@@ -1,8 +1,11 @@
 // tests/cart.extra.test.js
 // Extra unit tests: rounding/tax, concurrency, stress
-const cartModule = require("../cart.js");
-const createCart = cartModule.createCart || cartModule.default || cartModule;
-const setStorageMode = cartModule.setStorageMode || (() => {});
+import cartModule, {
+  createCart as _createCart,
+  setStorageMode as _setStorageMode,
+} from "../cart.js";
+const createCart = _createCart || cartModule || cartModule;
+const setStorageMode = _setStorageMode || (() => {});
 
 // Clear storage helper
 function clearStorage() {

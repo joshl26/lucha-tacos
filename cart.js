@@ -5,7 +5,7 @@
 const STORAGE_KEY = "lucha_cart_v1";
 
 // Storage mode: 'local' (localStorage, cross-tab) or 'session' (sessionStorage, per-tab).
-let _storageMode = "local"; // default per decision 1 (cross-tab persistence enabled)
+let _storageMode = "local"; // default
 let _customStorage = null; // For testability/injection
 
 /**
@@ -32,10 +32,14 @@ export function setStorageMode(mode) {
       /* ignore */
     }
     // notify listeners
-    window.dispatchEvent(
-      new CustomEvent("cart:storageModeChanged", { detail: { mode } })
-    );
-    window.dispatchEvent(new CustomEvent("cart:changed", { detail: summary }));
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(
+        new CustomEvent("cart:storageModeChanged", { detail: { mode } })
+      );
+      window.dispatchEvent(
+        new CustomEvent("cart:changed", { detail: summary })
+      );
+    }
   } catch (err) {
     console.warn("cart: unable to switch storage mode", err);
   }
@@ -155,9 +159,11 @@ export function createCart(initialState = {}, options = {}) {
   function dispatchChange() {
     try {
       const summary = getSummary();
-      window.dispatchEvent(
-        new CustomEvent("cart:changed", { detail: summary })
-      );
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(
+          new CustomEvent("cart:changed", { detail: summary })
+        );
+      }
     } catch (err) {
       /* swallow */
     }

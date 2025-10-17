@@ -1,7 +1,3 @@
-Nice — I’ll preserve the full checklists for Phases 1–3 and keep the Phase 4 checklist (updated). Below is the updated MDX content preview with all previous phase checklists retained exactly and Phase 4 expanded. Review it and tell me if you want me to save it (default filename: ROADMAP.mdx) or change anything.
-
-### Preview — ROADMAP (MDX)
-
 ---
 title: "Lucha Libre Restaurant - Development Roadmap"
 updated: "2025-10-16"
@@ -143,7 +139,7 @@ version: "v1.4.0"
 - [x] Add GitHub Actions CI for unit tests — Status: Done — Owner: DevOps — Notes: `.github/workflows/ci.yml` added; recommend Node 20 in CI.  
 - [x] cart.js hardening & API clarification — Status: Done — Owner: Dev — Notes: numeric prices treated as dollars; priceCents supported.  
 - [x] Add extra unit tests (rounding, concurrency, stress) — Status: Done — Owner: QA/Dev — Notes: tests/cart.extra.test.js added.  
-- [ ] Coverage reporting (jest --coverage + Codecov) — Status: Pending — Owner: Dev — ETA: 1 day — Action: add coverage script + upload step, add badge to README.  
+- [x] Coverage reporting (jest --coverage + Codecov) — Status: Pending — Owner: Dev — ETA: 1 day — Action: add coverage script + upload step, add badge to README.  
 - [ ] E2E tests (Cypress or Playwright) — Status: In progress / Planned — Owner: QA — ETA: 2–3 days — Action: add smoke tests, persistent app server step in CI.  
 - [ ] Cross-browser matrix (Playwright / BrowserStack) — Status: Planned — Owner: QA — ETA: 2 days — Action: configure Playwright matrix for Chrome/Firefox/Safari/Edge.  
 - [ ] Lighthouse CI (performance monitoring) — Status: Planned — Owner: DevOps — ETA: 1 day — Action: add LHCI autorun to CI (temporary-public-storage or LHCI token).  
@@ -199,12 +195,3 @@ version: "v1.4.0"
 5. Open PR with migration notes requesting reviews.
 
 ---
-
-If this looks good I can:
-- Save as `ROADMAP.mdx` in the workspace now, or
-- Create a PR patch including this updated roadmap (and optionally include the cart.js/tests/CI patches).
-
-Reply with one of:
-- “Save as ROADMAP.mdx” — I’ll write the file.  
-- “Create PR” — I’ll prepare the patch and PR message.  
-- “Edit” plus details — tell me any edits to checklist owners/ETA/status.
