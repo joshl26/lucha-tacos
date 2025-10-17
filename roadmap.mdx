@@ -1,8 +1,8 @@
 ---
 title: "Lucha Libre Restaurant - Development Roadmap"
-updated: "2025-10-16"
+updated: "2025-10-17"
 status: "Phase 4: Testing & Launch — In progress"
-version: "v1.4.0"
+version: "v1.4.1"
 ---
 
 ### Lucha Libre Restaurant - Development Roadmap
@@ -129,31 +129,33 @@ version: "v1.4.0"
 ### Phase 4: Testing & Launch 🎉
 
 #### Recent Phase 4 status (summary)
-- Unit tests: 12 / 12 passing (core + extra edge tests).  
-- CI: GitHub Actions workflow added and passing (unit tests run on push/PR).  
-- Key code change: cart.js API hardened and clarified (numeric prices treated as dollars by default; priceCents supported; storage injection; optional debounce).  
-- Next priorities: E2E (Cypress/Playwright), Lighthouse CI runs, coverage reporting.
+- Unit tests: 12 / 12 passing (core + extra edge tests).
+- CI: GitHub Actions workflow added and passing (unit tests run on push/PR).
+- Coverage: implemented (jest --coverage + Codecov upload).
+- E2E: Full E2E (Playwright) is planned — smoke-test approach discarded per recent direction.
+- Key code change: cart.js API hardened and clarified (numeric prices treated as dollars by default; priceCents supported; storage injection; optional debounce).
+- Next priorities: Lighthouse CI runs, cross-browser matrix, accessibility & security scans.
 
 #### Phase 4 Checklist (actionable, owner / status / notes)
-- [x] Unit tests: baseline suites (tests/cart.test.js + tests/cart.extra.test.js) — Status: Done — Owner: Dev — Notes: 12/12 passing locally & CI.  
-- [x] Add GitHub Actions CI for unit tests — Status: Done — Owner: DevOps — Notes: `.github/workflows/ci.yml` added; recommend Node 20 in CI.  
-- [x] cart.js hardening & API clarification — Status: Done — Owner: Dev — Notes: numeric prices treated as dollars; priceCents supported.  
-- [x] Add extra unit tests (rounding, concurrency, stress) — Status: Done — Owner: QA/Dev — Notes: tests/cart.extra.test.js added.  
-- [x] Coverage reporting (jest --coverage + Codecov) — Status: Pending — Owner: Dev — ETA: 1 day — Action: add coverage script + upload step, add badge to README.  
-- [ ] E2E tests (Cypress or Playwright) — Status: In progress / Planned — Owner: QA — ETA: 2–3 days — Action: add smoke tests, persistent app server step in CI.  
-- [ ] Cross-browser matrix (Playwright / BrowserStack) — Status: Planned — Owner: QA — ETA: 2 days — Action: configure Playwright matrix for Chrome/Firefox/Safari/Edge.  
-- [ ] Lighthouse CI (performance monitoring) — Status: Planned — Owner: DevOps — ETA: 1 day — Action: add LHCI autorun to CI (temporary-public-storage or LHCI token).  
-- [ ] Accessibility automated checks (axe-core integration) — Status: Planned — Owner: QA — ETA: 1 day — Action: integrate axe into Cypress or schedule Lighthouse A11Y runs.  
-- [ ] Security scan (OWASP ZAP or similar) — Status: Planned — Owner: Security — ETA: 2 days — Action: add nightly scan, add basic XSS test cases.  
-- [ ] Release smoke checklist (pre-launch staging run) — Status: Planned — Owner: Release — ETA: before deploy — Action: run SMOKE-001 after each deploy.  
-- [ ] Update developer docs to require Node 20 (local & CI parity) — Status: Pending — Owner: Dev — ETA: 30 mins — Action: add note to README and update GitHub Actions node-version to 20.x.  
-- [ ] Create PR with cart.js changes + tests + CI workflow and include migration notes — Status: Pending — Owner: Dev — ETA: 30–60 mins — Action: open PR and request review.  
-- [ ] Monitor flaky tests and add rerun policy / flaky annotation — Status: Planned — Owner: QA/DevOps — ETA: ongoing — Action: add CI artifacts and flakiness tracking.  
-- [ ] Add integration tests for cart-ui.js wiring (programmatic + UI events) — Status: Planned — Owner: QA — ETA: 1–2 days.  
+- [x] Unit tests: baseline suites (tests/cart.test.js + tests/cart.extra.test.js) — Status: Done — Owner: Dev — Notes: 12/12 passing locally & CI.
+- [x] Add GitHub Actions CI for unit tests — Status: Done — Owner: DevOps — Notes: `.github/workflows/ci.yml` added; Node 20 recommended.
+- [x] cart.js hardening & API clarification — Status: Done — Owner: Dev — Notes: numeric prices treated as dollars; priceCents supported.
+- [x] Add extra unit tests (rounding, concurrency, stress) — Status: Done — Owner: QA/Dev — Notes: tests/cart.extra.test.js added.
+- [x] Coverage reporting (jest --coverage + Codecov) — Status: Done — Owner: Dev — Notes: coverage script + upload configured.
+- [ ] E2E tests (Playwright / Cypress) — Status: Planned — Owner: QA — ETA: 2 days — Notes: smoke-test approach removed; plan full E2E flows (add-to-cart, checkout flow, persistence, accessibility assertions).
+- [ ] Cross-browser matrix (Playwright / BrowserStack) — Status: Planned — Owner: QA — ETA: 2 days — Action: configure Playwright projects.
+- [ ] Lighthouse CI (performance monitoring) — Status: Planned — Owner: DevOps — ETA: 1 day — Action: add LHCI autorun to CI.
+- [ ] Accessibility automated checks (axe-core integration) — Status: Planned — Owner: QA — ETA: 1 day — Action: integrate axe into E2E.
+- [ ] Security scan (OWASP ZAP or similar) — Status: Planned — Owner: Security — ETA: 2 days — Action: add nightly scan.
+- [ ] Release smoke checklist (pre-launch staging run) — Status: Planned — Owner: Release — ETA: before deploy — Action: run SMOKE-001 after each deploy.
+- [ ] Update developer docs to require Node 20 (local & CI parity) — Status: Pending — Owner: Dev — ETA: 30 mins — Action: add note to README and update GitHub Actions node-version to 20.x.
+- [ ] Create PR with cart.js changes + tests + CI workflow and include migration notes — Status: Pending — Owner: Dev — ETA: 30–60 mins — Action: open PR and request review.
+- [ ] Monitor flaky tests and add rerun policy / flaky annotation — Status: Planned — Owner: QA/DevOps — ETA: ongoing — Action: add CI artifacts and flakiness tracking.
+- [ ] Add integration tests for cart-ui.js wiring (programmatic + UI events) — Status: Planned — Owner: QA — ETA: 1–2 days.
 
 ---
 
-### Current Session Summary (2025-10-16)
+### Current Session Summary (2025-10-17)
 
 **Completed in this session:**
 
@@ -173,25 +175,24 @@ version: "v1.4.0"
 ---
 
 ### Migration notes (developer-facing)
-- Numeric price behavior changed: numbers now interpreted as dollars by default.  
-  - If you previously passed integer cents (e.g., `{ price: 100 }`) change to `{ priceCents: 100 }` or `{ price: 1.00 }`.  
+- Numeric price behavior changed: numbers now interpreted as dollars by default.
+  - If you previously passed integer cents (e.g., `{ price: 100 }`) change to `{ priceCents: 100 }` or `{ price: 1.00 }`.
 - Update tests referencing price integers.
 
 ---
 
 ### Commands & CI notes
-- Install: `npm ci`  
-- Run tests: `npm test -- --runInBand` or `npx jest --runInBand`  
-- Add coverage script: `"coverage": "jest --coverage"` and run `npm run coverage`  
+- Install: `npm ci`
+- Run tests: `npm test -- --runInBand` or `npx jest --runInBand`
+- Coverage: `npm run coverage` (jest --coverage)
 - Recommended CI node-version: `20.x` in `.github/workflows/ci.yml`
 
 ---
 
 ### Next recommended actions
-1. Add E2E tests to CI and ensure a stable start-server step.  
-2. Add coverage reporting + Codecov badge.  
+1. Replace smoke-test approach with full E2E flows (checkout, cart persistence, accessibility checks).  
+2. Add cross-browser Playwright matrix or BrowserStack integration.  (complete)
 3. Add Lighthouse CI job on PRs or nightly runs.  
-4. Run accessibility and security scans on staging.  
-5. Open PR with migration notes requesting reviews.
-
----
+4. Add automated accessibility checks (axe integration).  
+5. Add security scans (OWASP ZAP nightly).  
+6. Open PR with migration notes + runbook for reviewers.
