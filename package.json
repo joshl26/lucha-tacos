@@ -10,7 +10,10 @@
     "coverage": "jest --coverage --runInBand",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
-    "test:e2e:report": "playwright show-report"
+    "test:e2e:report": "playwright show-report",
+    "lighthouse": "lhci autorun --config=lighthouserc.cjs",
+    "lighthouse:report": "node scripts/lighthouse-summary.cjs",
+    "audit": "npm run lighthouse && npm run lighthouse:report"
   },
   "engines": {
     "node": ">=20"

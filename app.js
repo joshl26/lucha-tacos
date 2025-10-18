@@ -160,7 +160,7 @@ function displayFilterControls() {
       </div>
       
       <div class="filter-group">
-        <label class="filter-label me-2">🌶️ Spice Level:</label>
+        <label for="filter-spicy" class="filter-label me-2">🌶️ Spice Level:</label>
         <select id="filter-spicy" class="form-select form-select-sm" style="width: auto; display: inline-block;">
           <option value="all" ${
             currentFilters.spicyLevel === "all" ? "selected" : ""
