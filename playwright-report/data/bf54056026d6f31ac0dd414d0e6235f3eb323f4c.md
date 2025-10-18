@@ -1,0 +1,330 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e4]:
+        - button "Open cart — 1 item" [ref=e5] [cursor=pointer]:
+          - generic [ref=e6]: 🧾
+          - generic [ref=e7]: "1"
+        - navigation "Main navigation" [ref=e8]:
+          - list [ref=e9]:
+            - listitem [ref=e10]:
+              - link "Home" [ref=e11] [cursor=pointer]:
+                - /url: /index.html
+            - listitem [ref=e12]:
+              - link "Order Menu" [ref=e13] [cursor=pointer]:
+                - /url: /order/index.html
+            - listitem [ref=e14]:
+              - link "About" [ref=e15] [cursor=pointer]:
+                - /url: /about/index.html
+      - generic [ref=e16]:
+        - generic [ref=e17]:
+          - heading "Categories" [level=5] [ref=e19]
+          - generic [ref=e20]:
+            - button "Show all menu items" [ref=e21] [cursor=pointer]: All Items
+            - button "Filter menu by Tacos" [ref=e22] [cursor=pointer]: Tacos
+            - button "Filter menu by Burritos" [ref=e23] [cursor=pointer]: Burritos
+            - button "Filter menu by Quesadillas" [ref=e24] [cursor=pointer]: Quesadillas
+        - generic [ref=e25]:
+          - generic [ref=e27]:
+            - generic [ref=e29] [cursor=pointer]:
+              - checkbox "🥗 Vegetarian Only" [ref=e30]
+              - generic [ref=e31]: 🥗 Vegetarian Only
+            - generic [ref=e32]:
+              - generic [ref=e33] [cursor=pointer]: "🌶️ Spice Level:"
+              - combobox "🌶️ Spice Level:" [ref=e34]:
+                - option "All Levels" [selected]
+                - option "Mild (🌶️)"
+                - option "Medium (🌶️🌶️)"
+                - option "Hot (🌶️🌶️🌶️)"
+            - generic [ref=e36] [cursor=pointer]:
+              - checkbox "Gluten-Free" [ref=e37]
+              - generic [ref=e38]: Gluten-Free
+            - generic [ref=e40] [cursor=pointer]:
+              - checkbox "Dairy-Free" [ref=e41]
+              - generic [ref=e42]: Dairy-Free
+            - generic [ref=e44] [cursor=pointer]:
+              - checkbox "🌱 Vegan" [ref=e45]
+              - generic [ref=e46]: 🌱 Vegan
+            - button "Clear All Filters" [ref=e47] [cursor=pointer]
+          - generic [ref=e48]:
+            - generic [ref=e50]:
+              - generic [ref=e52]:
+                - heading "Carne Asada Tacos 🌶️ ⭐ Staff Pick GF" [level=5] [ref=e53]:
+                  - text: Carne Asada Tacos 🌶️
+                  - generic [ref=e54]: ⭐ Staff Pick
+                  - generic [ref=e55]: GF
+                - paragraph [ref=e56]: Perfectly grilled flank steak marinated in our secret blend of spices, served on authentic corn tortillas with fresh white onions and cilantro. Chef's favorite!
+                - paragraph [ref=e57]:
+                  - strong [ref=e58]: "Ingredients:"
+                  - text: flank steak, corn tortilla, white onion, cilantro, lime, spices
+                - paragraph [ref=e59]:
+                  - strong [ref=e60]: "⚠️ Contains:"
+                  - text: gluten (fries)
+                - paragraph [ref=e61]: 580 cal
+                - paragraph [ref=e62]: $18.99
+              - generic [ref=e63]:
+                - generic [ref=e64]:
+                  - button "Decrease quantity" [ref=e65] [cursor=pointer]:
+                    - generic [ref=e66]: 
+                  - generic [ref=e67]: "1"
+                  - button "Increase quantity" [ref=e68] [cursor=pointer]:
+                    - generic [ref=e69]: +
+                - button "Add Carne Asada Tacos to cart" [ref=e70] [cursor=pointer]:
+                  - generic [ref=e71]: 
+                  - text: Add to Cart
+            - generic [ref=e73]:
+              - generic [ref=e75]:
+                - heading "Pollo Asado Tacos 🌶️ GF" [level=5] [ref=e76]:
+                  - text: Pollo Asado Tacos 🌶️
+                  - generic [ref=e77]: GF
+                - paragraph [ref=e78]: Tender grilled chicken breast marinated in citrus and herbs, topped with fresh onions and cilantro. A crowd favorite!
+                - paragraph [ref=e79]:
+                  - strong [ref=e80]: "Ingredients:"
+                  - text: chicken breast, corn tortilla, white onion, cilantro, lime, citrus marinade
+                - paragraph [ref=e81]:
+                  - strong [ref=e82]: "⚠️ Contains:"
+                  - text: gluten (fries)
+                - paragraph [ref=e83]: 520 cal
+                - paragraph [ref=e84]: $17.99
+              - generic [ref=e85]:
+                - generic [ref=e86]:
+                  - button "Decrease quantity" [ref=e87] [cursor=pointer]:
+                    - generic [ref=e88]: 
+                  - generic [ref=e89]: "1"
+                  - button "Increase quantity" [ref=e90] [cursor=pointer]:
+                    - generic [ref=e91]: +
+                - button "Add Pollo Asado Tacos to cart" [ref=e92] [cursor=pointer]:
+                  - generic [ref=e93]: 
+                  - text: Add to Cart
+            - generic [ref=e95]:
+              - generic [ref=e97]:
+                - heading "Chorizo Tacos 🌶️🌶️🌶️ GF" [level=5] [ref=e98]:
+                  - text: Chorizo Tacos 🌶️🌶️🌶️
+                  - generic [ref=e99]: GF
+                - paragraph [ref=e100]: Authentic Mexican chorizo with a bold, smoky flavor that packs a punch. Not for the faint of heart!
+                - paragraph [ref=e101]:
+                  - strong [ref=e102]: "Ingredients:"
+                  - text: Mexican chorizo, corn tortilla, white onion, cilantro, spices
+                - paragraph [ref=e103]:
+                  - strong [ref=e104]: "⚠️ Contains:"
+                  - text: gluten (fries), pork
+                - paragraph [ref=e105]: 680 cal
+                - paragraph [ref=e106]: $20.99
+              - generic [ref=e107]:
+                - generic [ref=e108]:
+                  - button "Decrease quantity" [ref=e109] [cursor=pointer]:
+                    - generic [ref=e110]: 
+                  - generic [ref=e111]: "1"
+                  - button "Increase quantity" [ref=e112] [cursor=pointer]:
+                    - generic [ref=e113]: +
+                - button "Add Chorizo Tacos to cart" [ref=e114] [cursor=pointer]:
+                  - generic [ref=e115]: 
+                  - text: Add to Cart
+            - generic [ref=e117]:
+              - generic [ref=e119]:
+                - heading "Veggie Supreme Tacos 🌶️ ⭐ Staff Pick 🥗 Vegetarian 🌱 Vegan GF" [level=5] [ref=e120]:
+                  - text: Veggie Supreme Tacos 🌶️
+                  - generic [ref=e121]: ⭐ Staff Pick
+                  - generic [ref=e122]: 🥗 Vegetarian
+                  - generic [ref=e123]: 🌱 Vegan
+                  - generic [ref=e124]: GF
+                - paragraph [ref=e125]: A delicious plant-based option featuring seasonal grilled vegetables, creamy black beans, and house-made guacamole.
+                - paragraph [ref=e126]:
+                  - strong [ref=e127]: "Ingredients:"
+                  - text: bell peppers, zucchini, black beans, corn tortilla, guacamole, cilantro
+                - paragraph [ref=e128]: 420 cal
+                - paragraph [ref=e129]: $15.99
+              - generic [ref=e130]:
+                - generic [ref=e131]:
+                  - button "Decrease quantity" [ref=e132] [cursor=pointer]:
+                    - generic [ref=e133]: 
+                  - generic [ref=e134]: "1"
+                  - button "Increase quantity" [ref=e135] [cursor=pointer]:
+                    - generic [ref=e136]: +
+                - button "Add Veggie Supreme Tacos to cart" [ref=e137] [cursor=pointer]:
+                  - generic [ref=e138]: 
+                  - text: Add to Cart
+            - generic [ref=e140]:
+              - generic [ref=e142]:
+                - heading "Carne Asada Burrito 🌶️🌶️" [level=5] [ref=e143]
+                - paragraph [ref=e144]: A massive burrito stuffed with tender carne asada, seasoned black beans, and all the fixings. Comes with crispy fries.
+                - paragraph [ref=e145]:
+                  - strong [ref=e146]: "Ingredients:"
+                  - text: flank steak, flour tortilla, black beans, lettuce, jalapeno, ranchero sauce, sour cream, avocado mayo, rice
+                - paragraph [ref=e147]:
+                  - strong [ref=e148]: "⚠️ Contains:"
+                  - text: gluten, dairy
+                - paragraph [ref=e149]: 920 cal
+                - paragraph [ref=e150]: $17.99
+              - generic [ref=e151]:
+                - generic [ref=e152]:
+                  - button "Decrease quantity" [ref=e153] [cursor=pointer]:
+                    - generic [ref=e154]: 
+                  - generic [ref=e155]: "1"
+                  - button "Increase quantity" [ref=e156] [cursor=pointer]:
+                    - generic [ref=e157]: +
+                - button "Add Carne Asada Burrito to cart" [ref=e158] [cursor=pointer]:
+                  - generic [ref=e159]: 
+                  - text: Add to Cart
+            - generic [ref=e161]:
+              - generic [ref=e163]:
+                - heading "Pollo Asado Burrito 🌶️🌶️ ⭐ Staff Pick" [level=5] [ref=e164]:
+                  - text: Pollo Asado Burrito 🌶️🌶️
+                  - generic [ref=e165]: ⭐ Staff Pick
+                - paragraph [ref=e166]: Grilled chicken breast wrapped with beans, rice, and fresh toppings in a warm flour tortilla. Satisfying and delicious!
+                - paragraph [ref=e167]:
+                  - strong [ref=e168]: "Ingredients:"
+                  - text: chicken breast, flour tortilla, black beans, lettuce, jalapeno, ranchero sauce, sour cream, avocado mayo, rice
+                - paragraph [ref=e169]:
+                  - strong [ref=e170]: "⚠️ Contains:"
+                  - text: gluten, dairy
+                - paragraph [ref=e171]: 850 cal
+                - paragraph [ref=e172]: $17.99
+              - generic [ref=e173]:
+                - generic [ref=e174]:
+                  - button "Decrease quantity" [ref=e175] [cursor=pointer]:
+                    - generic [ref=e176]: 
+                  - generic [ref=e177]: "1"
+                  - button "Increase quantity" [ref=e178] [cursor=pointer]:
+                    - generic [ref=e179]: +
+                - button "Add Pollo Asado Burrito to cart" [ref=e180] [cursor=pointer]:
+                  - generic [ref=e181]: 
+                  - text: Add to Cart
+            - generic [ref=e183]:
+              - generic [ref=e185]:
+                - heading "Chorizo Burrito 🌶️🌶️🌶️" [level=5] [ref=e186]
+                - paragraph [ref=e187]: Bold and spicy chorizo burrito loaded with beans, rice, and zesty toppings. For those who love heat!
+                - paragraph [ref=e188]:
+                  - strong [ref=e189]: "Ingredients:"
+                  - text: Mexican chorizo, flour tortilla, black beans, lettuce, jalapeno, ranchero sauce, sour cream, avocado mayo, rice
+                - paragraph [ref=e190]:
+                  - strong [ref=e191]: "⚠️ Contains:"
+                  - text: gluten, dairy, pork
+                - paragraph [ref=e192]: 1020 cal
+                - paragraph [ref=e193]: $20.99
+              - generic [ref=e194]:
+                - generic [ref=e195]:
+                  - button "Decrease quantity" [ref=e196] [cursor=pointer]:
+                    - generic [ref=e197]: 
+                  - generic [ref=e198]: "1"
+                  - button "Increase quantity" [ref=e199] [cursor=pointer]:
+                    - generic [ref=e200]: +
+                - button "Add Chorizo Burrito to cart" [ref=e201] [cursor=pointer]:
+                  - generic [ref=e202]: 
+                  - text: Add to Cart
+            - generic [ref=e204]:
+              - generic [ref=e206]:
+                - heading "Bean & Cheese Burrito 🌶️ 🥗 Vegetarian" [level=5] [ref=e207]:
+                  - text: Bean & Cheese Burrito 🌶️
+                  - generic [ref=e208]: 🥗 Vegetarian
+                - paragraph [ref=e209]: A vegetarian classic! Creamy refried beans and melted cheese with rice and fresh veggies. Simple and satisfying.
+                - paragraph [ref=e210]:
+                  - strong [ref=e211]: "Ingredients:"
+                  - text: refried beans, flour tortilla, Mexican rice, cheddar cheese, lettuce, tomato, salsa
+                - paragraph [ref=e212]:
+                  - strong [ref=e213]: "⚠️ Contains:"
+                  - text: gluten, dairy
+                - paragraph [ref=e214]: 720 cal
+                - paragraph [ref=e215]: $13.99
+              - generic [ref=e216]:
+                - generic [ref=e217]:
+                  - button "Decrease quantity" [ref=e218] [cursor=pointer]:
+                    - generic [ref=e219]: 
+                  - generic [ref=e220]: "1"
+                  - button "Increase quantity" [ref=e221] [cursor=pointer]:
+                    - generic [ref=e222]: +
+                - button "Add Bean & Cheese Burrito to cart" [ref=e223] [cursor=pointer]:
+                  - generic [ref=e224]: 
+                  - text: Add to Cart
+            - generic [ref=e226]:
+              - generic [ref=e228]:
+                - heading "Carnitas Quesadilla 🌶️🌶️ ⭐ Staff Pick" [level=5] [ref=e229]:
+                  - text: Carnitas Quesadilla 🌶️🌶️
+                  - generic [ref=e230]: ⭐ Staff Pick
+                - paragraph [ref=e231]: Slow-cooked pulled pork with melted Monterrey Jack cheese in a crispy tortilla. Rich, savory, and incredibly satisfying!
+                - paragraph [ref=e232]:
+                  - strong [ref=e233]: "Ingredients:"
+                  - text: pulled pork, flour tortilla, Monterrey Jack cheese, sour cream, lettuce, ranchera sauce
+                - paragraph [ref=e234]:
+                  - strong [ref=e235]: "⚠️ Contains:"
+                  - text: gluten, dairy, pork
+                - paragraph [ref=e236]: 890 cal
+                - paragraph [ref=e237]: $19.99
+              - generic [ref=e238]:
+                - generic [ref=e239]:
+                  - button "Decrease quantity" [ref=e240] [cursor=pointer]:
+                    - generic [ref=e241]: 
+                  - generic [ref=e242]: "1"
+                  - button "Increase quantity" [ref=e243] [cursor=pointer]:
+                    - generic [ref=e244]: +
+                - button "Add Carnitas Quesadilla to cart" [ref=e245] [cursor=pointer]:
+                  - generic [ref=e246]: 
+                  - text: Add to Cart
+            - generic [ref=e248]:
+              - generic [ref=e250]:
+                - heading "Chicken Quesadilla 🌶️" [level=5] [ref=e251]
+                - paragraph [ref=e252]: Classic chicken quesadilla with perfectly melted cheese. A fan favorite that never disappoints!
+                - paragraph [ref=e253]:
+                  - strong [ref=e254]: "Ingredients:"
+                  - text: chicken breast, flour tortilla, Monterrey Jack cheese, cheddar cheese, sour cream, salsa
+                - paragraph [ref=e255]:
+                  - strong [ref=e256]: "⚠️ Contains:"
+                  - text: gluten, dairy
+                - paragraph [ref=e257]: 780 cal
+                - paragraph [ref=e258]: $16.99
+              - generic [ref=e259]:
+                - generic [ref=e260]:
+                  - button "Decrease quantity" [ref=e261] [cursor=pointer]:
+                    - generic [ref=e262]: 
+                  - generic [ref=e263]: "1"
+                  - button "Increase quantity" [ref=e264] [cursor=pointer]:
+                    - generic [ref=e265]: +
+                - button "Add Chicken Quesadilla to cart" [ref=e266] [cursor=pointer]:
+                  - generic [ref=e267]: 
+                  - text: Add to Cart
+            - generic [ref=e269]:
+              - generic [ref=e271]:
+                - heading "Veggie Quesadilla 🌶️ 🥗 Vegetarian" [level=5] [ref=e272]:
+                  - text: Veggie Quesadilla 🌶️
+                  - generic [ref=e273]: 🥗 Vegetarian
+                - paragraph [ref=e274]: Loaded with fresh grilled vegetables and gooey melted cheese. A delicious vegetarian option!
+                - paragraph [ref=e275]:
+                  - strong [ref=e276]: "Ingredients:"
+                  - text: bell peppers, onions, mushrooms, flour tortilla, Monterrey Jack cheese, cheddar cheese, guacamole, sour cream
+                - paragraph [ref=e277]:
+                  - strong [ref=e278]: "⚠️ Contains:"
+                  - text: gluten, dairy
+                - paragraph [ref=e279]: 650 cal
+                - paragraph [ref=e280]: $14.99
+              - generic [ref=e281]:
+                - generic [ref=e282]:
+                  - button "Decrease quantity" [ref=e283] [cursor=pointer]:
+                    - generic [ref=e284]: 
+                  - generic [ref=e285]: "1"
+                  - button "Increase quantity" [ref=e286] [cursor=pointer]:
+                    - generic [ref=e287]: +
+                - button "Add Veggie Quesadilla to cart" [ref=e288] [cursor=pointer]:
+                  - generic [ref=e289]: 
+                  - text: Add to Cart
+    - paragraph [ref=e293]:
+      - text: © 2024 Lucha Tacos Canada | by
+      - link "BlackRock Design Haus" [ref=e294] [cursor=pointer]:
+        - /url: https://joshlehman.ca
+      - text: "|"
+      - link "Privacy Policy" [ref=e295] [cursor=pointer]:
+        - /url: /privacy/index.html
+  - navigation [ref=e297]:
+    - list [ref=e298]:
+      - listitem [ref=e299]:
+        - link "Home" [ref=e300] [cursor=pointer]:
+          - /url: /index.html
+      - listitem [ref=e301]:
+        - link "Order Menu" [ref=e302] [cursor=pointer]:
+          - /url: /order/index.html
+      - listitem [ref=e303]:
+        - link "About" [ref=e304] [cursor=pointer]:
+          - /url: /about/index.html
+```

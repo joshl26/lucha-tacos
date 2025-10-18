@@ -20,14 +20,14 @@ coverage/
 # Playwright
 # =========================
 # test-results/
-playwright-report/
+# playwright-report/
 playwright/.cache/
 playwright/test-results/
 
 # =========================
 # Lighthouse CI
 # =========================
-.lighthouseci/
+# .lighthouseci/
 
 # =========================
 # OS generated files

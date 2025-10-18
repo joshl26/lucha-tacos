@@ -104,7 +104,7 @@ jobs:
           # Run Playwright with both JSON and HTML reporters.
           # JSON reporter prints to stdout; we redirect that stdout into test-results/results.json
           # HTML reporter will produce playwright-report/ directory.
-          npx playwright test --reporter=json --reporter=html > test-results/results.json
+          npx playwright test --reporter=html
           exit_code=$?
 
           # Collect any axe JSON outputs produced by a11y tests (they should write into test-results/)

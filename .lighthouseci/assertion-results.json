@@ -1,0 +1,66 @@
+[
+  {
+    "name": "auditRan",
+    "expected": 1,
+    "actual": 0,
+    "values": [
+      0,
+      0,
+      0
+    ],
+    "operator": ">=",
+    "passed": false,
+    "message": "\"no-vulnerable-libraries\" is not a known audit.",
+    "auditId": "no-vulnerable-libraries",
+    "level": "warn",
+    "url": "http://localhost:49574/index.html"
+  },
+  {
+    "name": "auditRan",
+    "expected": 1,
+    "actual": 0,
+    "values": [
+      0,
+      0,
+      0
+    ],
+    "operator": ">=",
+    "passed": false,
+    "message": "\"no-vulnerable-libraries\" is not a known audit.",
+    "auditId": "no-vulnerable-libraries",
+    "level": "warn",
+    "url": "http://localhost:49574/order/index.html"
+  },
+  {
+    "name": "auditRan",
+    "expected": 1,
+    "actual": 0,
+    "values": [
+      0,
+      0,
+      0
+    ],
+    "operator": ">=",
+    "passed": false,
+    "message": "\"no-vulnerable-libraries\" is not a known audit.",
+    "auditId": "no-vulnerable-libraries",
+    "level": "warn",
+    "url": "http://localhost:49574/about/index.html"
+  },
+  {
+    "name": "auditRan",
+    "expected": 1,
+    "actual": 0,
+    "values": [
+      0,
+      0,
+      0
+    ],
+    "operator": ">=",
+    "passed": false,
+    "message": "\"no-vulnerable-libraries\" is not a known audit.",
+    "auditId": "no-vulnerable-libraries",
+    "level": "warn",
+    "url": "http://localhost:49574/privacy/index.html"
+  }
+]
