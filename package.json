@@ -8,7 +8,7 @@
     "test:watch": "jest --watchAll",
     "test:ci": "jest --runInBand",
     "coverage": "jest --coverage --runInBand",
-    "test:e2e": "playwright test",
+    "test:e2e": "playwright test --reporter=json > test-results/results.json",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:report": "playwright show-report",
     "lighthouse": "lhci autorun --config=lighthouserc.cjs",

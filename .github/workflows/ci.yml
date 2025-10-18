@@ -91,19 +91,23 @@ jobs:
       - name: Run E2E tests (start http-server + produce JSON report)
         run: |
           mkdir -p test-results
-          # start a static server in background
+          # start server in background
           npx http-server ./ -p 5500 -s > server.log 2>&1 &
           server_pid=$!
           echo "Server started with PID $server_pid"
-          sleep 2 # give server time to start
-          # run playwright and save JSON output to file (preserve exit code)
-          npx playwright test --reporter=json > test-results/results.json
-          exit_code=$?
+          sleep 2
+
+          # run Playwright and capture full output (stdout + stderr)
+          npx playwright test --reporter=json 2>&1 | tee test-results/results.json
+          exit_code=${PIPESTATUS[0]}
+
           echo "Playwright exit code: $exit_code"
+
           # stop server
           kill $server_pid || true
           wait $server_pid 2>/dev/null || true
-          # exit with Playwright's exit code so job fails when tests fail
+
+          # exit with Playwright's exit code
           exit $exit_code
 
       - name: Upload Playwright results artifact (JSON)
