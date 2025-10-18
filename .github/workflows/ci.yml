@@ -88,11 +88,21 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      - name: Run E2E tests (start server + run)
+      - name: Run E2E tests (start server + produce JSON report)
         run: |
-          npx start-server-and-test "npx http-server ./ -p 5500 -s" http://127.0.0.1:5500 "npx playwright test"
+          mkdir -p test-results
+          # Run Playwright with JSON reporter, save stdout to test-results/results.json and preserve exit code
+          npx start-server-and-test "npx http-server ./ -p 5500 -s" http://127.0.0.1:5500 "bash -lc 'npx playwright test --reporter=json > test-results/results.json; exit_code=$?; echo exit_code=$exit_code; exit $exit_code'"
 
-      - name: Upload Playwright artifacts (on failure)
+      - name: Upload Playwright results artifact (JSON)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-results
+          path: test-results/
+          retention-days: 7
+
+      - name: "Upload Playwright artifacts (report directory: screenshots/videos) (on failure)"
         if: failure()
         uses: actions/upload-artifact@v4
         with:
@@ -120,25 +130,21 @@ jobs:
       - name: Install Lighthouse CI
         run: npm install -g @lhci/cli@0.14.x
 
-      - name: Install Playwright browsers (for Playwright JSON run)
-        run: npx playwright install --with-deps
-
       - name: Run LHCI (start server + LHCI)
         run: |
           npx start-server-and-test "npx http-server ./ -p 5500 -s" http://127.0.0.1:5500 "lhci autorun --config=lighthouserc.cjs"
 
-      - name: Run Playwright (produce JSON summary)
-        run: |
-          mkdir -p test-results
-          # ensure Playwright outputs JSON to stdout. Adjust if you already configure a JSON reporter in playwright.config.
-          npx start-server-and-test "npx http-server ./ -p 5500 -s" http://127.0.0.1:5500 "npx playwright test --reporter=json" > test-results/results.json || true
-          echo "Playwright results written to test-results/results.json"
+      - name: Download Playwright results artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: playwright-results
+          path: ./test-results
 
       - name: Extract LHCI scores -> badge JSON
-        run: node scripts/lhci-to-badges.js
+        run: node scripts/lhci-to-badges.cjs
 
       - name: Extract Playwright results -> badge JSON
-        run: node scripts/playwright-to-badge.js
+        run: node scripts/playwright-to-badge.cjs
 
       - name: Publish badges to gh-pages
         uses: peaceiris/actions-gh-pages@v3
