@@ -377,9 +377,17 @@ function handleCheckoutSubmit(formEl) {
     showToast("Order placed successfully!");
     announce("Order placed — thank you");
 
+    // Clear the cart after successful checkout
+    cart.clearCart();
+
+    // Reset the form
+    formEl.reset();
+    clearFieldErrors(formEl);
+
     hideButtonLoading(submitBtn);
     setTimeout(() => {
       closeCheckoutModal();
+      updateCartUI();
     }, 800);
   }, 600);
 }

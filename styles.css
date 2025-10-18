@@ -1,4 +1,4 @@
-/* styles.css - Layout & Spacing Polish (colors preserved) */
+/* styles.css - Layout & Spacing Polish with Standardized Headings (colors preserved) */
 
 /* Reset */
 * {
@@ -43,6 +43,79 @@ main {
   flex-direction: column;
   background-color: var(--bg);
   color: var(--text);
+}
+
+/* === STANDARDIZED HEADING SIZES === */
+h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 1.5rem;
+}
+
+h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.3;
+  margin-bottom: 1.25rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 1rem;
+}
+
+h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 0.875rem;
+}
+
+h5 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 0.75rem;
+}
+
+/* Responsive heading sizes */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-size: 1.75rem;
+  }
+
+  h3 {
+    font-size: 1.35rem;
+  }
+
+  h4 {
+    font-size: 1.15rem;
+  }
+
+  h5 {
+    font-size: 1.05rem;
+  }
+}
+
+@media (max-width: 600px) {
+  h1 {
+    font-size: 1.75rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+  }
 }
 
 /* === HEADER & NAVIGATION - ENHANCED STYLING === */
@@ -205,7 +278,7 @@ header #site-cart-button {
 .hero-container {
   position: absolute;
   left: 0;
-  top: 0;
+  top: 60;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -280,6 +353,7 @@ section {
 .content-text p {
   margin-bottom: 1.5rem;
   line-height: 1.8;
+  font-size: 1.125rem;
 }
 
 .content-text p:last-child {
@@ -457,15 +531,66 @@ section.d-flex.flex-sm-row.flex-column.h-auto {
   outline: none;
 }
 
-/* === MODALS - IMPROVED SPACING === */
+/* === MODALS - FIXED AND IMPROVED === */
+.cart-modal-wrapper,
+.checkout-modal-wrapper,
+.feedback-modal-wrapper {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.cart-modal-wrapper.open,
+.checkout-modal-wrapper.open,
+.feedback-modal-wrapper.open {
+  display: flex;
+}
+
+.cart-modal-backdrop,
+.checkout-modal-backdrop,
+.feedback-modal-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
 .cart-modal,
 .checkout-modal,
 .feedback-modal {
+  position: relative;
   background: #fff;
   color: #222;
+  max-width: 600px;
+  width: 100%;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .cart-modal-header,
@@ -488,6 +613,32 @@ section.d-flex.flex-sm-row.flex-column.h-auto {
   margin: 0;
   font-size: 1.5rem;
   font-weight: 600;
+}
+
+.cart-modal-close,
+.checkout-modal-close,
+.feedback-modal-close {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #666;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.cart-modal-close:hover,
+.checkout-modal-close:hover,
+.feedback-modal-close:hover {
+  background: #f0f0f0;
+  color: #333;
 }
 
 .cart-modal-body,
@@ -845,9 +996,7 @@ textarea:focus {
   .cart-modal,
   .checkout-modal,
   .feedback-modal {
-    left: 1rem;
-    right: 1rem;
-    width: auto;
+    margin: 0.5rem;
     max-width: none;
   }
 

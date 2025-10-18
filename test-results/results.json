@@ -130,12 +130,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 5218,
+                      "duration": 5073,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-10-18T15:49:26.635Z",
+                      "startTime": "2025-10-18T16:59:15.409Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -164,12 +164,12 @@
                       "workerIndex": 1,
                       "parallelIndex": 1,
                       "status": "passed",
-                      "duration": 7151,
+                      "duration": 6991,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-10-18T15:49:26.634Z",
+                      "startTime": "2025-10-18T16:59:15.353Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -198,12 +198,12 @@
                       "workerIndex": 2,
                       "parallelIndex": 2,
                       "status": "passed",
-                      "duration": 2886,
+                      "duration": 4857,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-10-18T15:49:26.603Z",
+                      "startTime": "2025-10-18T16:59:15.359Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -229,15 +229,15 @@
                   "projectName": "firefox",
                   "results": [
                     {
-                      "workerIndex": 2,
-                      "parallelIndex": 2,
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 1210,
+                      "duration": 16164,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-10-18T15:49:30.118Z",
+                      "startTime": "2025-10-18T16:59:22.212Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -263,15 +263,15 @@
                   "projectName": "webkit",
                   "results": [
                     {
-                      "workerIndex": 3,
+                      "workerIndex": 4,
                       "parallelIndex": 2,
                       "status": "passed",
-                      "duration": 2494,
+                      "duration": 2666,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-10-18T15:49:33.057Z",
+                      "startTime": "2025-10-18T16:59:22.832Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -297,15 +297,15 @@
                   "projectName": "webkit",
                   "results": [
                     {
-                      "workerIndex": 4,
-                      "parallelIndex": 0,
+                      "workerIndex": 5,
+                      "parallelIndex": 1,
                       "status": "passed",
-                      "duration": 4160,
+                      "duration": 15319,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-10-18T15:49:33.088Z",
+                      "startTime": "2025-10-18T16:59:23.949Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -325,8 +325,8 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-10-18T15:49:25.475Z",
-    "duration": 11894.935,
+    "startTime": "2025-10-18T16:59:14.149Z",
+    "duration": 25428.162,
     "expected": 6,
     "skipped": 0,
     "unexpected": 0,
