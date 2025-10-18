@@ -110,6 +110,18 @@ jobs:
           # exit with Playwright's exit code
           exit $exit_code
 
+      - name: "Debug: list test-results"
+        run: |
+          echo "PWD: $(pwd)"
+          ls -la
+          ls -la test-results || true
+          if [ -f test-results/results.json ]; then
+            echo "results.json exists"
+            head -c 200 test-results/results.json | cat
+          else
+            echo "results.json NOT FOUND"
+          fi
+
       - name: Upload Playwright results artifact (JSON)
         if: always()
         uses: actions/upload-artifact@v4
