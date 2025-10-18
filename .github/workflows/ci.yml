@@ -176,23 +176,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: playwright-results
-          path: .
-
-      - name: Extract LHCI scores -> badge JSON
-        run: node scripts/lhci-to-badges.cjs
-
-      - name: Extract Playwright results -> badge JSON
-        run: node scripts/playwright-to-badge.cjs
-
-      - name: "Debug: show public_badges contents"
-        run: |
-          echo "public_badges exists?"; ls -la public_badges || true
-          echo "Show up to first 200 chars of each JSON:"
-          for f in public_badges/*.json; do
-            echo "---- $f ----"
-            head -c 200 "$f" || true
-            echo
-          done
+          path: ./test-results # ✅ Fix: Download to correct path
 
       - name: "Debug: workspace before badge scripts"
         run: |
@@ -211,6 +195,22 @@ jobs:
             echo "test-results/results.json exists (first 200 chars):"
             head -c 200 test-results/results.json || true
           fi
+
+      - name: Extract LHCI scores -> badge JSON
+        run: node scripts/lhci-to-badges.cjs
+
+      - name: Extract Playwright results -> badge JSON
+        run: node scripts/playwright-to-badge.cjs
+
+      - name: "Debug: show public_badges contents"
+        run: |
+          echo "public_badges exists?"; ls -la public_badges || true
+          echo "Show up to first 200 chars of each JSON:"
+          for f in public_badges/*.json; do
+            echo "---- $f ----"
+            head -c 200 "$f" || true
+            echo
+          done
 
       - name: Publish badges to gh-pages
         if: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') }}
