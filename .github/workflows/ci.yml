@@ -160,6 +160,18 @@ jobs:
         run: |
           npx start-server-and-test "npx http-server ./ -p 5500 -s" http://127.0.0.1:5500 "lhci autorun --config=lighthouserc.cjs"
 
+      - name: "Debug: list assertion-results"
+        run: |
+          echo "PWD: $(pwd)"
+          ls -la
+          ls -la assertion-results || true
+          if [ -f lighthouseci/assertion-results.json ]; then
+            echo "results.json exists"
+            head -c 200 lighthouseci/assertion-results.json | cat
+          else
+            echo "assertion-results.json NOT FOUND"
+          fi
+
       - name: Download Playwright results artifact
         uses: actions/download-artifact@v4
         with:

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // scripts/lighthouse-summary.js
 // Parse and display Lighthouse CI results and assertion-results in a friendly format
+// Also supports writing badge JSON files for Shields.io
 
 const fs = require("fs");
 const path = require("path");
@@ -324,6 +325,48 @@ function displayLHCIResults(results) {
   return !failed;
 }
 
+// NEW: Write badge JSON files for Shields.io
+function writeBadgeJson(results) {
+  const outDir = path.resolve("public_badges");
+  fs.mkdirSync(outDir, { recursive: true });
+
+  const thresholds = {
+    performance: 0.85,
+    accessibility: 0.9,
+    "best-practices": 0.85,
+    seo: 0.9,
+  };
+
+  const colorForScore = (score) => {
+    if (score == null) return "lightgrey";
+    if (score >= 0.9) return "brightgreen";
+    if (score >= 0.75) return "green";
+    if (score >= 0.5) return "yellow";
+    if (score > 0) return "orange";
+    return "red";
+  };
+
+  results.forEach((result) => {
+    if (!result.summary) return;
+    Object.entries(result.summary).forEach(([category, score]) => {
+      if (typeof score !== "number") return;
+      const percent = Math.round(score * 100);
+      const badge = {
+        schemaVersion: 1,
+        label: `lighthouse-${category}`,
+        message: `${percent}`,
+        color: colorForScore(score),
+      };
+      const filename = `lighthouse-${category}.json`;
+      fs.writeFileSync(
+        path.join(outDir, filename),
+        JSON.stringify(badge, null, 2)
+      );
+      console.log(`Wrote badge: ${filename} (${percent}%)`);
+    });
+  });
+}
+
 function main() {
   const manifest = loadManifest();
 
@@ -351,9 +394,9 @@ function main() {
   }
 
   displayLHCIResults(results);
-  const thresholdsPassed = displayLHCIResults
-    ? checkThresholdsWrapper(results)
-    : true;
+  writeBadgeJson(results); // NEW: write badge JSON files
+
+  const thresholdsPassed = checkThresholdsWrapper(results);
   process.exit(thresholdsPassed ? 0 : 1);
 }
 
@@ -395,4 +438,5 @@ module.exports = {
   isAssertionFormat,
   displayAssertions,
   displayLHCIResults,
+  writeBadgeJson, // NEW export
 };
