@@ -125,7 +125,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: playwright-results
-          path: test-results/
+          path: test-results/results.json
           retention-days: 7
 
       - name: "Upload Playwright artifacts (report directory: screenshots/videos) (on failure)"
@@ -160,11 +160,11 @@ jobs:
         run: |
           npx start-server-and-test "npx http-server ./ -p 5500 -s" http://127.0.0.1:5500 "lhci autorun --config=lighthouserc.cjs"
 
-      - name: "Debug: list assertion-results"
+      - name: "Debug: list .lighthouseci"
         run: |
           echo "PWD: $(pwd)"
           ls -la
-          ls -la assertion-results || true
+          ls -la .lighthouseci || true
           if [ -f .lighthouseci/assertion-results.json ]; then
             echo "assertion-results.json exists"
             head -c 200 .lighthouseci/assertion-results.json | cat
@@ -176,7 +176,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: playwright-results
-          path: ./test-results
+          path: .
 
       - name: Extract LHCI scores -> badge JSON
         run: node scripts/lhci-to-badges.cjs
@@ -184,12 +184,30 @@ jobs:
       - name: Extract Playwright results -> badge JSON
         run: node scripts/playwright-to-badge.cjs
 
+      - name: "Debug: show public_badges contents"
+        run: |
+          echo "public_badges exists?"; ls -la public_badges || true
+          echo "Show up to first 200 chars of each JSON:"
+          for f in public_badges/*.json; do
+            echo "---- $f ----"
+            head -c 200 "$f" || true
+            echo
+          done
+
       - name: Publish badges to gh-pages
+        if: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') }}
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public_badges
           publish_branch: gh-pages
+
+      - name: Verify published Lighthouse badge (quick check)
+        if: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') }}
+        run: |
+          echo "Waiting a few seconds for Pages to update..."
+          sleep 6
+          curl -I "https://joshl26.github.io/lucha-tacos/lighthouse-accessibility.json" || true
 
       - name: Upload Lighthouse reports (on failure)
         if: failure()

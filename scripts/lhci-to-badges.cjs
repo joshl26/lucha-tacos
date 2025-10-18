@@ -3,16 +3,39 @@ const fs = require("fs");
 const path = require("path");
 
 const lhciDir = path.resolve(".lighthouseci");
-const files = fs.readdirSync(lhciDir).filter((f) => f.endsWith(".json"));
-if (!files.length) {
-  console.error("No LHCI JSON files found");
+if (!fs.existsSync(lhciDir)) {
+  console.error("No .lighthouseci directory found");
   process.exit(0);
 }
 
-// pick the most recent or first LHR file
-const lhrFile = path.join(lhciDir, files[0]);
-const data = JSON.parse(fs.readFileSync(lhrFile, "utf8"));
+// Prefer assertion-results.json if it exists
+const assertionResultsPath = path.join(lhciDir, "assertion-results.json");
+let data;
+
+if (fs.existsSync(assertionResultsPath)) {
+  console.log("Reading LHCI results from assertion-results.json");
+  data = JSON.parse(fs.readFileSync(assertionResultsPath, "utf8"));
+} else {
+  // Fallback: pick the first LHR file
+  const files = fs
+    .readdirSync(lhciDir)
+    .filter((f) => f.startsWith("lhr-") && f.endsWith(".json"));
+  if (!files.length) {
+    console.error("No LHCI LHR or assertion files found in .lighthouseci/");
+    process.exit(0);
+  }
+  const lhrFile = path.join(lhciDir, files[0]);
+  console.log("Reading LHCI results from", lhrFile);
+  data = JSON.parse(fs.readFileSync(lhrFile, "utf8"));
+}
+
+// Handle both raw LHR and wrapped formats
 const lhr = data.lhr || data;
+
+if (!lhr.categories) {
+  console.error("No categories found in LHR data");
+  process.exit(0);
+}
 
 const scores = {};
 for (const [key, value] of Object.entries(lhr.categories || {})) {
@@ -25,13 +48,13 @@ fs.mkdirSync(outDir, { recursive: true });
 for (const [cat, score] of Object.entries(scores)) {
   const json = {
     schemaVersion: 1,
-    label: cat,
+    label: `lighthouse-${cat}`,
     message: String(score),
     color: score >= 90 ? "brightgreen" : score >= 75 ? "yellow" : "orange",
   };
-  fs.writeFileSync(
-    path.join(outDir, `lighthouse-${cat}.json`),
-    JSON.stringify(json)
-  );
+  const filename = `lighthouse-${cat}.json`;
+  fs.writeFileSync(path.join(outDir, filename), JSON.stringify(json, null, 2));
+  console.log(`Wrote badge: ${filename} (${score})`);
 }
+
 console.log("LHCI badges written:", Object.keys(scores));
