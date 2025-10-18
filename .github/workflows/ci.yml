@@ -88,11 +88,23 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      - name: Run E2E tests (start server + produce JSON report)
+      - name: Run E2E tests (start http-server + produce JSON report)
         run: |
           mkdir -p test-results
-          # Run Playwright with JSON reporter, save stdout to test-results/results.json and preserve exit code
-          npx start-server-and-test "npx http-server ./ -p 5500 -s" http://127.0.0.1:5500 "bash -lc 'npx playwright test --reporter=json > test-results/results.json; exit_code=$?; echo exit_code=$exit_code; exit $exit_code'"
+          # start a static server in background
+          npx http-server ./ -p 5500 -s > server.log 2>&1 &
+          server_pid=$!
+          echo "Server started with PID $server_pid"
+          sleep 2 # give server time to start
+          # run playwright and save JSON output to file (preserve exit code)
+          npx playwright test --reporter=json > test-results/results.json
+          exit_code=$?
+          echo "Playwright exit code: $exit_code"
+          # stop server
+          kill $server_pid || true
+          wait $server_pid 2>/dev/null || true
+          # exit with Playwright's exit code so job fails when tests fail
+          exit $exit_code
 
       - name: Upload Playwright results artifact (JSON)
         if: always()
