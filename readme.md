@@ -7,8 +7,8 @@ Welcome to the **Lucha Libre Restaurant** website project! This is a vibrant, lu
 ![CI](https://github.com/joshl26/lucha-tacos/actions/workflows/ci.yml/badge.svg)
 [![codecov](https://codecov.io/gh/joshl26/lucha-tacos/branch/main/graph/badge.svg)](https://codecov.io/gh/joshl26/lucha-tacos)
 [![Node >=20](https://img.shields.io/badge/node-%3E%3D20-brightgreen.svg)](https://nodejs.org/)
-[![Playwright tests](https://github.com/joshl26/lucha-tacos/actions/workflows/ci.yml/badge.svg)](https://github.com/joshl26/lucha-tacos/actions/workflows/ci.yml)
-[![Lighthouse (LHCI)](https://github.com/joshl26/lucha-tacos/actions/workflows/ci.yml/badge.svg)](https://github.com/joshl26/lucha-tacos/actions/workflows/ci.yml)
+[![Lighthouse - accessibility](https://img.shields.io/endpoint?url=https://joshl26.github.io/lucha-tacos/lighthouse-accessibility.json)](https://joshl26.github.io/lucha-tacos/lighthouse-accessibility.json)
+[![Playwright tests](https://img.shields.io/endpoint?url=https://joshl26.github.io/lucha-tacos/playwright.json)](https://joshl26.github.io/lucha-tacos/playwright.json)
 
 ---
 

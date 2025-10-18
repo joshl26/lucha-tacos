@@ -101,7 +101,7 @@ jobs:
           retention-days: 7
 
   lighthouse:
-    name: Lighthouse audit
+    name: Lighthouse audit + publish badges
     runs-on: ubuntu-latest
     needs: [unit-tests, e2e-tests]
     steps:
@@ -120,9 +120,32 @@ jobs:
       - name: Install Lighthouse CI
         run: npm install -g @lhci/cli@0.14.x
 
-      - name: Start static server & run Lighthouse
+      - name: Install Playwright browsers (for Playwright JSON run)
+        run: npx playwright install --with-deps
+
+      - name: Run LHCI (start server + LHCI)
         run: |
           npx start-server-and-test "npx http-server ./ -p 5500 -s" http://127.0.0.1:5500 "lhci autorun --config=lighthouserc.cjs"
+
+      - name: Run Playwright (produce JSON summary)
+        run: |
+          mkdir -p test-results
+          # ensure Playwright outputs JSON to stdout. Adjust if you already configure a JSON reporter in playwright.config.
+          npx start-server-and-test "npx http-server ./ -p 5500 -s" http://127.0.0.1:5500 "npx playwright test --reporter=json" > test-results/results.json || true
+          echo "Playwright results written to test-results/results.json"
+
+      - name: Extract LHCI scores -> badge JSON
+        run: node scripts/lhci-to-badges.js
+
+      - name: Extract Playwright results -> badge JSON
+        run: node scripts/playwright-to-badge.js
+
+      - name: Publish badges to gh-pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public_badges
+          publish_branch: gh-pages
 
       - name: Upload Lighthouse reports (on failure)
         if: failure()
