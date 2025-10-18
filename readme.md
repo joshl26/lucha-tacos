@@ -9,6 +9,9 @@ Welcome to the **Lucha Libre Restaurant** website project! This is a vibrant, lu
 [![Node >=20](https://img.shields.io/badge/node-%3E%3D20-brightgreen.svg)](https://nodejs.org/)
 [![Lighthouse - accessibility](https://img.shields.io/endpoint?url=https://joshl26.github.io/lucha-tacos/lighthouse-accessibility.json)](https://joshl26.github.io/lucha-tacos/lighthouse-accessibility.json)
 [![Lighthouse - performance](https://img.shields.io/endpoint?url=https://joshl26.github.io/lucha-tacos/lighthouse-performance.json)](https://joshl26.github.io/lucha-tacos/lighthouse-performance.json)
+[![Lighthouse - best-practices](https://img.shields.io/endpoint?url=https://joshl26.github.io/lucha-tacos/lighthouse-best-practices.json)](https://joshl26.github.io/lucha-tacos/lighthouse-best-practices.json)
+[![Lighthouse - pwa](https://img.shields.io/endpoint?url=https://joshl26.github.io/lucha-tacos/lighthouse-pwa.json)](https://joshl26.github.io/lucha-tacos/lighthouse-pwa.json)
+[![Lighthouse - seo](https://img.shields.io/endpoint?url=https://joshl26.github.io/lucha-tacos/lighthouse-seo.json)](https://joshl26.github.io/lucha-tacos/lighthouse-seo.json)
 [![Playwright tests](https://img.shields.io/endpoint?url=https://joshl26.github.io/lucha-tacos/playwright.json)](https://joshl26.github.io/lucha-tacos/playwright.json)
 
 ---
