@@ -95,14 +95,25 @@ jobs:
       - name: Run E2E tests (start http-server + run Playwright)
         run: |
           mkdir -p test-results
+          # Start a static server (background)
           npx http-server ./ -p 5500 -s > server.log 2>&1 &
           server_pid=$!
           echo "Server started with PID $server_pid"
           sleep 2
 
-          npx playwright test
+          # Run Playwright with both JSON and HTML reporters.
+          # JSON reporter prints to stdout; we redirect that stdout into test-results/results.json
+          # HTML reporter will produce playwright-report/ directory.
+          npx playwright test --reporter=json --reporter=html > test-results/results.json
           exit_code=$?
 
+          # Collect any axe JSON outputs produced by a11y tests (they should write into test-results/)
+          echo "Listing test-results after Playwright run:"
+          ls -la test-results || true
+          echo "Listing playwright-report directory (if any):"
+          ls -la playwright-report || true
+
+          # Stop server
           kill $server_pid || true
           wait $server_pid 2>/dev/null || true
 
@@ -128,8 +139,16 @@ jobs:
           path: test-results/results.json
           retention-days: 7
 
-      - name: "Upload Playwright artifacts (report directory: screenshots/videos) (on failure)"
-        if: failure()
+      - name: Upload axe / accessibility artifacts (if any)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: axe-results
+          path: test-results/*.json
+          retention-days: 7
+
+      - name: "Upload Playwright artifacts (report directory: screenshots/videos)"
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
@@ -169,14 +188,14 @@ jobs:
             echo "assertion-results.json exists"
             head -c 200 .lighthouseci/assertion-results.json | cat
           else
-            echo "assertion-results.json NOT FOUND"
+            echo ".lighthouseci/assertion-results.json NOT FOUND"
           fi
 
       - name: Download Playwright results artifact
         uses: actions/download-artifact@v4
         with:
           name: playwright-results
-          path: ./test-results # ✅ Fix: Download to correct path
+          path: ./test-results
 
       - name: "Debug: workspace before badge scripts"
         run: |

@@ -1,20 +1,6 @@
-<testsuites id="" name="" tests="6" failures="0" skipped="0" errors="0" time="12.441565999999998">
-<testsuite name="cart.spec.ts" timestamp="2025-10-18T04:11:58.149Z" hostname="chromium" tests="2" failures="0" skipped="0" time="9.852" errors="0">
-<testcase name="Cart flow › Add item to cart and update quantity" classname="cart.spec.ts" time="3.956">
-</testcase>
-<testcase name="Cart flow › Checkout flow (mock payment)" classname="cart.spec.ts" time="5.896">
-</testcase>
-</testsuite>
-<testsuite name="cart.spec.ts" timestamp="2025-10-18T04:11:58.149Z" hostname="firefox" tests="2" failures="0" skipped="0" time="6.277" errors="0">
-<testcase name="Cart flow › Add item to cart and update quantity" classname="cart.spec.ts" time="2.584">
-</testcase>
-<testcase name="Cart flow › Checkout flow (mock payment)" classname="cart.spec.ts" time="3.693">
-</testcase>
-</testsuite>
-<testsuite name="cart.spec.ts" timestamp="2025-10-18T04:11:58.149Z" hostname="webkit" tests="2" failures="0" skipped="0" time="5.744" errors="0">
-<testcase name="Cart flow › Add item to cart and update quantity" classname="cart.spec.ts" time="1.872">
-</testcase>
-<testcase name="Cart flow › Checkout flow (mock payment)" classname="cart.spec.ts" time="3.872">
+<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="0" time="5.375948">
+<testsuite name="a11y.spec.ts" timestamp="2025-10-18T06:40:30.556Z" hostname="chromium" tests="1" failures="0" skipped="0" time="3.377" errors="0">
+<testcase name="Home page accessibility (axe) via direct injection" classname="a11y.spec.ts" time="3.377">
 </testcase>
 </testsuite>
 </testsuites>
