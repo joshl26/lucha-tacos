@@ -165,9 +165,9 @@ jobs:
           echo "PWD: $(pwd)"
           ls -la
           ls -la assertion-results || true
-          if [ -f lighthouseci/assertion-results.json ]; then
+          if [ -f .lighthouseci/assertion-results.json ]; then
             echo "results.json exists"
-            head -c 200 lighthouseci/assertion-results.json | cat
+            head -c 200 .lighthouseci/assertion-results.json | cat
           else
             echo "assertion-results.json NOT FOUND"
           fi
