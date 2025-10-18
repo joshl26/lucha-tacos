@@ -100,18 +100,14 @@ jobs:
           server_pid=$!
           echo "Server started with PID $server_pid"
           sleep 2
-
-          # Run Playwright with both JSON and HTML reporters.
-          # JSON reporter prints to stdout; we redirect that stdout into test-results/results.json
-          # HTML reporter will produce playwright-report/ directory.
-          npx playwright test --reporter=html
+          npx playwright test
           exit_code=$?
 
-          # Collect any axe JSON outputs produced by a11y tests (they should write into test-results/)
-          echo "Listing test-results after Playwright run:"
-          ls -la test-results || true
-          echo "Listing playwright-report directory (if any):"
-          ls -la playwright-report || true
+          # # Collect any axe JSON outputs produced by a11y tests (they should write into test-results/)
+          # echo "Listing test-results after Playwright run:"
+          # ls -la test-results || true
+          # echo "Listing playwright-report directory (if any):"
+          # ls -la playwright-report || true
 
           # Stop server
           kill $server_pid || true
@@ -136,7 +132,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: playwright-results
-          path: test-results/results.json
+          path: test-results/
           retention-days: 7
 
       - name: Upload axe / accessibility artifacts (if any)
@@ -144,7 +140,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: axe-results
-          path: test-results/*.json
+          path: test-results/
           retention-days: 7
 
       - name: "Upload Playwright artifacts (report directory: screenshots/videos)"
