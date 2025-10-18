@@ -108,14 +108,16 @@
         <div class="text-center pb-5">
           <h1 class="hero-text">Order Menu</h1>
         </div>
+
+        <!-- Updated wrapper: order-layout -->
         <div
-          class="w-100 flex-row d-flex"
+          class="order-layout w-100 d-flex h-100"
           style="background-color: black; height: 70dvh"
         >
           <!-- Categories Sidebar -->
           <div
-            class="flex-column overflow-y-scroll h-100"
-            style="width: 30%; border-right: 1px solid #333"
+            class="categories-sidebar flex-column h-100"
+            style="border-right: 1px solid #333"
           >
             <div class="flex-row">
               <h5 class="categories-header">Categories</h5>
@@ -129,8 +131,8 @@
 
           <!-- Menu Items Display -->
           <div
-            class="d-flex flex-column h-100"
-            style="width: 70%; background-color: #1a1a1a"
+            class="menu-panel d-flex flex-column h-100"
+            style="background-color: #1a1a1a"
           >
             <!-- Filter Controls -->
             <div
@@ -140,11 +142,11 @@
               <!-- Filter controls will be inserted here by JavaScript -->
             </div>
 
-            <!-- Menu Items -->
-            <div
-              class="menu-items d-flex flex-column gap-3 p-3 overflow-y-scroll flex-grow-1"
-            >
-              <!-- Menu items will be inserted here by JavaScript -->
+            <div class="menu-panel-inner d-flex flex-column h-100">
+              <!-- Menu Items -->
+              <div class="menu-items d-flex flex-column gap-3 p-3 flex-grow-1">
+                <!-- Menu items will be inserted here by JavaScript -->
+              </div>
             </div>
           </div>
         </div>

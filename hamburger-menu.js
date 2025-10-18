@@ -18,8 +18,8 @@ function applyResponsiveStyles() {
       // Adjust hamburger position based on actual header height
       const header = document.querySelector("header");
       if (header && hamburger) {
-        const headerHeight = header.offsetHeight;
-        hamburger.style.top = `${headerHeight / 2}px`;
+        // const headerHeight = header.offsetHeight;
+        hamburger.style.top = `30px`;
       }
 
       if (hamburger) hamburger.style.display = "flex";
@@ -200,7 +200,6 @@ function attachEventHandlers() {
     if (!menuOpen) {
       hamburger.style.background = "rgba(183, 28, 28, 0.3)";
       hamburger.style.borderColor = "rgba(183, 28, 28, 0.4)";
-      hamburger.style.transform = "scale(1.05)";
     }
   });
 
@@ -208,7 +207,6 @@ function attachEventHandlers() {
     if (!menuOpen) {
       hamburger.style.background = "rgba(0, 0, 0, 0.85)";
       hamburger.style.borderColor = "rgba(255, 255, 255, 0.1)";
-      hamburger.style.transform = "scale(1)";
     }
   });
 
