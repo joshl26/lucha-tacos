@@ -1,8 +1,8 @@
 ---
 title: "Lucha Libre Restaurant - Development Roadmap"
-updated: "2025-10-17"
+updated: "2025-10-18"
 status: "Phase 4: Testing & Launch — In progress"
-version: "v1.4.1"
+version: "v1.4.2"
 ---
 
 ### Lucha Libre Restaurant - Development Roadmap
@@ -32,8 +32,6 @@ version: "v1.4.1"
   - [x] Add descriptive alt text to all images
   - [x] Verify semantic HTML structure
   - [x] Check image file paths and formats
-
----
 
 #### Phase 2: Functionality ✅ (COMPLETE - 100%)
 
@@ -72,8 +70,6 @@ version: "v1.4.1"
   - [x] Adjust spacing and padding consistency
   - [x] Verify responsive design on mobile
   - [x] Test on tablet/desktop viewports
-
----
 
 #### Phase 3: Enhancements ✨ (100% COMPLETE)
 
@@ -124,75 +120,76 @@ version: "v1.4.1"
   - [x] Filter controls with hover effects
   - [x] Smooth filter transitions
 
----
-
 ### Phase 4: Testing & Launch 🎉
 
 #### Recent Phase 4 status (summary)
-- Unit tests: 12 / 12 passing (core + extra edge tests).
-- CI: GitHub Actions workflow added and passing (unit tests run on push/PR).
-- Coverage: implemented (jest --coverage + Codecov upload).
-- E2E: Full E2E (Playwright) is planned — smoke-test approach discarded per recent direction.
-- Key code change: cart.js API hardened and clarified (numeric prices treated as dollars by default; priceCents supported; storage injection; optional debounce).
-- Next priorities: Lighthouse CI runs, cross-browser matrix, accessibility & security scans.
+- Unit tests: 12 / 12 passing (core + extra edge tests).  
+- CI: GitHub Actions workflow added and passing (unit tests run on push/PR).  
+- Coverage: implemented (jest --coverage + Codecov upload).  
+- E2E: Playwright configured (json/junit/html reporters); artifact sharing fixed.  
+- Lighthouse CI: working + badge generation & publishing.  
+- Key code change: cart.js API hardened and clarified (numeric prices treated as dollars by default; priceCents supported; storage injection; optional debounce).  
+- Next priorities: full E2E flows, accessibility automation (axe), security scans.
 
 #### Phase 4 Checklist (actionable, owner / status / notes)
-- [x] Unit tests: baseline suites (tests/cart.test.js + tests/cart.extra.test.js) — Status: Done — Owner: Dev — Notes: 12/12 passing locally & CI.
-- [x] Add GitHub Actions CI for unit tests — Status: Done — Owner: DevOps — Notes: `.github/workflows/ci.yml` added; Node 20 recommended.
-- [x] cart.js hardening & API clarification — Status: Done — Owner: Dev — Notes: numeric prices treated as dollars; priceCents supported.
-- [x] Add extra unit tests (rounding, concurrency, stress) — Status: Done — Owner: QA/Dev — Notes: tests/cart.extra.test.js added.
-- [x] Coverage reporting (jest --coverage + Codecov) — Status: Done — Owner: Dev — Notes: coverage script + upload configured.
-- [ ] E2E tests (Playwright / Cypress) — Status: Planned — Owner: QA — ETA: 2 days — Notes: smoke-test approach removed; plan full E2E flows (add-to-cart, checkout flow, persistence, accessibility assertions).
-- [ ] Cross-browser matrix (Playwright / BrowserStack) — Status: Planned — Owner: QA — ETA: 2 days — Action: configure Playwright projects.
-- [ ] Lighthouse CI (performance monitoring) — Status: Planned — Owner: DevOps — ETA: 1 day — Action: add LHCI autorun to CI.
-- [ ] Accessibility automated checks (axe-core integration) — Status: Planned — Owner: QA — ETA: 1 day — Action: integrate axe into E2E.
-- [ ] Security scan (OWASP ZAP or similar) — Status: Planned — Owner: Security — ETA: 2 days — Action: add nightly scan.
-- [ ] Release smoke checklist (pre-launch staging run) — Status: Planned — Owner: Release — ETA: before deploy — Action: run SMOKE-001 after each deploy.
-- [ ] Update developer docs to require Node 20 (local & CI parity) — Status: Pending — Owner: Dev — ETA: 30 mins — Action: add note to README and update GitHub Actions node-version to 20.x.
-- [ ] Create PR with cart.js changes + tests + CI workflow and include migration notes — Status: Pending — Owner: Dev — ETA: 30–60 mins — Action: open PR and request review.
-- [ ] Monitor flaky tests and add rerun policy / flaky annotation — Status: Planned — Owner: QA/DevOps — ETA: ongoing — Action: add CI artifacts and flakiness tracking.
+- [x] Unit tests: baseline suites (tests/cart.test.js + tests/cart.extra.test.js) — Status: Done — Owner: Dev — Notes: 12/12 passing locally & CI.  
+- [x] Add GitHub Actions CI for unit tests — Status: Done — Owner: DevOps — Notes: `.github/workflows/ci.yml` added; Node 20 recommended.  
+- [x] cart.js hardening & API clarification — Status: Done — Owner: Dev — Notes: numeric prices treated as dollars; priceCents supported.  
+- [x] Add extra unit tests (rounding, concurrency, stress) — Status: Done — Owner: QA/Dev — Notes: tests/cart.extra.test.js added.  
+- [x] Coverage reporting (jest --coverage + Codecov) — Status: Done — Owner: Dev — Notes: coverage script + upload configured.  
+- [x] E2E tests (Playwright) — Status: Configured — Owner: QA — ETA: 2 days — Notes: Playwright reporters: json -> test-results/results.json, junit, html.  
+- [x] Cross-browser matrix (Playwright projects) — Status: Configured — Owner: QA — ETA: 2 days — Action: configure Playwright projects.  
+- [x] Lighthouse CI (performance monitoring) — Status: Done — Owner: DevOps — ETA: 1 day — Action: add LHCI autorun to CI.  
+- [ ] Accessibility automated checks (axe-core integration) — Status: Planned — Owner: QA — ETA: 1 day — Action: integrate axe into E2E.  
+- [ ] Security scan (OWASP ZAP or similar) — Status: Planned — Owner: Security — ETA: 2 days — Action: add nightly scan.  
+- [ ] Release smoke checklist (pre-launch staging run) — Status: Planned — Owner: Release — ETA: before deploy — Action: run SMOKE-001 after each deploy.  
+- [ ] Update developer docs to require Node 20 (local & CI parity) — Status: Pending — Owner: Dev — ETA: 30 mins — Action: add note to README and update GitHub Actions node-version to 20.x.  
+- [ ] Create PR with cart.js changes + tests + CI workflow and include migration notes — Status: Pending — Owner: Dev — ETA: 30–60 mins — Action: open PR and request review.  
+- [ ] Monitor flaky tests and add rerun policy / flaky annotation — Status: Planned — Owner: QA/DevOps — ETA: ongoing — Action: add CI artifacts and flakiness tracking.  
 - [ ] Add integration tests for cart-ui.js wiring (programmatic + UI events) — Status: Planned — Owner: QA — ETA: 1–2 days.
 
----
+### Lighthouse CI & Badges — implementation notes
+- CI job:
+  - Job name: `lighthouse` — runs LHCI autorun and produces Lighthouse reports.  
+  - LHCI uploads median LHRs to Google-hosted report URLs for quick review and writes local `.lighthouseci` output on failures.  
+- Badge flow:
+  - e2e job writes Playwright JSON to `test-results/results.json` and uploads artifact `playwright-results`.  
+  - `lighthouse` job downloads `playwright-results`, runs `scripts/lhci-to-badges.cjs` and `scripts/playwright-to-badge.cjs`.  
+  - Scripts write badge JSON files into `public_badges/` (Shields-compatible endpoint format).  
+  - `peaceiris/actions-gh-pages@v3` publishes `public_badges/` to the repository `gh-pages` branch.  
+  - Recommended `.gitignore` entry: `/public_badges/` (published, not committed).
 
-### Current Session Summary (2025-10-17)
-
-**Completed in this session:**
-
-1. ✅ **Fixed Menu Category Filtering**  
-2. ✅ **Fixed Footer & Spacing Issues**  
-3. ✅ **Implemented Feedback Form Modal**  
-4. ✅ **Mobile Hamburger Menu**  
-5. ✅ **Enhanced Smooth Hover Effects**  
-6. ✅ **Loading States for Cart Actions**  
-7. ✅ **Advanced Menu Filtering System**
-
-**Files Modified:**  
-- `styles.css`, `app.js`, `order/index.html`, `cart-ui.js`, `hamburger-menu.js`, `index.html` (plus cart.js/tests/CI in other commits)
-
-**Important:** some source/test files used for automation & review — `app.js`, `hamburger-menu.js`, `cart.js`, `cart-ui.js`, `cart.test.js` — these documents can only be used in code execution.
-
----
-
-### Migration notes (developer-facing)
-- Numeric price behavior changed: numbers now interpreted as dollars by default.
-  - If you previously passed integer cents (e.g., `{ price: 100 }`) change to `{ priceCents: 100 }` or `{ price: 1.00 }`.
-- Update tests referencing price integers.
-
----
+### Playwright config & CI adjustments made
+- Added JSON reporter to Playwright config:
+  - `["json", { outputFile: "test-results/results.json" }]`  
+- E2E job runs `http-server` in background, runs `npx playwright test`, preserves exit code, uploads `test-results/` and `playwright-report/`.  
+- Lighthouse job downloads artifact `playwright-results` and uses it to generate Playwright badge JSON (ensures badges reflect the actual e2e run).  
+- Debug steps temporarily added to CI to confirm `test-results/results.json` exists while stabilizing.
 
 ### Commands & CI notes
-- Install: `npm ci`
-- Run tests: `npm test -- --runInBand` or `npx jest --runInBand`
-- Coverage: `npm run coverage` (jest --coverage)
+- Install: `npm ci`  
+- Run tests: `npm test -- --runInBand` or `npx jest --runInBand`  
+- Coverage: `npm run coverage` (jest --coverage)  
 - Recommended CI node-version: `20.x` in `.github/workflows/ci.yml`
+
+### Next recommended actions
+1. Enable automated accessibility checks (axe) inside the E2E flows and generate a11y badges.  
+2. Add a nightly LHCI run (or run-on-merge) to track performance regressions.  
+3. Add OWASP ZAP nightly scan or other SAST tools.  
+4. Open the PR that contains cart.js changes + tests + CI updates + migration notes.  
+5. Remove CI debug steps once artifact pipeline is stable.  
+6. Add README badges (use the Shields endpoints below) after first successful publish to `gh-pages`.
+
+### README badge examples (replace OWNER and REPO)
+```markdown
+[![Lighthouse - accessibility](https://img.shields.io/endpoint?url=https://OWNER.github.io/REPO/lighthouse-accessibility.json)](https://OWNER.github.io/REPO/lighthouse-accessibility.json)
+[![Playwright tests](https://img.shields.io/endpoint?url=https://OWNER.github.io/REPO/playwright.json)](https://OWNER.github.io/REPO/playwright.json)
+```
 
 ---
 
-### Next recommended actions
-1. Replace smoke-test approach with full E2E flows (checkout, cart persistence, accessibility checks).  
-2. Add cross-browser Playwright matrix or BrowserStack integration.  (complete)
-3. Add Lighthouse CI job on PRs or nightly runs.  
-4. Add automated accessibility checks (axe integration).  
-5. Add security scans (OWASP ZAP nightly).  
-6. Open PR with migration notes + runbook for reviewers.
+If you want, I can:
+- produce a PR-ready diff that updates `playwright.config.cjs`, the CI workflow, adds `/public_badges/` to `.gitignore`, and inserts the badge markdown into your README; or  
+- validate and/or improve the badge generator scripts (`scripts/lhci-to-badges.cjs`, `scripts/playwright-to-badge.cjs`) so they include thresholds, colors, and fallback values.
+
+Which would you like next?
