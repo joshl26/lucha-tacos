@@ -1,1 +1,10 @@
-{"schemaVersion":1,"label":"playwright","message":"0%","color":"orange"}
+{
+  "schemaVersion": 1,
+  "label": "playwright",
+  "message": "0%",
+  "color": "lightgrey",
+  "details": {
+    "passed": 0,
+    "total": 0
+  }
+}
