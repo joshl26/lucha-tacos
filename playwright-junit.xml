@@ -1,162 +1,20 @@
-<testsuites id="" name="" tests="9" failures="1" skipped="0" errors="0" time="32.484016">
-<testsuite name="a11y.spec.ts" timestamp="2025-10-18T07:05:22.540Z" hostname="chromium" tests="1" failures="0" skipped="0" time="2.107" errors="0">
-<testcase name="Home page accessibility (axe) via direct injection" classname="a11y.spec.ts" time="2.107">
+<testsuites id="" name="" tests="6" failures="0" skipped="0" errors="0" time="13.148395999999998">
+<testsuite name="cart.spec.ts" timestamp="2025-10-18T14:22:36.337Z" hostname="chromium" tests="2" failures="0" skipped="0" time="10.146" errors="0">
+<testcase name="Cart flow › Add item to cart and update quantity" classname="cart.spec.ts" time="4.118">
+</testcase>
+<testcase name="Cart flow › Checkout flow (mock payment)" classname="cart.spec.ts" time="6.028">
 </testcase>
 </testsuite>
-<testsuite name="cart.spec.ts" timestamp="2025-10-18T07:05:22.540Z" hostname="chromium" tests="2" failures="1" skipped="0" time="32.735" errors="0">
-<testcase name="Cart flow › Add item to cart and update quantity" classname="cart.spec.ts" time="1.721">
+<testsuite name="cart.spec.ts" timestamp="2025-10-18T14:22:36.337Z" hostname="firefox" tests="2" failures="0" skipped="0" time="6.889" errors="0">
+<testcase name="Cart flow › Add item to cart and update quantity" classname="cart.spec.ts" time="2.942">
 </testcase>
-<testcase name="Cart flow › Checkout flow (mock payment)" classname="cart.spec.ts" time="31.014">
-<failure message="cart.spec.ts:32:3 Checkout flow (mock payment)" type="FAILURE">
-<![CDATA[  [chromium] › cart.spec.ts:32:3 › Cart flow › Checkout flow (mock payment) ────────────────────────
-
-    Test timeout of 30000ms exceeded.
-
-    Error: page.fill: Test timeout of 30000ms exceeded.
-    Call log:
-      - waiting for locator('#checkout-name')
-        - locator resolved to <input type="text" name="name" required="" id="checkout-name" autocomplete="name"/>
-        - fill("Test User")
-      - attempting fill action
-        2 × waiting for element to be visible, enabled and editable
-          - element is not visible
-        - retrying fill action
-        - waiting 20ms
-        2 × waiting for element to be visible, enabled and editable
-          - element is not visible
-        - retrying fill action
-          - waiting 100ms
-        - waiting for element to be visible, enabled and editable
-        - element is not visible
-      - retrying fill action
-        - waiting 500ms
-      - element was detached from the DOM, retrying
-        - waiting for" http://127.0.0.1:5500/order/" navigation to finish...
-        - navigated to "http://127.0.0.1:5500/order/"
-        - locator resolved to <input type="text" name="name" required="" id="checkout-name" autocomplete="name"/>
-        - fill("Test User")
-      - attempting fill action
-        2 × waiting for element to be visible, enabled and editable
-          - element is not visible
-        - retrying fill action
-        - waiting 20ms
-        2 × waiting for element to be visible, enabled and editable
-          - element is not visible
-        - retrying fill action
-          - waiting 100ms
-        7 × waiting for element to be visible, enabled and editable
-          - element is not visible
-        - retrying fill action
-          - waiting 500ms
-        - waiting for" http://127.0.0.1:5500/order/" navigation to finish...
-        - navigated to "http://127.0.0.1:5500/order/"
-        - waiting for element to be visible, enabled and editable
-      2 × element was detached from the DOM, retrying
-          - locator resolved to <input type="text" name="name" required="" id="checkout-name" autocomplete="name"/>
-          - fill("Test User")
-        - attempting fill action
-          - waiting for element to be visible, enabled and editable
-          - element is not visible
-        - retrying fill action
-          - waiting for element to be visible, enabled and editable
-          - element is not visible
-        - retrying fill action
-          - waiting 20ms
-          - waiting for element to be visible, enabled and editable
-          - element is not visible
-        - retrying fill action
-          - waiting 100ms
-          - waiting for element to be visible, enabled and editable
-          - element is not visible
-        - retrying fill action
-          - waiting 100ms
-          - waiting for element to be visible, enabled and editable
-          - element is not visible
-        - retrying fill action
-          - waiting 500ms
-          - waiting for element to be visible, enabled and editable
-          - element is not visible
-        - retrying fill action
-          - waiting 500ms
-          - waiting for element to be visible, enabled and editable
-          - element is not visible
-        - retrying fill action
-          - waiting 500ms
-          - waiting for element to be visible, enabled and editable
-          - element is not visible
-        - retrying fill action
-          - waiting 500ms
-          - waiting for element to be visible, enabled and editable
-          - element is not visible
-        - retrying fill action
-          - waiting 500ms
-          - waiting for element to be visible, enabled and editable
-          - element is not visible
-        - retrying fill action
-          - waiting 500ms
-          - waiting for element to be visible, enabled and editable
-          - element is not visible
-        - retrying fill action
-          - waiting 500ms
-          - waiting for element to be visible, enabled and editable
-          - element is not visible
-        - retrying fill action
-          - waiting 500ms
-        28 × waiting for element to be visible, enabled and editable
-           - element is not visible
-         - retrying fill action
-           - waiting 500ms
-
-
-      44 |
-      45 |     // Fill out the form
-    > 46 |     await page.fill("#checkout-name", "Test User");
-         |                ^
-      47 |     await page.fill("#checkout-contact", "test@example.com");
-      48 |
-      49 |     // Submit the form
-        at E:\GIT Working Folders\lucha-tacos\tests\e2e\cart.spec.ts:46:16
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\..\test-results\cart-Cart-flow-Checkout-flow-mock-payment--chromium\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\cart-Cart-flow-Checkout-flow-mock-payment--chromium\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ..\..\test-results\cart-Cart-flow-Checkout-flow-mock-payment--chromium\error-context.md
-]]>
-</failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|test-results\cart-Cart-flow-Checkout-flow-mock-payment--chromium\test-failed-1.png]]
-
-[[ATTACHMENT|test-results\cart-Cart-flow-Checkout-flow-mock-payment--chromium\video.webm]]
-
-[[ATTACHMENT|test-results\cart-Cart-flow-Checkout-flow-mock-payment--chromium\error-context.md]]
-]]>
-</system-out>
+<testcase name="Cart flow › Checkout flow (mock payment)" classname="cart.spec.ts" time="3.947">
 </testcase>
 </testsuite>
-<testsuite name="a11y.spec.ts" timestamp="2025-10-18T07:05:22.540Z" hostname="firefox" tests="1" failures="0" skipped="0" time="2.896" errors="0">
-<testcase name="Home page accessibility (axe) via direct injection" classname="a11y.spec.ts" time="2.896">
+<testsuite name="cart.spec.ts" timestamp="2025-10-18T14:22:36.337Z" hostname="webkit" tests="2" failures="0" skipped="0" time="5.79" errors="0">
+<testcase name="Cart flow › Add item to cart and update quantity" classname="cart.spec.ts" time="1.917">
 </testcase>
-</testsuite>
-<testsuite name="cart.spec.ts" timestamp="2025-10-18T07:05:22.540Z" hostname="firefox" tests="2" failures="0" skipped="0" time="8.268" errors="0">
-<testcase name="Cart flow › Add item to cart and update quantity" classname="cart.spec.ts" time="3.906">
-</testcase>
-<testcase name="Cart flow › Checkout flow (mock payment)" classname="cart.spec.ts" time="4.362">
-</testcase>
-</testsuite>
-<testsuite name="a11y.spec.ts" timestamp="2025-10-18T07:05:22.540Z" hostname="webkit" tests="1" failures="0" skipped="0" time="1.849" errors="0">
-<testcase name="Home page accessibility (axe) via direct injection" classname="a11y.spec.ts" time="1.849">
-</testcase>
-</testsuite>
-<testsuite name="cart.spec.ts" timestamp="2025-10-18T07:05:22.540Z" hostname="webkit" tests="2" failures="0" skipped="0" time="6.331" errors="0">
-<testcase name="Cart flow › Add item to cart and update quantity" classname="cart.spec.ts" time="1.893">
-</testcase>
-<testcase name="Cart flow › Checkout flow (mock payment)" classname="cart.spec.ts" time="4.438">
+<testcase name="Cart flow › Checkout flow (mock payment)" classname="cart.spec.ts" time="3.873">
 </testcase>
 </testsuite>
 </testsuites>
