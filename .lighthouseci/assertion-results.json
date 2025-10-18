@@ -13,7 +13,7 @@
     "message": "\"no-vulnerable-libraries\" is not a known audit.",
     "auditId": "no-vulnerable-libraries",
     "level": "warn",
-    "url": "http://localhost:54213/index.html"
+    "url": "http://localhost:57041/index.html"
   },
   {
     "name": "auditRan",
@@ -29,7 +29,7 @@
     "message": "\"no-vulnerable-libraries\" is not a known audit.",
     "auditId": "no-vulnerable-libraries",
     "level": "warn",
-    "url": "http://localhost:54213/order/index.html"
+    "url": "http://localhost:57041/order/index.html"
   },
   {
     "name": "auditRan",
@@ -45,7 +45,7 @@
     "message": "\"no-vulnerable-libraries\" is not a known audit.",
     "auditId": "no-vulnerable-libraries",
     "level": "warn",
-    "url": "http://localhost:54213/about/index.html"
+    "url": "http://localhost:57041/about/index.html"
   },
   {
     "name": "auditRan",
@@ -61,6 +61,6 @@
     "message": "\"no-vulnerable-libraries\" is not a known audit.",
     "auditId": "no-vulnerable-libraries",
     "level": "warn",
-    "url": "http://localhost:54213/privacy/index.html"
+    "url": "http://localhost:57041/privacy/index.html"
   }
 ]
