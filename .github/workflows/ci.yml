@@ -99,3 +99,38 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 7
+
+  lighthouse:
+    name: Lighthouse audit
+    runs-on: ubuntu-latest
+    needs: [unit-tests, e2e-tests]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli@0.14.x
+
+      - name: Start static server & run Lighthouse
+        run: |
+          npx start-server-and-test "npx http-server ./ -p 5500 -s" http://127.0.0.1:5500 "lhci autorun --config=lighthouserc.cjs"
+
+      - name: Upload Lighthouse reports (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-reports
+          path: .lighthouseci/
+          retention-days: 7
+
+      - name: Show Lighthouse summary
+        run: node scripts/lighthouse-summary.cjs || echo "No summary script found"
