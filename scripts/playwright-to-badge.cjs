@@ -91,10 +91,10 @@ function colorForPercent(p) {
 const badge = {
   schemaVersion: 1,
   label: "playwright",
-  message: `${percent}%`,
+  message: total ? `${passed}/${total}` : "0/0",
   color: colorForPercent(percent),
   // optionally include a subtitle field for debugging; shields ignores extra fields
-  details: { passed, total },
+  // details: { passed, total },
 };
 
 const outDir = path.resolve("public_badges");
