@@ -194,6 +194,24 @@ jobs:
             echo
           done
 
+      - name: "Debug: workspace before badge scripts"
+        run: |
+          echo "PWD: $(pwd)"
+          echo "List root files:"
+          ls -la
+          echo "List .lighthouseci:"
+          ls -la .lighthouseci || true
+          echo "List test-results:"
+          ls -la test-results || true
+          if [ -f .lighthouseci/assertion-results.json ]; then
+            echo ".lighthouseci/assertion-results.json exists (first 200 chars):"
+            head -c 200 .lighthouseci/assertion-results.json || true
+          fi
+          if [ -f test-results/results.json ]; then
+            echo "test-results/results.json exists (first 200 chars):"
+            head -c 200 test-results/results.json || true
+          fi
+
       - name: Publish badges to gh-pages
         if: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') }}
         uses: peaceiris/actions-gh-pages@v3
@@ -206,7 +224,7 @@ jobs:
         if: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') }}
         run: |
           echo "Waiting a few seconds for Pages to update..."
-          sleep 6
+          sleep 15
           curl -I "https://joshl26.github.io/lucha-tacos/lighthouse-accessibility.json" || true
 
       - name: Upload Lighthouse reports (on failure)
