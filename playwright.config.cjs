@@ -1,4 +1,3 @@
-// playwright.config.js
 const { devices } = require("@playwright/test");
 
 module.exports = {
@@ -8,6 +7,7 @@ module.exports = {
   fullyParallel: true,
   reporter: [
     ["list"],
+    ["json", { outputFile: "test-results/results.json" }], // ✅ Add this line
     ["junit", { outputFile: "playwright-junit.xml" }],
     ["html", { outputFolder: "playwright-report" }],
   ],
@@ -26,7 +26,7 @@ module.exports = {
     },
   ],
   use: {
-    baseURL: "http://127.0.0.1:5500", // set to your Live Server URL
+    baseURL: "http://127.0.0.1:5500",
     headless: true,
     trace: "on-first-retry",
     screenshot: "only-on-failure",

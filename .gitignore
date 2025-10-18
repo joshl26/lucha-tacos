@@ -67,3 +67,4 @@ logs/
 !.env.example
 
 /public_badges/
+

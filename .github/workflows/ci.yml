@@ -88,26 +88,20 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      - name: Run E2E tests (start http-server + produce JSON report)
+      - name: Run E2E tests (start http-server + run Playwright)
         run: |
           mkdir -p test-results
-          # start server in background
           npx http-server ./ -p 5500 -s > server.log 2>&1 &
           server_pid=$!
           echo "Server started with PID $server_pid"
           sleep 2
 
-          # run Playwright and capture full output (stdout + stderr)
-          npx playwright test --reporter=json 2>&1 | tee test-results/results.json
-          exit_code=${PIPESTATUS[0]}
+          npx playwright test
+          exit_code=$?
 
-          echo "Playwright exit code: $exit_code"
-
-          # stop server
           kill $server_pid || true
           wait $server_pid 2>/dev/null || true
 
-          # exit with Playwright's exit code
           exit $exit_code
 
       - name: "Debug: list test-results"
