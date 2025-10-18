@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// scripts/playwright-to-badge.js
+// scripts/playwright-to-badge.cjs
 const fs = require("fs");
 const path = require("path");
 
@@ -17,40 +17,16 @@ try {
   process.exit(1);
 }
 
-// Extract total/passed from flat structure
+// ✅ Use stats directly (most reliable)
 let total = 0;
 let passed = 0;
 
-function traverseSuites(suites) {
-  if (!suites || !Array.isArray(suites)) return;
-  for (const suite of suites) {
-    if (Array.isArray(suite.specs)) {
-      for (const spec of suite.specs) {
-        if (Array.isArray(spec.tests)) {
-          for (const test of spec.tests) {
-            total += 1;
-            if (test.status === "passed" || test.ok === true) {
-              passed += 1;
-            }
-          }
-        }
-      }
-    }
-    if (Array.isArray(suite.suites)) {
-      traverseSuites(suite.suites); // recurse
-    }
-  }
-}
-
-// Start traversal from root suites
-if (Array.isArray(r.suites)) {
-  traverseSuites(r.suites);
-}
-
-// Fallback to stats if available
-if (total === 0 && r.stats) {
+if (r.stats) {
   total = r.stats.expected + r.stats.unexpected + r.stats.flaky;
   passed = r.stats.expected;
+} else {
+  console.error("No stats found in Playwright JSON");
+  process.exit(0);
 }
 
 const percent = total ? Math.round((passed / total) * 100) : 0;

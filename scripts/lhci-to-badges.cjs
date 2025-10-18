@@ -1,4 +1,4 @@
-// scripts/lhci-to-badges.js
+// scripts/lhci-to-badges.cjs
 const fs = require("fs");
 const path = require("path");
 
@@ -8,26 +8,18 @@ if (!fs.existsSync(lhciDir)) {
   process.exit(0);
 }
 
-// Prefer assertion-results.json if it exists
-const assertionResultsPath = path.join(lhciDir, "assertion-results.json");
-let data;
-
-if (fs.existsSync(assertionResultsPath)) {
-  console.log("Reading LHCI results from assertion-results.json");
-  data = JSON.parse(fs.readFileSync(assertionResultsPath, "utf8"));
-} else {
-  // Fallback: pick the first LHR file
-  const files = fs
-    .readdirSync(lhciDir)
-    .filter((f) => f.startsWith("lhr-") && f.endsWith(".json"));
-  if (!files.length) {
-    console.error("No LHCI LHR or assertion files found in .lighthouseci/");
-    process.exit(0);
-  }
-  const lhrFile = path.join(lhciDir, files[0]);
-  console.log("Reading LHCI results from", lhrFile);
-  data = JSON.parse(fs.readFileSync(lhrFile, "utf8"));
+// Look for LHR files (not assertion-results.json)
+const lhrFiles = fs
+  .readdirSync(lhciDir)
+  .filter((f) => f.startsWith("lhr-") && f.endsWith(".json"));
+if (!lhrFiles.length) {
+  console.error("No LHR files found in .lighthouseci/");
+  process.exit(0);
 }
+
+const lhrFile = path.join(lhciDir, lhrFiles[0]);
+console.log("Reading LHR from", lhrFile);
+const data = JSON.parse(fs.readFileSync(lhrFile, "utf8"));
 
 // Handle both raw LHR and wrapped formats
 const lhr = data.lhr || data;
