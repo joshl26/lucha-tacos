@@ -1,20 +1,20 @@
-<testsuites id="" name="" tests="6" failures="0" skipped="0" errors="0" time="13.148395999999998">
-<testsuite name="cart.spec.ts" timestamp="2025-10-18T14:22:36.337Z" hostname="chromium" tests="2" failures="0" skipped="0" time="10.146" errors="0">
-<testcase name="Cart flow › Add item to cart and update quantity" classname="cart.spec.ts" time="4.118">
+<testsuites id="" name="" tests="6" failures="0" skipped="0" errors="0" time="11.894935">
+<testsuite name="cart.spec.ts" timestamp="2025-10-18T15:49:25.525Z" hostname="chromium" tests="2" failures="0" skipped="0" time="12.369" errors="0">
+<testcase name="Cart flow › Add item to cart and update quantity" classname="cart.spec.ts" time="5.218">
 </testcase>
-<testcase name="Cart flow › Checkout flow (mock payment)" classname="cart.spec.ts" time="6.028">
-</testcase>
-</testsuite>
-<testsuite name="cart.spec.ts" timestamp="2025-10-18T14:22:36.337Z" hostname="firefox" tests="2" failures="0" skipped="0" time="6.889" errors="0">
-<testcase name="Cart flow › Add item to cart and update quantity" classname="cart.spec.ts" time="2.942">
-</testcase>
-<testcase name="Cart flow › Checkout flow (mock payment)" classname="cart.spec.ts" time="3.947">
+<testcase name="Cart flow › Checkout flow (mock payment)" classname="cart.spec.ts" time="7.151">
 </testcase>
 </testsuite>
-<testsuite name="cart.spec.ts" timestamp="2025-10-18T14:22:36.337Z" hostname="webkit" tests="2" failures="0" skipped="0" time="5.79" errors="0">
-<testcase name="Cart flow › Add item to cart and update quantity" classname="cart.spec.ts" time="1.917">
+<testsuite name="cart.spec.ts" timestamp="2025-10-18T15:49:25.525Z" hostname="firefox" tests="2" failures="0" skipped="0" time="4.096" errors="0">
+<testcase name="Cart flow › Add item to cart and update quantity" classname="cart.spec.ts" time="2.886">
 </testcase>
-<testcase name="Cart flow › Checkout flow (mock payment)" classname="cart.spec.ts" time="3.873">
+<testcase name="Cart flow › Checkout flow (mock payment)" classname="cart.spec.ts" time="1.21">
+</testcase>
+</testsuite>
+<testsuite name="cart.spec.ts" timestamp="2025-10-18T15:49:25.525Z" hostname="webkit" tests="2" failures="0" skipped="0" time="6.654" errors="0">
+<testcase name="Cart flow › Add item to cart and update quantity" classname="cart.spec.ts" time="2.494">
+</testcase>
+<testcase name="Cart flow › Checkout flow (mock payment)" classname="cart.spec.ts" time="4.16">
 </testcase>
 </testsuite>
 </testsuites>

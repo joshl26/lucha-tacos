@@ -72,14 +72,23 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="/order/index.html" class="nav-link" data-page="order"
-                  >Order Menu</a
-                >
+                <a href="/order/index.html" class="nav-link" data-page="order">
+                  Order Menu
+                </a>
               </li>
               <li class="nav-item">
-                <a href="/about/index.html" class="nav-link" data-page="about"
-                  >About</a
+                <a href="/about/index.html" class="nav-link" data-page="about">
+                  About
+                </a>
+              </li>
+              <li class="nav-item">
+                <a
+                  href="/privacy/index.html"
+                  class="nav-link"
+                  data-page="privacy"
                 >
+                  Privacy
+                </a>
               </li>
             </ul>
           </nav>
@@ -98,43 +107,20 @@
       ></video>
 
       <div class="hero-container">
-        <div
-          class="position-relative m-auto px-1 pt-4 pb-2 drop-shadow-md"
-          style="max-width: 350px"
-        >
-          <div
-            class="position-absolute top-0 w-100 h-100 z-0 rounded-4"
-            style="
-              background-color: rgba(255, 203, 203, 0.216);
-              background-image: url(/public/black-felt.png);
-            "
-            role="presentation"
-            aria-hidden="true"
-          ></div>
-          <h1
-            class="position-relative hero-text carter-one-regular pb-2 drop-shadow-md"
-            style="color: red"
-          >
-            Lucha
-          </h1>
+        <div class="hero-content">
+          <h1 class="hero-text">Lucha</h1>
           <img
             alt="Lucha Tacos logo featuring a traditional red and gold Mexican wrestling mask"
             src="/public/mask-1.svg"
-            class="position-relative drop-shadow-md"
-            style="width: 300px"
+            class="hero-logo"
           />
-          <h1
-            class="position-relative hero-text carter-one-regular pt-3 drop-shadow-md"
-            style="color: red"
-          >
-            Tacos
-          </h1>
+          <h1 class="hero-text">Tacos</h1>
         </div>
       </div>
 
       <!-- Hero Content Section -->
       <section class="d-flex flex-sm-row flex-column h-auto">
-        <div class="w-100" style="padding: 6rem">
+        <div class="w-100 content-text">
           <h2 class="pb-3" style="font-size: 1.25rem; font-weight: normal">
             Lucha Tacos introduces the dynamic and lively flavors of Mexico to
             your dining experience, infused with an extra element of excitement.
@@ -169,7 +155,7 @@
             class="hero-image w-100"
           />
         </div>
-        <div class="w-100 2" style="padding: 4rem">
+        <div class="w-100 content-text">
           <p class="pb-3" style="font-size: 1.25rem">
             Lucha Tacos brings the bold and vibrant flavors of Mexico to your
             plate with authenticity and excitement.
@@ -283,7 +269,7 @@
 
       <!-- Image Gallery 1 -->
       <section
-        class="d-flex flex-sm-row flex-column h-auto container px-0 py-sm-2"
+        class="d-flex flex-sm-row flex-column h-auto container px-0 py-sm-2 image-gallery"
         aria-label="Food gallery"
       >
         <div class="w-100 d-flex flex-column"></div>
@@ -313,7 +299,7 @@
 
       <!-- Image Gallery 2 -->
       <section
-        class="d-flex flex-sm-row flex-column h-auto container px-0 py-sm-2 pb-5"
+        class="d-flex flex-sm-row flex-column h-auto container px-0 py-sm-2 pb-5 image-gallery"
         aria-label="Additional food items"
       >
         <div class="w-100 d-flex flex-column"></div>
@@ -343,7 +329,7 @@
 
       <!-- Event Catering Section -->
       <section
-        class="d-flex flex-sm-row flex-column container px-0"
+        class="d-flex flex-sm-row flex-column container px-0 align-items-center"
         aria-labelledby="catering-heading"
       >
         <div class="w-75 d-flex flex-column m-auto text-center pb-4 py-sm-5">
@@ -354,8 +340,7 @@
         <div class="w-25 d-flex flex-column m-auto py-sm-5">
           <a
             href="/order/index.html"
-            class="p-2 mx-sm-3 text-center rounded text-white"
-            style="background-color: red; text-decoration: none"
+            class="place-order-button p-2 mx-sm-3 text-center"
             aria-label="Place your catering order"
           >
             PLACE YOUR ORDER
@@ -365,8 +350,7 @@
 
       <!-- Vancouver Location -->
       <section
-        class="d-flex flex-sm-row flex-column h-auto container px-0 py-3 mt-5"
-        style="height: 500px"
+        class="d-flex flex-sm-row flex-column h-auto container px-0 py-3 mt-5 location-section"
         aria-labelledby="vancouver-location"
       >
         <div class="flex-column w-50 m-auto">
@@ -377,7 +361,7 @@
             Vancouver
           </h2>
           <hr class="flex-row w-25 m-auto py-1 py-sm-5" role="presentation" />
-          <address class="flex-row text-center" style="font-style: normal">
+          <address class="flex-row text-center">
             <div>117 Water St, Vancouver, BC V6B 1A7</div>
             <div>
               <a href="mailto:orders@luchatacos.ca" class="text-white"
@@ -411,8 +395,7 @@
 
       <!-- Toronto Location -->
       <section
-        class="d-flex flex-sm-row flex-column h-auto container px-0 pt-3"
-        style="height: 500px"
+        class="d-flex flex-sm-row flex-column h-auto container px-0 pt-3 location-section"
         aria-labelledby="toronto-location"
       >
         <div class="flex-column w-50 m-auto">
@@ -420,7 +403,7 @@
             Toronto
           </h2>
           <hr class="flex-row w-25 m-auto py-1 py-sm-5" role="presentation" />
-          <address class="flex-row text-center" style="font-style: normal">
+          <address class="flex-row text-center">
             <div>100 Wellington St W, Toronto, ON M5K 1E7</div>
             <div>
               <a href="mailto:orders@luchatacos.ca" class="text-white"

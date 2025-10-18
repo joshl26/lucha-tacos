@@ -1,4 +1,4 @@
-// hamburger-menu.js - Mobile hamburger menu functionality
+// hamburger-menu.js - Enhanced mobile hamburger menu
 
 let menuOpen = false;
 
@@ -15,6 +15,13 @@ function applyResponsiveStyles() {
   function handleResize() {
     if (window.innerWidth <= 768) {
       // Mobile: show hamburger, hide desktop nav
+      // Adjust hamburger position based on actual header height
+      const header = document.querySelector("header");
+      if (header && hamburger) {
+        const headerHeight = header.offsetHeight;
+        hamburger.style.top = `${headerHeight / 2}px`;
+      }
+
       if (hamburger) hamburger.style.display = "flex";
       if (desktopNav) desktopNav.style.display = "none";
     } else {
@@ -39,72 +46,142 @@ function applyResponsiveStyles() {
 function createMenuElements() {
   if (document.getElementById("hamburger-btn")) return;
 
-  // Create hamburger button with proper inline positioning
+  // Enhanced hamburger button
   const hamburger = document.createElement("button");
   hamburger.id = "hamburger-btn";
   hamburger.className = "hamburger-btn";
   hamburger.setAttribute("aria-label", "Toggle navigation menu");
   hamburger.setAttribute("aria-expanded", "false");
   hamburger.setAttribute("aria-controls", "mobile-nav-menu");
-  hamburger.style.display = "flex";
-  hamburger.style.position = "fixed";
-  hamburger.style.top = "1rem";
-  hamburger.style.left = "1rem";
-  hamburger.style.zIndex = "1100";
-  hamburger.style.width = "44px";
-  hamburger.style.height = "44px";
-  hamburger.style.background = "none";
-  hamburger.style.border = "none";
-  hamburger.style.cursor = "pointer";
-  hamburger.style.padding = "8px";
-  hamburger.style.borderRadius = "6px";
-  hamburger.style.alignItems = "center";
-  hamburger.style.justifyContent = "center";
+
+  Object.assign(hamburger.style, {
+    display: "flex",
+    position: "fixed",
+    top: "30px", // Vertically center in 60px header
+    left: "1rem",
+    zIndex: "1100",
+    width: "48px",
+    height: "48px",
+    background: "rgba(0, 0, 0, 0.85)",
+    border: "1px solid rgba(255, 255, 255, 0.1)",
+    cursor: "pointer",
+    padding: "0",
+    borderRadius: "8px",
+    alignItems: "center",
+    justifyContent: "center",
+    backdropFilter: "blur(10px)",
+    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
+    transition: "all 0.3s ease",
+    transform: "translateY(-50%)",
+  });
 
   hamburger.innerHTML = `
-    <span class="hamburger-line" style="position: absolute; width: 24px; height: 2px; background: white; border-radius: 2px; top: 6px; left: 50%; transform: translateX(-50%); transition: all 0.3s ease;"></span>
-    <span class="hamburger-line" style="position: absolute; width: 24px; height: 2px; background: white; border-radius: 2px; top: 13px; left: 50%; transform: translateX(-50%); opacity: 1; transition: all 0.3s ease;"></span>
-    <span class="hamburger-line" style="position: absolute; width: 24px; height: 2px; background: white; border-radius: 2px; top: 20px; left: 50%; transform: translateX(-50%); transition: all 0.3s ease;"></span>
+    <span class="hamburger-line" style="position: absolute; width: 24px; height: 2px; background: white; border-radius: 2px; top: 14px; left: 50%; transform: translateX(-50%); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);"></span>
+    <span class="hamburger-line" style="position: absolute; width: 24px; height: 2px; background: white; border-radius: 2px; top: 23px; left: 50%; transform: translateX(-50%); opacity: 1; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);"></span>
+    <span class="hamburger-line" style="position: absolute; width: 24px; height: 2px; background: white; border-radius: 2px; top: 32px; left: 50%; transform: translateX(-50%); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);"></span>
   `;
 
   document.body.appendChild(hamburger);
 
-  // Create backdrop
+  // Enhanced backdrop
   const backdrop = document.createElement("div");
   backdrop.id = "mobile-nav-backdrop";
   backdrop.className = "mobile-nav-backdrop";
-  backdrop.style.display = "none";
-  backdrop.style.position = "fixed";
-  backdrop.style.top = "0";
-  backdrop.style.left = "0";
-  backdrop.style.right = "0";
-  backdrop.style.bottom = "0";
-  backdrop.style.background = "rgba(0, 0, 0, 0.5)";
-  backdrop.style.zIndex = "1080";
+  Object.assign(backdrop.style, {
+    display: "none",
+    position: "fixed",
+    top: "0",
+    left: "0",
+    right: "0",
+    bottom: "0",
+    background: "rgba(0, 0, 0, 0.7)",
+    backdropFilter: "blur(4px)",
+    zIndex: "1080",
+    transition: "opacity 0.3s ease",
+  });
   document.body.appendChild(backdrop);
 
-  // Create mobile menu
+  // Enhanced mobile menu
   const mobileMenu = document.createElement("nav");
   mobileMenu.id = "mobile-nav-menu";
   mobileMenu.className = "mobile-nav-menu";
-  mobileMenu.style.position = "fixed";
-  mobileMenu.style.top = "0";
-  mobileMenu.style.left = "-100%";
-  mobileMenu.style.width = "280px";
-  mobileMenu.style.height = "100vh";
-  mobileMenu.style.background = "#000";
-  mobileMenu.style.borderRight = "1px solid #333";
-  mobileMenu.style.zIndex = "1090";
-  mobileMenu.style.overflowY = "auto";
-  mobileMenu.style.paddingTop = "5rem";
-  mobileMenu.style.paddingBottom = "2rem";
-  mobileMenu.style.transition = "left 0.3s cubic-bezier(0.4, 0, 0.2, 1)";
+  mobileMenu.setAttribute("aria-label", "Mobile navigation");
 
-  // Get desktop nav and clone its structure
+  Object.assign(mobileMenu.style, {
+    position: "fixed",
+    top: "0",
+    left: "-100%",
+    width: "300px",
+    maxWidth: "85vw",
+    height: "100vh",
+    background:
+      "linear-gradient(180deg, rgba(0, 0, 0, 0.98) 0%, rgba(20, 20, 20, 0.98) 100%)",
+    borderRight: "1px solid rgba(255, 255, 255, 0.1)",
+    boxShadow: "4px 0 20px rgba(0, 0, 0, 0.5)",
+    zIndex: "1090",
+    overflowY: "auto",
+    paddingTop: "5rem",
+    paddingBottom: "2rem",
+    transition: "left 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+  });
+
+  // Clone and enhance desktop nav
   const desktopNav = document.querySelector("header nav");
   if (desktopNav) {
-    const navHTML = desktopNav.innerHTML;
-    mobileMenu.innerHTML = navHTML;
+    const navClone = desktopNav.cloneNode(true);
+    const navList = navClone.querySelector(".nav");
+
+    if (navList) {
+      navList.style.cssText = `
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 1.5rem;
+        background: transparent;
+        border: none;
+      `;
+
+      const navItems = navList.querySelectorAll(".nav-item");
+      navItems.forEach((item) => {
+        const link = item.querySelector(".nav-link");
+        if (link) {
+          link.style.cssText = `
+            display: block;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 1.05rem;
+            letter-spacing: 0.02em;
+          `;
+
+          link.addEventListener("mouseenter", () => {
+            link.style.background = "rgba(255, 255, 255, 0.1)";
+            link.style.borderColor = "rgba(183, 28, 28, 0.4)";
+            link.style.transform = "translateX(8px)";
+          });
+
+          link.addEventListener("mouseleave", () => {
+            if (!link.classList.contains("active")) {
+              link.style.background = "transparent";
+              link.style.borderColor = "rgba(255, 255, 255, 0.05)";
+              link.style.transform = "translateX(0)";
+            }
+          });
+
+          if (link.classList.contains("active")) {
+            link.style.background =
+              "linear-gradient(135deg, rgba(183, 28, 28, 0.3) 0%, rgba(161, 23, 23, 0.2) 100%)";
+            link.style.borderColor = "rgba(183, 28, 28, 0.4)";
+            link.style.boxShadow = "0 2px 8px rgba(183, 28, 28, 0.2)";
+          }
+        }
+      });
+    }
+
+    mobileMenu.appendChild(navClone);
   }
 
   document.body.appendChild(mobileMenu);
@@ -118,6 +195,22 @@ function attachEventHandlers() {
   if (!hamburger || !mobileMenu) return;
 
   hamburger.addEventListener("click", toggleMenu);
+
+  hamburger.addEventListener("mouseenter", () => {
+    if (!menuOpen) {
+      hamburger.style.background = "rgba(183, 28, 28, 0.3)";
+      hamburger.style.borderColor = "rgba(183, 28, 28, 0.4)";
+      hamburger.style.transform = "scale(1.05)";
+    }
+  });
+
+  hamburger.addEventListener("mouseleave", () => {
+    if (!menuOpen) {
+      hamburger.style.background = "rgba(0, 0, 0, 0.85)";
+      hamburger.style.borderColor = "rgba(255, 255, 255, 0.1)";
+      hamburger.style.transform = "scale(1)";
+    }
+  });
 
   if (backdrop) {
     backdrop.addEventListener("click", closeMenu);
@@ -151,18 +244,25 @@ function openMenu() {
 
   menuOpen = true;
 
-  // Animate hamburger to X
+  // Animate hamburger to X with enhanced styling
   const lines = hamburger.querySelectorAll(".hamburger-line");
-  lines[0].style.top = "13px";
+  lines[0].style.top = "23px";
   lines[0].style.transform = "translateX(-50%) rotate(45deg)";
   lines[1].style.opacity = "0";
-  lines[2].style.top = "13px";
+  lines[2].style.top = "23px";
   lines[2].style.transform = "translateX(-50%) rotate(-45deg)";
 
+  hamburger.style.background = "rgba(183, 28, 28, 0.5)";
+  hamburger.style.borderColor = "rgba(183, 28, 28, 0.6)";
   hamburger.setAttribute("aria-expanded", "true");
 
   mobileMenu.style.left = "0";
-  if (backdrop) backdrop.style.display = "block";
+  if (backdrop) {
+    backdrop.style.display = "block";
+    setTimeout(() => {
+      backdrop.style.opacity = "1";
+    }, 10);
+  }
 
   document.body.style.overflow = "hidden";
 
@@ -181,16 +281,23 @@ function closeMenu() {
 
   // Animate hamburger back to lines
   const lines = hamburger.querySelectorAll(".hamburger-line");
-  lines[0].style.top = "6px";
+  lines[0].style.top = "14px";
   lines[0].style.transform = "translateX(-50%) rotate(0deg)";
   lines[1].style.opacity = "1";
-  lines[2].style.top = "20px";
+  lines[2].style.top = "32px";
   lines[2].style.transform = "translateX(-50%) rotate(0deg)";
 
+  hamburger.style.background = "rgba(0, 0, 0, 0.85)";
+  hamburger.style.borderColor = "rgba(255, 255, 255, 0.1)";
   hamburger.setAttribute("aria-expanded", "false");
 
   mobileMenu.style.left = "-100%";
-  if (backdrop) backdrop.style.display = "none";
+  if (backdrop) {
+    backdrop.style.opacity = "0";
+    setTimeout(() => {
+      backdrop.style.display = "none";
+    }, 300);
+  }
 
   document.body.style.overflow = "";
   hamburger.focus();

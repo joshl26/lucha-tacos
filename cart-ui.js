@@ -1,5 +1,5 @@
 // cart-ui.js
-// UI wiring for the cart module. Adds stable data-test attributes to enable reliable E2E tests.
+// UI wiring for the cart module with improved button handling
 
 import { cart } from "./cart.js";
 
@@ -9,6 +9,9 @@ const CHECKOUT_MODAL_ID = "cart-checkout-modal";
 const CART_ANNOUNCER_ID = "cart-announcer";
 const TOAST_CONTAINER_ID = "cart-toast-container";
 
+/**
+ * Creates cart button in header or in dedicated container
+ */
 function createCartButton() {
   if (document.getElementById(CART_BUTTON_ID)) return;
 
@@ -18,8 +21,6 @@ function createCartButton() {
   btn.setAttribute("aria-label", "Open cart — 0 items");
   btn.setAttribute("aria-haspopup", "dialog");
   btn.type = "button";
-
-  // Add data-test attributes expected by tests
   btn.setAttribute("data-test", "mini-cart-open");
 
   btn.innerHTML = `
@@ -27,13 +28,40 @@ function createCartButton() {
     <span class="cart-badge" aria-hidden="true" data-test="mini-cart-count">0</span>
   `;
 
-  const header =
-    document.querySelector("header") ||
-    document.querySelector("nav") ||
-    document.body;
-  header.prepend(btn);
+  // Try to find dedicated container first (for order page)
+  const container = document.getElementById("cart-button-container");
+  if (container) {
+    container.appendChild(btn);
+  } else {
+    // Fallback to header
+    const header =
+      document.querySelector("header") ||
+      document.querySelector("nav") ||
+      document.body;
+    header.prepend(btn);
+  }
 
   btn.addEventListener("click", () => openCartModal());
+}
+
+/**
+ * Ensures cart button exists in container (for order page)
+ */
+function ensureCartButton() {
+  const container = document.getElementById("cart-button-container");
+  if (!container) return;
+
+  // Check if cart button already exists in container
+  if (container.querySelector(".cart-button")) return;
+
+  // Remove from header if it exists there
+  const existingButton = document.getElementById(CART_BUTTON_ID);
+  if (existingButton && existingButton.parentNode !== container) {
+    existingButton.remove();
+  }
+
+  // Create new button in container
+  createCartButton();
 }
 
 function createAnnouncer() {
@@ -51,6 +79,14 @@ function ensureToastContainer() {
   c.id = TOAST_CONTAINER_ID;
   c.className = "cart-toast-container";
   c.setAttribute("aria-live", "polite");
+  c.style.position = "fixed";
+  c.style.bottom = "2rem";
+  c.style.right = "2rem";
+  c.style.zIndex = "2000";
+  c.style.display = "flex";
+  c.style.flexDirection = "column";
+  c.style.gap = "0.5rem";
+  c.style.maxWidth = "320px";
   document.body.appendChild(c);
 }
 
@@ -61,29 +97,38 @@ function showToast(message, opts = {}) {
   toast.className = "cart-toast";
   toast.role = "status";
   toast.textContent = message;
+  toast.style.background = "rgba(0, 0, 0, 0.9)";
+  toast.style.color = "#fff";
+  toast.style.padding = "1rem 1.25rem";
+  toast.style.borderRadius = "8px";
+  toast.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.3)";
+  toast.style.opacity = "0";
+  toast.style.transform = "translateX(100%)";
+  toast.style.transition = "all 0.3s ease";
+
   container.appendChild(toast);
+
   const timeout = opts.timeout || 3000;
   requestAnimationFrame(() => {
-    toast.classList.add("visible");
+    requestAnimationFrame(() => {
+      toast.style.opacity = "1";
+      toast.style.transform = "translateX(0)";
+    });
   });
+
   setTimeout(() => {
-    toast.classList.remove("visible");
+    toast.style.opacity = "0";
+    toast.style.transform = "translateX(100%)";
     setTimeout(() => container.removeChild(toast), 300);
   }, timeout);
 }
 
-/**
- * Show loading state on button
- */
 function showButtonLoading(btn) {
   if (!btn) return;
   btn.classList.add("btn-loading");
   btn.disabled = true;
 }
 
-/**
- * Hide loading state on button
- */
 function hideButtonLoading(btn) {
   if (!btn) return;
   btn.classList.remove("btn-loading");
@@ -95,7 +140,7 @@ function buildCartModalHtml() {
   <div class="cart-modal-backdrop"></div>
   <div class="cart-modal" role="dialog" aria-modal="true" aria-labelledby="cart-title" tabindex="-1">
     <div class="cart-modal-header">
-      <h2 id="cart-title">Your Cart</h2>
+      <h3 id="cart-title">Your Cart</h3>
       <button class="cart-modal-close" aria-label="Close cart">&times;</button>
     </div>
     <div class="cart-modal-body">
@@ -109,7 +154,7 @@ function buildCartModalHtml() {
       <div class="cart-subtotal" id="cart-subtotal"></div>
       <div class="cart-actions">
         <button class="btn btn-secondary cart-clear" data-test="cart-clear">Clear</button>
-        <button class="btn btn-primary cart-checkout" data-test="checkout-button">Proceed to Checkout</button>
+        <button class="btn btn-primary cart-checkout" data-test="checkout-button">Checkout</button>
       </div>
     </div>
   </div>
@@ -176,30 +221,30 @@ function buildCheckoutModalHtml() {
   <div class="checkout-modal-backdrop"></div>
   <div class="checkout-modal" role="dialog" aria-modal="true" aria-labelledby="checkout-title" tabindex="-1">
     <div class="checkout-modal-header">
-      <h2 id="checkout-title">Checkout</h2>
+      <h3 id="checkout-title">Checkout</h3>
       <button class="checkout-modal-close" aria-label="Close checkout">&times;</button>
     </div>
     <div class="checkout-modal-body">
       <section class="checkout-summary" aria-labelledby="checkout-summary-heading">
-        <h3 id="checkout-summary-heading">Order Summary</h3>
+        <h4 id="checkout-summary-heading">Order Summary</h4>
         <div id="checkout-items" class="checkout-items"></div>
         <div id="checkout-subtotal" class="checkout-subtotal" aria-live="polite"></div>
       </section>
 
       <section class="checkout-contact" aria-labelledby="checkout-contact-heading">
-        <h3 id="checkout-contact-heading">Contact & Delivery</h3>
+        <h4 id="checkout-contact-heading">Contact & Delivery</h4>
         <form id="checkout-form" novalidate>
           <label>
             Full name *
             <input type="text" name="name" id="checkout-name" required autocomplete="name" />
           </label>
           <label>
-            Email (or) Phone *
+            Email or Phone *
             <input type="text" name="contact" id="checkout-contact" required autocomplete="email tel" />
           </label>
           <label>
             Delivery address (optional)
-            <textarea name="address" id="checkout-address" rows="3" ></textarea>
+            <textarea name="address" id="checkout-address" rows="3"></textarea>
           </label>
           <div class="checkout-form-actions">
             <button type="button" class="btn btn-secondary checkout-cancel">Cancel</button>
@@ -272,14 +317,14 @@ function updateCheckoutSummary() {
         <div class="checkout-item-name">${escapeHtml(
           it.name
         )} <small class="muted">x${it.qty}</small></div>
-        <div class="checkout-item-price">$${formatPrice(
+        <div class="checkout-item-price">${formatPrice(
           it.priceCents * it.qty
         )}</div>
       `;
       itemsContainer.appendChild(row);
     }
   }
-  subtotalEl.innerHTML = `<strong>Subtotal:</strong> $${formatPrice(
+  subtotalEl.innerHTML = `<strong>Subtotal:</strong> ${formatPrice(
     s.subtotalCents
   )}`;
 }
@@ -329,7 +374,7 @@ function handleCheckoutSubmit(formEl) {
     };
 
     window.dispatchEvent(new CustomEvent("cart:checkout", { detail: payload }));
-    showToast("Order placed (placeholder) — check console for event payload");
+    showToast("Order placed successfully!");
     announce("Order placed — thank you");
 
     hideButtonLoading(submitBtn);
@@ -378,7 +423,6 @@ function renderCartItems(container) {
     const row = document.createElement("div");
     row.className = "cart-item";
     row.dataset.itemId = it.id;
-    // data-test attribute for the item row so tests can target it:
     row.setAttribute("data-test", `cart-item-${it.id}`);
 
     row.innerHTML = `
@@ -399,10 +443,9 @@ function renderCartItems(container) {
           )}" data-test="cart-remove-${it.id}">Remove</button>
         </div>
       </div>
-      <div class="cart-item-price">$${formatPrice(it.priceCents)}</div>
+      <div class="cart-item-price">${formatPrice(it.priceCents)}</div>
     `;
 
-    // hook up handlers using data-test attributes
     const dec = row.querySelector(`[data-test="cart-decrement-${it.id}"]`);
     const inc = row.querySelector(`[data-test="cart-increment-${it.id}"]`);
     const qtyDisplay = row.querySelector(`[data-test="cart-qty-${it.id}"]`);
@@ -477,7 +520,7 @@ function updateCartUI() {
   const subtotalEl = wrapper.querySelector("#cart-subtotal");
   const s = cart.getSummary();
   if (subtotalEl)
-    subtotalEl.innerHTML = `<strong>Subtotal:</strong> $${formatPrice(
+    subtotalEl.innerHTML = `<strong>Subtotal:</strong> ${formatPrice(
       s.subtotalCents
     )}`;
 }
@@ -561,16 +604,10 @@ function escapeHtml(str) {
     .replaceAll("'", "&#039;");
 }
 
-/**
- * Wire add-to-cart buttons:
- * - derive a stable data-test attribute if one isn't provided
- * - attach click handlers only once per button
- */
 function wireAddToCartButtons() {
   document.querySelectorAll(".add-to-cart").forEach((btn, idx) => {
     if (btn.dataset.cartWired) return;
 
-    // derive id (prefer explicit data attributes)
     const derivedId =
       btn.dataset.itemId || btn.getAttribute("data-item-id") || `t${idx + 1}`;
     if (!btn.hasAttribute("data-test")) {
@@ -639,6 +676,7 @@ export function initCartUI() {
 
   const mo = new MutationObserver(() => {
     wireAddToCartButtons();
+    ensureCartButton(); // Check for cart button container
   });
   mo.observe(document.body, { childList: true, subtree: true });
 
@@ -650,3 +688,5 @@ if (document.readyState === "loading") {
 } else {
   initCartUI();
 }
+
+export { ensureCartButton };
